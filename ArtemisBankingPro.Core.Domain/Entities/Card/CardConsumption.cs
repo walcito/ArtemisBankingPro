@@ -1,17 +1,12 @@
-﻿using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ArtemisBankingPro.Core.Domain.Common;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 
 namespace ArtemisBankingPro.Core.Domain.Entities.Card
 {
-    public class CardConsumption
+    public class CardConsumption : BaseEntity
     {
-        public int Id { get; set; }
-        public int CardId { get; set; }
-        public int CommerceId { get; set; }
+        public required int CardId { get; set; }
+        public required int CommerceId { get; set; }
         public decimal Amount { get; set; }
         public ConsumptionStatus Status { get; set; }
         public DateTime TransactionDate { get; set; }
@@ -19,5 +14,10 @@ namespace ArtemisBankingPro.Core.Domain.Entities.Card
         public string? RejectionReason { get; set; }
         public int? ProcessingLogId { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // Navigation Properties
+        public CreditCard? CreditCard { get; set; }
+        public CardProcessingLog? ProcessingLog { get; set; }
+  
     }
 }

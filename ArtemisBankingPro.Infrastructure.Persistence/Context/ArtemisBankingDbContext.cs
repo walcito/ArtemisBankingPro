@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArtemisBankingPro.Infrastructure.Persistence.Context;
 
@@ -13,6 +14,9 @@ public class ArtemisBankingDbContext : DbContext
     public DbSet<Transaccion> Transacciones => Set<Transaccion>();
     public DbSet<ActivationToken> ActivationTokens => Set<ActivationToken>();
     public DbSet<ResetToken> ResetTokens => Set<ResetToken>();
+    public DbSet<CreditCard> CreditCards { get; set; }
+    public DbSet<CardConsumption> CardConsumptions { get; set; }
+    public DbSet<CardProcessingLog> CardProcessingLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

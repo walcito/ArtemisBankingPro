@@ -1,9 +1,10 @@
 ﻿using System;
 
 public class ComercioConfiguration
+{
 
-    public ComercioConfiguration()
-	{
-		//Aliandy
-	}
+public ComercioConfiguration()
+{
+	//Aliandy
+}
 }
