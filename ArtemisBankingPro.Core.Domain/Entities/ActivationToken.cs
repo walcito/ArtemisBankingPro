@@ -5,7 +5,7 @@ namespace ArtemisBankingPro.Core.Domain.Entities;
 public class ActivationToken : BaseEntity
 {
     public string Token { get; set; } = string.Empty;
-    public string UsuarioId { get; set; } = string.Empty;
-    public bool Usado { get; set; } = false;
-    public DateTime FechaExpiracion { get; set; }
+    public int UserId { get; set; }
+    public bool IsUsed { get; set; } = false;
+    public DateTime ExpirationDate { get; set; }
 }
