@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +14,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.EntitiesConfigurations.Ca
             #endregion
 
             #region Property Configuration
-            builder.Property(c => c.ClientId).IsRequired();
+            builder.Property(c => c.UserId).IsRequired();
             builder.Property(c => c.CardNumber).IsRequired().HasMaxLength(16);
             builder.Property(c => c.ExpirationDate).IsRequired();
             builder.Property(c => c.CvcHash).IsRequired().HasMaxLength(255);
@@ -28,7 +28,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.EntitiesConfigurations.Ca
 
             #region Index Configuration
             builder.HasIndex(c => c.CardNumber).IsUnique();
-            builder.HasIndex(c => c.ClientId);
+            builder.HasIndex(c => c.UserId);
             builder.HasIndex(c => c.Status);
             #endregion
 

@@ -8,9 +8,9 @@ public class Loan
 {
     public int Id { get; set; }
     
-    // Relación con el Cliente (Dueño del préstamo)
-    public int ClientId { get; set; }
-    public Client Client { get; set; }
+    // Relación con el Usuario (Dueño del préstamo)
+    public int UserId { get; set; }
+    public User? User { get; set; }
 
     // Datos Financieros del Préstamo
     public decimal DisbursedAmount { get; set; } // Monto Desembolsado

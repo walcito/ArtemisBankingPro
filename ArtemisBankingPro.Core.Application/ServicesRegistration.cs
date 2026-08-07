@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ArtemisBankingPro.Core.Application.Services;
+using ArtemisBankingPro.Core.Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ArtemisBankingPro.Core.Application
+namespace ArtemisBankingPro.Core.Application;
+
+public static class ServicesRegistration
 {
-    internal class ServicesRegistration
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddScoped<IAmortizationService, CalculadoraAmortizationService>();
+
+        return services;
     }
 }
