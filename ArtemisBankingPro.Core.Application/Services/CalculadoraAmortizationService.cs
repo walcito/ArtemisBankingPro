@@ -14,7 +14,7 @@ public class CalculadoraAmortizationService : IAmortizationService
         // Tasa mensual (ej: 12% anual → 0.01 mensual)
         decimal monthlyRate = annualInterestRate / 12m / 100m;
 
-        // Cuota fija: P × [ r × (1 + r)^n ] / [ (1 + r)^n − 1 ]
+        // Cuota fija: 
         decimal fixedInstallment;
 
         if (monthlyRate == 0)
@@ -36,7 +36,6 @@ public class CalculadoraAmortizationService : IAmortizationService
             decimal interest = Math.Round(pendingBalance * monthlyRate, 2);
             decimal principalAmortization = fixedInstallment - interest;
 
-            // Última cuota: ajustar para eliminar diferencias de redondeo
             if (i == termInMonths)
             {
                 principalAmortization = pendingBalance;

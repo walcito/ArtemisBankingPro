@@ -1,3 +1,4 @@
+using ArtemisBankingPro.Core.Application.Features.Loans.Commands.DesembolsarPrestamo;
 using ArtemisBankingPro.Core.Application.Services;
 using ArtemisBankingPro.Core.Domain.Entities;
 using ArtemisBankingPro.Core.Domain.Enums;
@@ -12,42 +13,60 @@ public class AsignarPrestamoCommandHandler : IRequestHandler<AsignarPrestamoComm
     private readonly IGenericRepository<Loan> _loanRepository;
     private readonly IAmortizationService _amortizationService;
     private readonly GeneradorNumeroPrestamoService _generadorNumeroPrestamo;
+    private readonly IMediator _mediator;
 
     public AsignarPrestamoCommandHandler(
         IGenericRepository<User> userRepository,
         IGenericRepository<Loan> loanRepository,
         IAmortizationService amortizationService,
-        GeneradorNumeroPrestamoService generadorNumeroPrestamo)
+        GeneradorNumeroPrestamoService generadorNumeroPrestamo,
+        IMediator mediator)
     {
         _userRepository = userRepository;
         _loanRepository = loanRepository;
         _amortizationService = amortizationService;
         _generadorNumeroPrestamo = generadorNumeroPrestamo;
+        _mediator = mediator;
     }
 
     public async Task<int> Handle(AsignarPrestamoCommand request, CancellationToken cancellationToken)
     {
-        // Validar que el usuario existe y está activo
         var user = await _userRepository.GetByIdAsync(request.UserId);
         if (user is null || !user.IsActive)
             throw new Exception("El cliente no existe o no está activo.");
 
-        // Validar que no tenga un préstamo activo
         var loans = await _loanRepository.GetAllAsync();
         var hasActiveLoan = loans.Any(l => l.UserId == request.UserId && l.Status == LoanStatus.Active);
 
         if (hasActiveLoan)
             throw new Exception("El cliente ya tiene un préstamo activo.");
 
-        // Generar número de préstamo único
         var loanNumber = await _generadorNumeroPrestamo.GenerarNumeroUnicoAsync();
 
-        // Generar tabla de amortización
         var installments = _amortizationService.GenerateAmortizationTable(
             request.DisbursedAmount,
             request.AnnualInterestRate,
             request.TermInMonths
         );
+
+        // Validación de Riesgo: Deuda Actual Cliente + Total a Pagar Nuevo Préstamo > Deuda Promedio Global
+        var activeLoans = loans.Where(l => l.Status == LoanStatus.Active).ToList();
+        if (activeLoans.Any())
+        {
+            decimal clientCurrentDebt = activeLoans.Where(l => l.UserId == request.UserId).Sum(l => l.CurrentDebt);
+            decimal newLoanTotalToPay = installments.Sum(i => i.InstallmentAmount);
+            decimal globalAverageDebt = activeLoans.Average(l => l.CurrentDebt);
+
+            if (clientCurrentDebt + newLoanTotalToPay > globalAverageDebt)
+            {
+                if (!request.ConfirmHighRisk)
+                {
+                    throw new ArtemisBankingPro.Core.Application.Exceptions.HighRiskLoanException(
+                        "El préstamo representa un alto riesgo financiero. Se requiere confirmación explícita de riesgo alto."
+                    );
+                }
+            }
+        }
 
         var loan = new Loan
         {
@@ -60,13 +79,15 @@ public class AsignarPrestamoCommandHandler : IRequestHandler<AsignarPrestamoComm
             Status = LoanStatus.Active,
         };
 
-        // Asociar cuotas al préstamo
         foreach (var installment in installments)
         {
             loan.Installments.Add(installment);
         }
 
         await _loanRepository.AddAsync(loan);
+
+        // Desembolso automático: acreditar monto a la cuenta principal del cliente
+        await _mediator.Send(new DesembolsarPrestamoCommand { LoanId = loan.Id }, cancellationToken);
 
         return loan.Id;
     }
