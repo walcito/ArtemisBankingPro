@@ -1,0 +1,75 @@
+@model ArtemisBankingPro.Core.Application.Common.Models.PagedResult<ArtemisBankingPro.Core.Application.Features.Trades.Queries.GetTrades.TradeDto>
+
+@{
+    ViewData["Title"] = "Gestión de Comercios";
+}
+
+<h2>Comercios</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="isActive" class="form-select">
+            <option value="">Todos</option>
+            <option value="true">Activos</option>
+            <option value="false">Inactivos</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+    <div class="col-auto ms-auto">
+        <a asp-action="Create" class="btn btn-success">Nuevo Comercio</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>RNC</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trade in Model.Items)
+        {
+            <tr>
+                <td>@trade.Name</td>
+                <td>@trade.Rnc</td>
+                <td>@trade.Mail</td>
+                <td>@trade.Phone</td>
+                <td>
+                    <span class="badge @(trade.IsActive ? "bg-success" : "bg-secondary")">
+                        @(trade.IsActive ? "Activo" : "Inactivo")
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@trade.Id" class="btn btn-sm btn-info">Ver</a>
+                    <a asp-action="Edit" asp-route-id="@trade.Id" class="btn btn-sm btn-warning">Editar</a>
+
+                    <form asp-action="ToggleStatus" asp-route-id="@trade.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm @(trade.IsActive ? "btn-danger" : "btn-success")"
+                                onclick="return confirm('@(trade.IsActive ? "¿Desactivar este comercio? Esto también inactivará a su usuario asociado." : "¿Reactivar este comercio?")');">
+                            @(trade.IsActive ? "Desactivar" : "Reactivar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -1,0 +1,33 @@
+@model ArtemisBankingPro.Core.Application.Features.Trades.Queries.GetTradeById.TradeDetailDto
+
+@{
+    ViewData["Title"] = "Detalle del Comercio";
+}
+
+<h2>@Model.Name</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">RNC</dt>
+    <dd class="col-sm-9">@Model.Rnc</dd>
+
+    <dt class="col-sm-3">Correo</dt>
+    <dd class="col-sm-9">@Model.Mail</dd>
+
+    <dt class="col-sm-3">Teléfono</dt>
+    <dd class="col-sm-9">@Model.Phone</dd>
+
+    <dt class="col-sm-3">Descripción</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9">
+        <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+            @(Model.IsActive ? "Activo" : "Inactivo")
+        </span>
+    </dd>
+
+    <dt class="col-sm-3">Usuario Asociado</dt>
+    <dd class="col-sm-9">@(Model.AssociatedUsername ?? "Sin usuario asociado")</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

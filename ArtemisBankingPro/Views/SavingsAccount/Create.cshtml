@@ -1,0 +1,28 @@
+@model ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount.CreateSavingsAccountCommand
+
+@{
+    ViewData["Title"] = "Nueva Cuenta Secundaria";
+}
+
+<h2>Nueva Cuenta Secundaria</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="UserId" class="form-label">Cliente (ID)</label>
+        <input asp-for="UserId" class="form-control" />
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InitialAmount" class="form-label">Monto Inicial</label>
+        <input asp-for="InitialAmount" class="form-control" />
+        <span asp-validation-for="InitialAmount" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Crear Cuenta</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

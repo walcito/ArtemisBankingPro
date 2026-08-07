@@ -1,0 +1,75 @@
+@model ArtemisBankingPro.Core.Application.Common.Models.PagedResult<ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts.SavingsAccountDto>
+
+@{
+    ViewData["Title"] = "Gestión de Cuentas de Ahorro";
+}
+
+<h2>Cuentas de Ahorro</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="identificationNumber" class="form-control" placeholder="Buscar por cédula" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+    <div class="col-auto ms-auto">
+        <a asp-action="Create" class="btn btn-success">Nueva Cuenta Secundaria</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Número de Cuenta</th>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Balance</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var account in Model.Items)
+        {
+            <tr>
+                <td>@account.AccountNumber</td>
+                <td>@account.UserFullName</td>
+                <td>@account.Type</td>
+                <td>@account.Balance.ToString("C2")</td>
+                <td>
+                    <span class="badge @(account.Status.ToString() == "Active" ? "bg-success" : "bg-secondary")">
+                        @account.Status
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-accountNumber="@account.AccountNumber" class="btn btn-sm btn-info">
+                        Ver Detalle
+                    </a>
+                    @if (account.Type.ToString() == "Secondary" && account.Status.ToString() == "Active")
+                    {
+                        <form asp-action="Cancel" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="accountNumber" value="@account.AccountNumber" />
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Seguro que desea cancelar esta cuenta?');">
+                                Cancelar
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

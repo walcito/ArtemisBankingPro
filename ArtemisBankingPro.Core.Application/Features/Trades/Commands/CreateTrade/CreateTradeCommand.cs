@@ -1,0 +1,12 @@
+using MediatR;
+
+namespace ArtemisBankingPro.Core.Application.Features.Trades.Commands.CreateTrade;
+
+public class CreateTradeCommand : IRequest<int>
+{
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Mail { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Rnc { get; set; } = string.Empty;
+}
