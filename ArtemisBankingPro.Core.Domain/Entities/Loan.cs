@@ -7,6 +7,7 @@ namespace ArtemisBankingPro.Core.Domain.Entities;
 public class Loan
 {
     public int Id { get; set; }
+    public string LoanNumber { get; set; } = string.Empty; // Número único de 9 dígitos
     
     // Relación con el Usuario (Dueño del préstamo)
     public int UserId { get; set; }

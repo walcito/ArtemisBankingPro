@@ -9,6 +9,7 @@ public static class ServicesRegistration
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IAmortizationService, CalculadoraAmortizationService>();
+        services.AddScoped<GeneradorNumeroPrestamoService>();
 
         return services;
     }

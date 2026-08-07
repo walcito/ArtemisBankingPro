@@ -1,10 +1,8 @@
-using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
-using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace ArtemisBankingPro.WebAPI.Controllers;
 
@@ -14,12 +12,10 @@ namespace ArtemisBankingPro.WebAPI.Controllers;
 public class LoansController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IAmortizationService _amortizationService;
 
-    public LoansController(IMediator mediator, IAmortizationService amortizationService)
+    public LoansController(IMediator mediator)
     {
         _mediator = mediator;
-        _amortizationService = amortizationService;
     }
 
     [HttpGet]
@@ -29,30 +25,10 @@ public class LoansController : ControllerBase
         return Ok(result);
     }
 
-    // Simula una tabla de amortización sin persistir datos
-    [HttpPost("simulate")]
-    [AllowAnonymous]
-    public IActionResult Simulate([FromBody] SimulateLoanRequest request)
+    [HttpPost]
+    public async Task<IActionResult> AsignarPrestamo([FromBody] AsignarPrestamoCommand command)
     {
-        if (request.DisbursedAmount <= 0 || request.AnnualInterestRate < 0 || request.TermInMonths <= 0)
-            return BadRequest("Los valores del préstamo deben ser positivos.");
-
-        var table = _amortizationService.GenerateAmortizationTable(
-            request.DisbursedAmount,
-            request.AnnualInterestRate,
-            request.TermInMonths
-        );
-
-        var response = table.Select(i => new
-        {
-            i.InstallmentNumber,
-            i.InstallmentAmount,
-            i.Interest,
-            i.PrincipalAmortization,
-            i.PendingBalance
-        });
-
-        return Ok(response);
+        var loanId = await _mediator.Send(command);
+        return Ok(loanId);
     }
 }
-
