@@ -4,8 +4,8 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Entities;
 
 public class ApplicationUser : IdentityUser
 {
-    public required string Nombre { get; set; }
-    public required string Apellido { get; set; }
-    public required string Cedula { get; set; }
-    public bool EstaActivo { get; set; } = true;
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public required string IdentificationNumber { get; set; }
+    public bool IsActive { get; set; } = true;
 }

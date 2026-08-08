@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Application.Interfaces.Repositories;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Entities;
 using MediatR;
 

@@ -9,10 +9,10 @@ public static class IdentitySeeder
     {
         var roles = new[]
         {
-            new IdentityRole { Name = "Administrador", NormalizedName = "ADMINISTRADOR" },
-            new IdentityRole { Name = "Cajero", NormalizedName = "CAJERO" },
-            new IdentityRole { Name = "Cliente", NormalizedName = "CLIENTE" },
-            new IdentityRole { Name = "Comercio", NormalizedName = "COMERCIO" }
+            new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+            new IdentityRole { Name = "Teller", NormalizedName = "TELLER" },
+            new IdentityRole { Name = "Client", NormalizedName = "CLIENT" },
+            new IdentityRole { Name = "Merchant", NormalizedName = "MERCHANT" }
         };
 
         foreach (var role in roles)
@@ -27,11 +27,11 @@ public static class IdentitySeeder
         {
             UserName = "admin",
             Email = "admin@artemisbanking.com",
-            Nombre = "Admin",
-            Apellido = "Sistema",
-            Cedula = "00000000000",
+            FirstName = "Admin",
+            LastName = "System",
+            IdentificationNumber = "00000000000",
             EmailConfirmed = true,
-            EstaActivo = true
+            IsActive = true
         };
 
         if (await userManager.FindByEmailAsync(defaultAdmin.Email) == null)
@@ -39,7 +39,7 @@ public static class IdentitySeeder
             var result = await userManager.CreateAsync(defaultAdmin, "123P@$$word!");
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(defaultAdmin, "Administrador");
+                await userManager.AddToRoleAsync(defaultAdmin, "Admin");
             }
         }
     }

@@ -1,3 +1,4 @@
+using ArtemisBankingPro.Core.Application.Common.Models;
 using ArtemisBankingPro.Core.Domain.Common.Enums;
 using MediatR;
 
