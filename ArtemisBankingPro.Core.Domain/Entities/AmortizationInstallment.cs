@@ -9,7 +9,7 @@ public class AmortizationInstallment
 
     // Relación con el Préstamo
     public int LoanId { get; set; }
-    public Loan Loan { get; set; }
+    public Loan? Loan { get; set; }
 
     // Datos de la Cuota, se utiliza el sistema de amortización francés
     
@@ -22,7 +22,6 @@ public class AmortizationInstallment
     // Estado de la cuota (Pendiente, ParcialmentePagada, Pagada)
     public InstallmentStatus Status { get; set; }
     
-    // Rastreo de pagos parciales si aplica la regla anti-sobrepago o pagos que no cubren todo
     public decimal PaidAmount { get; set; }
 
     public AmortizationInstallment()

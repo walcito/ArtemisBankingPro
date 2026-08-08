@@ -11,6 +11,8 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Context
  
     public DbSet<ActivationToken> ActivationTokens => Set<ActivationToken>();
     public DbSet<ResetToken> ResetTokens => Set<ResetToken>();
+    public DbSet<Loan> Loans { get; set; }
+    public DbSet<AmortizationInstallment> AmortizationInstallments { get; set; }
     public DbSet<CreditCard> CreditCards { get; set; }
     public DbSet<CardConsumption> CardConsumptions { get; set; }
     public DbSet<CardProcessingLog> CardProcessingLogs { get; set; }
