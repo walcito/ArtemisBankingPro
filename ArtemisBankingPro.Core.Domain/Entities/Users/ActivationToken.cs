@@ -1,8 +1,8 @@
 using ArtemisBankingPro.Core.Domain.Common;
 
-namespace ArtemisBankingPro.Core.Domain.Entities;
+namespace ArtemisBankingPro.Core.Domain.Entities.Users;
 
-public class ResetToken : BaseEntity
+public class ActivationToken : BaseEntity
 {
     public string Token { get; set; } = string.Empty;
     public int UserId { get; set; }

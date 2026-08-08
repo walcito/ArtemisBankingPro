@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Common.Enums;
 
-namespace ArtemisBankingPro.Core.Domain.Entities;
+namespace ArtemisBankingPro.Core.Domain.Entities.Users;
 
 public class User
 {

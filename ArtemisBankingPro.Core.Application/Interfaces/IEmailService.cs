@@ -1,4 +1,4 @@
-namespace ArtemisBankingPro.Core.Domain.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces;
 
 public interface IEmailService
 {

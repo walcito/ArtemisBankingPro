@@ -1,8 +1,9 @@
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Application.Interfaces.Repositories;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Entities;
 using MediatR;
+using SavingsAccount = ArtemisBankingPro.Core.Domain.Entities.SavingsAccount;
 
 namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
 
