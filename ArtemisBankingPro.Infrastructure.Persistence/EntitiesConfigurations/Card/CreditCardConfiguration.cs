@@ -33,6 +33,11 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.EntitiesConfigurations.Ca
             #endregion
 
             #region Relationship Configuration
+            builder.HasOne(c => c.User)
+                .WithMany(u => u.CreditCards)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasMany(c => c.Consumptions)
                 .WithOne(cc => cc.CreditCard)
                 .HasForeignKey(cc => cc.CardId)

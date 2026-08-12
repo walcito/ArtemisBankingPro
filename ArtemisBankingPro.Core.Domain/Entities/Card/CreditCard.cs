@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Domain.Common;
+﻿using ArtemisBankingPro.Core.Domain.Common;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 
 namespace ArtemisBankingPro.Core.Domain.Entities.Card
@@ -6,7 +6,6 @@ namespace ArtemisBankingPro.Core.Domain.Entities.Card
     public class CreditCard : BaseEntity
     {
         public required int UserId { get; set; }
-        public User? User { get; set; }
         public required string CardNumber { get; set; }
         public required DateTime ExpirationDate { get; set; }
         public required string CvcHash { get; set; }
@@ -19,8 +18,9 @@ namespace ArtemisBankingPro.Core.Domain.Entities.Card
         public DateTime ModifiedAt { get; set; }
 
         // Navigation Properties
+        public User? User { get; set; }
         public ICollection<CardConsumption>? Consumptions { get; set; }
         public ICollection<CardProcessingLog>? ProcessingLogs { get; set; }
-       
+
     }
 }

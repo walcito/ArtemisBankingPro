@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Domain.Entities.Card;
+﻿using ArtemisBankingPro.Core.Domain.Entities.Card;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +12,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card
         public async Task<CreditCard?> GetByCardNumberAsync(string cardNumber)
         {
             return await _dbContext.Set<CreditCard>()
+                .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.CardNumber == cardNumber);
         }
 
@@ -19,6 +20,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card
         {
             return await _dbContext.Set<CreditCard>()
                 .Where(c => c.UserId == userId)
+                .Include(c => c.User)
                 .ToListAsync();
         }
 
