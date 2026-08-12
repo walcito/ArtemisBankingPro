@@ -1,6 +1,7 @@
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.DesembolsarPrestamo;
 using ArtemisBankingPro.Core.Application.Services;
 using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Enums;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;

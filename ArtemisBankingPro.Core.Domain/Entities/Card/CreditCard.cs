@@ -1,5 +1,6 @@
 ﻿using ArtemisBankingPro.Core.Domain.Common;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 namespace ArtemisBankingPro.Core.Domain.Entities.Card
 {
@@ -18,7 +19,7 @@ namespace ArtemisBankingPro.Core.Domain.Entities.Card
         public DateTime ModifiedAt { get; set; }
 
         // Navigation Properties
-        public User? User { get; set; }
+        public User? User { get; set; } //fk
         public ICollection<CardConsumption>? Consumptions { get; set; }
         public ICollection<CardProcessingLog>? ProcessingLogs { get; set; }
 

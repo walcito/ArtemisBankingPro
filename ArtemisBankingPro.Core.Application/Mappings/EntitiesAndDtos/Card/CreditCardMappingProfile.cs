@@ -12,14 +12,14 @@ namespace ArtemisBankingPro.Core.Application.Mappings.EntitiesAndDtos.Card
 
             CreateMap<CreditCard, ListCreditCardDto>()
                 .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.Nombre} {src.User.Apellido}" : string.Empty))
+                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : string.Empty))
                 .ForMember(dest => dest.MaskedCardNumber, opt => opt.MapFrom(src => MaskCardNumber(src.CardNumber)))
                 .ForMember(dest => dest.LastFourDigits, opt => opt.MapFrom(src => GetLast4Digits(src.CardNumber)))
                 .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.ExpirationDate.ToString("MM/yy")));
 
             CreateMap<CreditCard, DetailCreditCardDto>()
                 .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.Nombre} {src.User.Apellido}" : string.Empty))
+                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : string.Empty))
                 .ForMember(dest => dest.MaskedCardNumber, opt => opt.MapFrom(src => MaskCardNumber(src.CardNumber)))
                 .ForMember(dest => dest.LastFourDigits, opt => opt.MapFrom(src => GetLast4Digits(src.CardNumber)))
                 .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.ExpirationDate.ToString("MM/yy")))
@@ -27,7 +27,7 @@ namespace ArtemisBankingPro.Core.Application.Mappings.EntitiesAndDtos.Card
 
             CreateMap<CreditCard, CreateCreditCardResponseDto>()
                 .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.Nombre} {src.User.Apellido}" : string.Empty))
+                .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : string.Empty))
                 .ForMember(dest => dest.MaskedCardNumber, opt => opt.MapFrom(src => MaskCardNumber(src.CardNumber)))
                 .ForMember(dest => dest.LastFourDigits, opt => opt.MapFrom(src => GetLast4Digits(src.CardNumber)))
                 .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.ExpirationDate.ToString("MM/yy")));
