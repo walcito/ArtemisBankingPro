@@ -1,4 +1,5 @@
 using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
 
 namespace ArtemisBankingPro.Core.Domain.Entities;
 
@@ -15,4 +16,5 @@ public class User
     public int? ComercioId { get; set; }
     public Comercio? Comercio { get; set; }
     public ICollection<CuentaAhorro> CuentasAhorro { get; set; } = new List<CuentaAhorro>();
+    public ICollection<CreditCard> CreditCards { get; set; } = new List<CreditCard>();
 }

@@ -12,13 +12,15 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card
         public async Task<CreditCard?> GetByCardNumberAsync(string cardNumber)
         {
             return await _dbContext.Set<CreditCard>()
+                .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.CardNumber == cardNumber);
         }
 
-        public async Task<IReadOnlyList<CreditCard>> GetByClientIdAsync(int clientId)
+        public async Task<IReadOnlyList<CreditCard>> GetByUserIdAsync(int userId)
         {
             return await _dbContext.Set<CreditCard>()
-                .Where(c => c.ClientId == clientId)
+                .Where(c => c.UserId == userId)
+                .Include(c => c.User)
                 .ToListAsync();
         }
 
