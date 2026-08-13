@@ -1,0 +1,40 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome.CashierHomeDto
+
+@{
+    ViewData["Title"] = "Home del Cajero";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<h2>Panel del Cajero</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h5>Transacciones Hoy</h5>
+            <p class="fs-3">@Model.TotalTransactionsToday</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h5>Monto Procesado Hoy</h5>
+            <p class="fs-3">@Model.TotalAmountProcessedToday.ToString("C2")</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h5>Rechazadas Hoy</h5>
+            <p class="fs-3">@Model.RejectedTransactionsToday</p>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a asp-action="Deposit" class="btn btn-primary">Depositar</a>
+    <a asp-action="Withdraw" class="btn btn-primary">Retirar</a>
+    <a asp-action="ThirdPartyTransaction" class="btn btn-primary">Transacción a Terceros</a>
+    <a asp-action="PayLoan" class="btn btn-primary">Pagar Préstamo</a>
+</div>

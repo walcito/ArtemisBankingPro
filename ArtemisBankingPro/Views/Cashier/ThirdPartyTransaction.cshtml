@@ -1,0 +1,31 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction.ThirdPartyTransactionCommand
+
+@{ ViewData["Title"] = "Transacción a Terceros"; }
+
+<h2>Transacción a Cuenta de Terceros</h2>
+
+<form asp-action="ThirdPartyTransaction" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="SourceAccountNumber" class="form-label">Cuenta de Origen</label>
+        <input asp-for="SourceAccountNumber" class="form-control" />
+        <span asp-validation-for="SourceAccountNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DestinationAccountNumber" class="form-label">Cuenta de Destino</label>
+        <input asp-for="DestinationAccountNumber" class="form-control" />
+        <span asp-validation-for="DestinationAccountNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label">Monto</label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success" onclick="return confirm('¿Confirmar transacción?');">Confirmar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
