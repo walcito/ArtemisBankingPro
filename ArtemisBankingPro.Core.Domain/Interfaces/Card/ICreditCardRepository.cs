@@ -7,5 +7,7 @@ namespace ArtemisBankingPro.Core.Domain.Interfaces.Card
         Task<CreditCard?> GetByCardNumberAsync(string cardNumber);
         Task<IReadOnlyList<CreditCard>> GetByUserIdAsync(int userId);
         Task<bool> CardNumberExistsAsync(string cardNumber);
+        Task<IReadOnlyList<CreditCard>> GetAllWithUserAsync();
+        Task<CreditCard?> GetByIdWithConsumptionsAsync(int id);
     }
 }
