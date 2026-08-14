@@ -26,7 +26,5 @@ namespace ArtemisBankingPro.Core.Application.ViewModels.Card
         [Display(Name = "Motivo de Cancelación")]
         public string? Reason { get; set; }
 
-        // Propiedad calculada 
-        public bool CanBeCancelled => CurrentDebt == 0m;
     }
 }
