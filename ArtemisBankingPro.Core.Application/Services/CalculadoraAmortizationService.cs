@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Entities;
-using ArtemisBankingPro.Core.Domain.Enums;
-using ArtemisBankingPro.Core.Domain.Interfaces;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Application.Interfaces;
 
 namespace ArtemisBankingPro.Core.Application.Services;
 

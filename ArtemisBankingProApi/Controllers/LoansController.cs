@@ -1,7 +1,8 @@
 using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
-using ArtemisBankingPro.Core.Application.Features.Loans.Commands.ModificarTasa;
+using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
+using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,16 +36,27 @@ public class LoansController : ControllerBase
             var loanId = await _mediator.Send(command);
             return Ok(loanId);
         }
-        catch (ArtemisBankingPro.Core.Application.Exceptions.HighRiskLoanException ex)
+        catch (ArtemisBankingPro.Core.Application.Exceptions.ClienteAltoRiesgoException ex)
         {
             return Conflict(new { error = ex.Message, confirmHighRisk = true });
         }
     }
 
-    [HttpPatch("{id}/rate")]
-    public async Task<IActionResult> ModificarTasa(int id, [FromBody] ModificarTasaRequest request)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> ObtenerDetalle(int id)
     {
-        var command = new ModificarTasaCommand
+        var query = new ObtenerDetallePrestamoQuery { LoanId = id };
+        var result = await _mediator.Send(query);
+        if (result is null)
+            return NotFound("El préstamo no existe.");
+
+        return Ok(result);
+    }
+
+    [HttpPatch("{id}/rate")]
+    public async Task<IActionResult> EditarTasaPrestamo(int id, [FromBody] EditarTasaPrestamoRequest request)
+    {
+        var command = new EditarTasaPrestamoCommand
         {
             LoanId = id,
             NewAnnualInterestRate = request.NewAnnualInterestRate

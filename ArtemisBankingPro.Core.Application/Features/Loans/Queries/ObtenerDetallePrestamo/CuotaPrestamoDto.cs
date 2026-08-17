@@ -1,0 +1,15 @@
+using ArtemisBankingPro.Core.Domain.Common.Enums;
+
+namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
+
+public class CuotaPrestamoDto
+{
+    public int Id { get; set; }
+    public int InstallmentNumber { get; set; }
+    public decimal InstallmentAmount { get; set; }
+    public decimal Interest { get; set; }
+    public decimal PrincipalAmortization { get; set; }
+    public decimal PendingBalance { get; set; }
+    public InstallmentStatus Status { get; set; }
+    public decimal PaidAmount { get; set; }
+}

@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 
