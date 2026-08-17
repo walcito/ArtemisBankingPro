@@ -1,6 +1,7 @@
 using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
+using ArtemisBankingPro.Core.Application.Features.Loans.Commands.PagarPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 using MediatR;
@@ -64,6 +65,19 @@ public class LoansController : ControllerBase
         var result = await _mediator.Send(command);
         if (!result)
             return NotFound("No se encontraron cuotas pendientes para recalcular o el préstamo no existe.");
+
+        return NoContent();
+    }
+
+    [HttpPost("{id}/pay")]
+    public async Task<IActionResult> PagarPrestamo(int id, [FromBody] PagarPrestamoCommand command)
+    {
+        if (id != command.LoanId)
+            return BadRequest("El ID del préstamo no coincide.");
+
+        var result = await _mediator.Send(command);
+        if (!result)
+            return BadRequest("No se pudo procesar el pago del préstamo.");
 
         return NoContent();
     }

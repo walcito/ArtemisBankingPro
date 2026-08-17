@@ -32,7 +32,7 @@ public class ObtenerDetallePrestamoQueryHandler : IRequestHandler<ObtenerDetalle
             CurrentDebt = loan.CurrentDebt,
             Status = loan.Status,
             UserId = loan.UserId,
-            UserFullName = loan.User != null ? $"{loan.User.Name} {loan.User.LastName}" : string.Empty,
+            UserFullName = loan.User != null ? $"{loan.User.FirstName} {loan.User.LastName}" : string.Empty,
             UserIdentificationNumber = loan.User?.IdentificationNumber ?? string.Empty,
             Installments = loan.Installments
                 .OrderBy(i => i.InstallmentNumber)
