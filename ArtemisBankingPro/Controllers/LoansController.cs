@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
-[Authorize(Roles = "Administrador")]
+[AllowAnonymous]
 public class LoansController : Controller
 {
     private readonly IMediator _mediator;

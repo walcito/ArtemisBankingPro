@@ -1,84 +1,78 @@
 @model ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo.DetallePrestamoDto
 
 @{
-    ViewData["Title"] = "Detalle del Préstamo";
+    ViewData["Title"] = $"Préstamo {Model.LoanNumber} · Amortización";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Préstamo @Model.LoanNumber — Amortización</h2>
-    <a asp-action="Index" class="btn btn-outline-secondary">Volver al Listado</a>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div>
+        <div style="font-size:18px; font-weight:700; color:var(--text);">@Model.UserFullName</div>
+        <div style="font-size:13px; color:var(--text-faint);">Cédula: @Model.UserIdentificationNumber</div>
+    </div>
+    <a asp-action="Index" class="btn-abp btn-abp-ghost">← Volver al listado</a>
 </div>
 
-<div class="mb-4">
-    <h5 class="mb-1">@Model.UserFullName</h5>
-    <h6 class="text-muted">Cédula: @Model.UserIdentificationNumber</h6>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm h-100 p-3">
-            <h3 class="fw-bold mb-1">@Model.DisbursedAmount.ToString("C2")</h3>
-            <span class="text-muted small fw-bold">CAPITAL APROBADO</span>
-        </div>
+<div class="stat-grid-abp">
+    <div class="card-abp stat-abp">
+        <div class="num">@Model.DisbursedAmount.ToString("C2")</div>
+        <div class="lbl">Capital Aprobado</div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow-sm h-100 p-3">
-            <h3 class="fw-bold text-danger mb-1">@Model.CurrentDebt.ToString("C2")</h3>
-            <span class="text-muted small fw-bold">PENDIENTE</span>
-        </div>
+    <div class="card-abp stat-abp">
+        <div class="num" style="color:var(--danger);">@Model.CurrentDebt.ToString("C2")</div>
+        <div class="lbl">Pendiente</div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow-sm h-100 p-3">
-            <h3 class="fw-bold mb-1">@Model.AnnualInterestRate.ToString("0.00")%</h3>
-            <span class="text-muted small fw-bold">TASA ANUAL</span>
-        </div>
+    <div class="card-abp stat-abp">
+        <div class="num">@Model.AnnualInterestRate.ToString("0.00")%</div>
+        <div class="lbl">Tasa Anual</div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow-sm h-100 p-3">
-            <h3 class="fw-bold mb-1">
-                <span class="badge @(Model.Status.ToString() == "Active" ? "bg-success" : (Model.Status.ToString() == "Paid" ? "bg-secondary" : "bg-dark"))">
-                    @Model.Status
-                </span>
-            </h3>
-            <span class="text-muted small fw-bold">ESTADO</span>
+    <div class="card-abp stat-abp">
+        <div class="num">
+            @{
+                var isAct = Model.Status.ToString() == "Active";
+                var badgeCls = isAct ? "badge-abp ok" : "badge-abp warn";
+            }
+            <span class="@badgeCls" style="font-size:14px;">
+                @(isAct ? "Al día" : Model.Status.ToString())
+            </span>
         </div>
+        <div class="lbl">Estado</div>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-end">Valor cuota</th>
-                    <th class="text-end">Interés</th>
-                    <th class="text-end">Capital</th>
-                    <th class="text-end">Balance Pendiente</th>
-                    <th class="text-center">Estado</th>
-                </tr>
-            </thead>
+<div class="card-abp" style="overflow:hidden;">
+    <table class="table-abp">
+        <thead>
+            <tr>
+                <th style="text-align:center;">#</th>
+                <th style="text-align:right;">Valor cuota</th>
+                <th style="text-align:right;">Interés</th>
+                <th style="text-align:right;">Capital</th>
+                <th style="text-align:right;">Balance Pendiente</th>
+                <th style="text-align:center;">Estado</th>
+            </tr>
+        </thead>
         <tbody>
             @if (Model.Installments != null && Model.Installments.Any())
             {
                 @foreach (var inst in Model.Installments.OrderBy(i => i.InstallmentNumber))
                 {
                     <tr>
-                        <td class="text-center fw-bold">@inst.InstallmentNumber</td>
-                        <td class="text-end">@inst.InstallmentAmount.ToString("C2")</td>
-                        <td class="text-end text-muted">@inst.Interest.ToString("C2")</td>
-                        <td class="text-end text-muted">@inst.PrincipalAmortization.ToString("C2")</td>
-                        <td class="text-end fw-bold">@inst.PendingBalance.ToString("C2")</td>
-                        <td class="text-center">
+                        <td style="text-align:center; font-weight:700;">@inst.InstallmentNumber</td>
+                        <td style="text-align:right; font-weight:700;">@inst.InstallmentAmount.ToString("C2")</td>
+                        <td style="text-align:right; color:var(--text-dim);">@inst.Interest.ToString("C2")</td>
+                        <td style="text-align:right; color:var(--text-dim);">@inst.PrincipalAmortization.ToString("C2")</td>
+                        <td style="text-align:right; font-weight:700;">@inst.PendingBalance.ToString("C2")</td>
+                        <td style="text-align:center;">
                             @{
-                                string badgeClass = "bg-secondary";
-                                if (inst.Status.ToString() == "Pending") badgeClass = "bg-warning text-dark";
-                                else if (inst.Status.ToString() == "Paid") badgeClass = "bg-success";
-                                else if (inst.Status.ToString() == "PartiallyPaid") badgeClass = "bg-info text-dark";
-                                else if (inst.Status.ToString() == "Late") badgeClass = "bg-danger";
+                                string badgeStyle = "badge-abp info";
+                                string statusLabel = inst.Status.ToString();
+                                if (statusLabel == "Pending") { badgeStyle = "badge-abp warn"; statusLabel = "Pendiente"; }
+                                else if (statusLabel == "Paid") { badgeStyle = "badge-abp ok"; statusLabel = "Pagada"; }
+                                else if (statusLabel == "PartiallyPaid") { badgeStyle = "badge-abp warn"; statusLabel = "Parcial"; }
+                                else if (statusLabel == "Late") { badgeStyle = "badge-abp bad"; statusLabel = "Atrasada"; }
                             }
-                            <span class="badge @badgeClass">
-                                @inst.Status
+                            <span class="@badgeStyle">
+                                @statusLabel
                             </span>
                         </td>
                     </tr>
@@ -87,10 +81,11 @@
             else
             {
                 <tr>
-                    <td colspan="6" class="text-center py-4">No hay cuotas generadas para este préstamo.</td>
+                    <td colspan="6" style="text-align:center; padding:36px; color:var(--text-faint);">
+                        No hay cuotas generadas para este préstamo.
+                    </td>
                 </tr>
             }
         </tbody>
-        </table>
-    </div>
+    </table>
 </div>
