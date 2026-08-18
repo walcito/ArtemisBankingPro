@@ -29,8 +29,9 @@ public static class ServicesRegistration
         });
 
         #region Services
-        //services.AddTransient<IAccountService, AccountService>();
-        //services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IAccountService, AccountService>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IJwtService, JwtService>();
         #endregion
     }
 
