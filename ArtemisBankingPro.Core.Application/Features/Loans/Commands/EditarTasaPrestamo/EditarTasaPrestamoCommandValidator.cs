@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace ArtemisBankingPro.Core.Application.Features.Loans.Commands.ModificarTasa;
+namespace ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
 
-public class ModificarTasaCommandValidator : AbstractValidator<ModificarTasaCommand>
+public class EditarTasaPrestamoCommandValidator : AbstractValidator<EditarTasaPrestamoCommand>
 {
-    public ModificarTasaCommandValidator()
+    public EditarTasaPrestamoCommandValidator()
     {
         RuleFor(x => x.LoanId)
             .GreaterThan(0)

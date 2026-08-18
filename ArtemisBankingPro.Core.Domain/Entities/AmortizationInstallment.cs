@@ -1,5 +1,5 @@
 using System;
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 
 namespace ArtemisBankingPro.Core.Domain.Entities;
 

@@ -1,20 +1,20 @@
 using ArtemisBankingPro.Core.Domain.Entities;
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Features.Loans.Commands.ModificarTasa;
+namespace ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
 
-public class ModificarTasaCommandHandler : IRequestHandler<ModificarTasaCommand, bool>
+public class EditarTasaPrestamoCommandHandler : IRequestHandler<EditarTasaPrestamoCommand, bool>
 {
     private readonly IGenericRepository<Loan> _loanRepository;
 
-    public ModificarTasaCommandHandler(IGenericRepository<Loan> loanRepository)
+    public EditarTasaPrestamoCommandHandler(IGenericRepository<Loan> loanRepository)
     {
         _loanRepository = loanRepository;
     }
 
-    public async Task<bool> Handle(ModificarTasaCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(EditarTasaPrestamoCommand request, CancellationToken cancellationToken)
     {
         // Obtener el préstamo con sus cuotas
         var loans = await _loanRepository.GetAllListWithIncludeAsync(l => l.Installments);

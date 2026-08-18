@@ -1,0 +1,97 @@
+﻿@model ArtemisBankingPro.Core.Application.ViewModels.Card.CreditCardDetailsViewModel
+
+@{
+    ViewData["Title"] = "Detalle de Tarjeta";
+    var availableCredit = Model.AvailableCredit;
+    var percentage = Model.CreditLimit > 0 ? ((availableCredit / Model.CreditLimit) * 100) : 0;
+}
+
+<div class="mb-4">
+    <span class="text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: .12em;">Detalle</span>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700;">Tarjeta @Model.MaskedCardNumber</h2>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div style="position: relative; border-radius: 18px; padding: 22px; color: #fff; min-height: 170px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #35648B 0%, #6D8A99 60%, #8FA3CA 130%); box-shadow: 0 18px 34px -18px rgba(20,50,80,.55);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 34px; height: 25px; border-radius: 5px; background: linear-gradient(135deg,#e7d99a,#c9ab5f);"></div>
+                <span class="badge" style="background: rgba(255,255,255,.22); color: #fff; border-radius: 100px;">
+                    @(Model.Status == ArtemisBankingPro.Core.Domain.Common.Enums.Card.CardStatus.Active ? "Activa" : "Cancelada")
+                </span>
+            </div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 19px; letter-spacing: .12em;">
+                @Model.MaskedCardNumber
+            </div>
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <div style="font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; opacity: .75;">Titular</div>
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14px;">@Model.ClientFullName.ToUpper()</div>
+                </div>
+                <div>
+                    <div style="font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; opacity: .75;">Vence</div>
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14px;">@Model.ExpirationDate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card panel p-4 shadow-sm border h-100" style="border-radius: 16px;">
+            <div class="text-uppercase fw-bold text-muted mb-2" style="font-size: 11.5px; letter-spacing: .1em;">Crédito Disponible</div>
+            <div class="d-flex align-items-baseline gap-2 mb-2">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; color: var(--c5, #35648B);">
+                    RD$@availableCredit.ToString("N2")
+                </span>
+            </div>
+            <div class="progress mb-3" style="height: 8px; border-radius: 5px; background-color: #eef2f7;">
+                <div class="progress-bar" role="progressbar" style="width: @percentage.ToString("0")%; background: linear-gradient(90deg, #35648B, #8FA3CA);" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="@Model.CreditLimit.ToString("N2")"></div>
+            </div>
+            <div class="d-flex justify-content-between text-muted" style="font-size: 12.5px;">
+                <span>Límite total: <b>RD$@Model.CreditLimit.ToString("N2")</b></span>
+                <span>Adeudado: <b class="text-danger">RD$@Model.CurrentDebt.ToString("N2")</b></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border mb-4" style="border-radius: 16px; overflow: hidden;">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="mb-0 fw-bold" style="font-family: 'Space Grotesk', sans-serif;">Consumos (más recientes primero)</h5>
+    </div>
+    <div class="p-3">
+        @if (Model.Consumptions.Any())
+        {
+            @foreach (var c in Model.Consumptions.OrderByDescending(x => x.Date))
+            {
+                <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; background: rgba(109,138,153,.18); color: #516c78;">
+                            ↑
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 13.5px;">@c.CommerceName</div>
+                            <div class="text-muted" style="font-size: 11.5px;">
+                                @c.Date.ToString("dd MMM yyyy, HH:mm") ·
+                                <span class="badge @(c.Status == ArtemisBankingPro.Core.Domain.Common.Enums.Card.ConsumptionStatus.Approved ? "bg-success" : "bg-danger")" style="border-radius: 100px; padding: 2px 8px;">
+                                    @(c.Status == ArtemisBankingPro.Core.Domain.Common.Enums.Card.ConsumptionStatus.Approved ? "APROBADA" : "RECHAZADA")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fw-bold" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px;">
+                        − RD$@c.Amount.ToString("N2")
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-4 text-muted">
+                No existen consumos registrados para esta tarjeta.
+            </div>
+        }
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary" style="border-radius: 10px; padding: 8px 18px;">← Volver atrás</a>

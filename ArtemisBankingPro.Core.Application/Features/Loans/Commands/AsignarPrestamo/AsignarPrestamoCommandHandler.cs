@@ -1,8 +1,9 @@
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.DesembolsarPrestamo;
 using ArtemisBankingPro.Core.Application.Services;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Domain.Entities;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 
@@ -62,7 +63,7 @@ public class AsignarPrestamoCommandHandler : IRequestHandler<AsignarPrestamoComm
             {
                 if (!request.ConfirmHighRisk)
                 {
-                    throw new ArtemisBankingPro.Core.Application.Exceptions.HighRiskLoanException(
+                    throw new ArtemisBankingPro.Core.Application.Exceptions.ClienteAltoRiesgoException(
                         "El préstamo representa un alto riesgo financiero. Se requiere confirmación explícita de riesgo alto."
                     );
                 }

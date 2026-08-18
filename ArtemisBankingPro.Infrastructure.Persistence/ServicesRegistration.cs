@@ -1,5 +1,6 @@
-﻿using ArtemisBankingPro.Core.Domain.Interfaces;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card;
@@ -36,9 +37,11 @@ namespace ArtemisBankingPro.Infrastructure.Persistence
             }
             #region Repositories IOC
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICardConsumptionRepository, CardConsumptionRepository>();
             services.AddScoped<ICardProcessingLogRepository, CardProcessingLogRepository>();
             services.AddScoped<ICreditCardRepository, CreditCardRepository>();
+            services.AddScoped<ArtemisBankingPro.Core.Domain.Interfaces.Users.IUserRepository, UserRepository>();
             #endregion
         }
 

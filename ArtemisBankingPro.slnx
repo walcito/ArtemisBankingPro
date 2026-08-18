@@ -15,4 +15,8 @@
   <Folder Name="/Presentation/WebApp/">
     <Project Path="ArtemisBankingPro/ArtemisBankingPro.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ArtemisBankingPro.UnitTests/ArtemisBankingPro.UnitTests.csproj" />
+    <Project Path="Tests/ArtemisBankingPro.IntegrationTests/ArtemisBankingPro.IntegrationTests.csproj" />
+  </Folder>
 </Solution>
