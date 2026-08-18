@@ -37,6 +37,7 @@ public class GetLoansQueryHandler : IRequestHandler<GetLoansQuery, PagedResult<L
             .Select(l => new LoanDto
             {
                 Id = l.Id,
+                LoanNumber = l.LoanNumber,
                 DisbursedAmount = l.DisbursedAmount,
                 AnnualInterestRate = l.AnnualInterestRate,
                 TermInMonths = l.TermInMonths,

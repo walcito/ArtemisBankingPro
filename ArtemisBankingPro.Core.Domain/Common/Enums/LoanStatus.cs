@@ -1,4 +1,4 @@
-namespace ArtemisBankingPro.Core.Domain.Enums;
+namespace ArtemisBankingPro.Core.Domain.Common.Enums;
 
 public enum LoanStatus
 {

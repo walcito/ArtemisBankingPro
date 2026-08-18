@@ -10,7 +10,7 @@ public static class ServicesRegistration
     public static void AddSharedInfrastructure(this IServiceCollection services, IConfiguration config)
     {
         #region Services IOC
-        //services.AddTransient<IEmailService, EmailService>();
+        services.AddTransient<IEmailService, EmailService>();
         #endregion
     }
 }

@@ -1,6 +1,7 @@
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.ToggleTradeStatus;
-using ArtemisBankingPro.Core.Application.Interfaces.Repositories;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 using Moq;
 using Xunit;
 

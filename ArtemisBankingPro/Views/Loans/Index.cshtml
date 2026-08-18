@@ -1,0 +1,89 @@
+@model ArtemisBankingPro.Core.Application.Common.Models.PagedResult<ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans.LoanDto>
+
+@{
+    ViewData["Title"] = "Gestión de Préstamos";
+}
+
+<form method="get" class="row g-3 mb-4 align-items-end">
+    <div class="col-md-3 field-abp" style="margin-bottom:0;">
+        <label>Filtrar por estado</label>
+        <select name="status" class="form-select">
+            <option value="">Todos</option>
+            <option value="Active" selected="@(Context.Request.Query["status"] == "Active")">Activos</option>
+            <option value="Paid" selected="@(Context.Request.Query["status"] == "Paid")">Pagados</option>
+        </select>
+    </div>
+    <div class="col-md-4 field-abp" style="margin-bottom:0;">
+        <label>Buscar por cédula</label>
+        <input type="text" name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn-abp btn-abp-primary">Buscar</button>
+    </div>
+</form>
+
+<div class="card-abp" style="overflow:hidden;">
+    <table class="table-abp">
+        <thead>
+            <tr>
+                <th>N° préstamo</th>
+                <th>Cliente</th>
+                <th>Capital</th>
+                <th>Pendiente</th>
+                <th>Tasa</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Items != null && Model.Items.Any())
+            {
+                @foreach (var loan in Model.Items)
+                {
+                    <tr>
+                        <td style="font-weight:700;">@loan.LoanNumber</td>
+                        <td>@loan.UserFullName</td>
+                        <td style="font-weight:600;">@loan.DisbursedAmount.ToString("C2")</td>
+                        <td style="font-weight:700; color:var(--danger);">@loan.CurrentDebt.ToString("C2")</td>
+                        <td>@loan.AnnualInterestRate.ToString("0.00")%</td>
+                        <td>
+                            @{
+                                var isAct = loan.Status.ToString() == "Active";
+                                var badgeCls = isAct ? "badge-abp ok" : "badge-abp warn";
+                            }
+                            <span class="@badgeCls">
+                                @(isAct ? "Activo" : loan.Status.ToString())
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@loan.Id" class="btn-abp btn-abp-ghost btn-abp-sm">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:36px; color:var(--text-faint);">
+                        No se encontraron préstamos registrados.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model != null && Model.TotalPages > 1)
+{
+    <div style="margin-top:20px; display:flex; gap:8px;">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@i" 
+               asp-route-identificationNumber="@Context.Request.Query["identificationNumber"]" 
+               asp-route-status="@Context.Request.Query["status"]"
+               class="btn-abp @(i == Model.PageNumber ? "btn-abp-primary" : "btn-abp-ghost") btn-abp-sm">@i</a>
+        }
+    </div>
+}
