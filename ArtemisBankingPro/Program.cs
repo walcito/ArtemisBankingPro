@@ -1,29 +1,48 @@
+using ArtemisBankingPro.Core.Application;
+using ArtemisBankingPro.Infrastructure.Identity;
+using ArtemisBankingPro.Infrastructure.Persistence;
+using ArtemisBankingPro.Infrastructure.Shared;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddPersistenceLayerIoc(builder.Configuration);
+builder.Services.AddApplicationLayerIoc();
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddSharedInfrastructure(builder.Configuration);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await services.RunIdentitySeedAsync();
+    }
+    catch (Exception)
+    {
+    }
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

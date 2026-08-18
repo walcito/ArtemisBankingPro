@@ -21,6 +21,12 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            //pendiente a ver si funciona la migracion ya restableci la relacion con trade y user by waldin
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Trade)
+                .WithOne(t => t.AssociatedUser)
+                .HasForeignKey<User>(u => u.TradeId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ArtemisBankingDbContext).Assembly);
         }

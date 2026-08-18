@@ -13,14 +13,28 @@ public class UserProfile : Profile
         CreateMap<AuthRequest, LoginViewModel>()
             .ReverseMap();
 
+        CreateMap<ForgotPasswordRequest, ForgotPasswordViewModel>()
+            .ReverseMap();
+
         CreateMap<ResetPasswordRequest, ResetPasswordViewModel>()
             .ReverseMap();
 
-        //pendiente descomentar cuando se cree el dto de creacion de usuario waldin
-        /* CreateMap<CreateUserDto, SaveUserViewModel>()
-             .ReverseMap();*/
+        CreateMap<ConfirmAccountRequest, ConfirmAccountViewModel>()
+            .ReverseMap();
+
+        CreateMap<CreateUserDto, SaveUserViewModel>()
+            .ReverseMap();
+
+        CreateMap<CreateCommerceUserDto, SaveUserViewModel>()
+            .ReverseMap();
+
+        CreateMap<EditUserDto, SaveUserViewModel>()
+            .ReverseMap();
 
         CreateMap<UserDto, UserViewModel>()
+            .ReverseMap();
+
+        CreateMap<UserDto, SaveUserViewModel>()
             .ReverseMap();
     }
 }
