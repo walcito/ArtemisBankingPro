@@ -1,5 +1,7 @@
-namespace ArtemisBankingPro.Core.Domain.Interfaces;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
-public interface IRoleRepository
+namespace ArtemisBankingPro.Core.Domain.Interfaces.Users;
+
+public interface IRoleRepository : IGenericRepository<Role>
 {
 }

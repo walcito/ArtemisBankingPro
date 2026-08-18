@@ -1,0 +1,22 @@
+@model ArtemisBankingPro.Core.Application.ViewModels.Account.ConfirmAccountViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Activación de Cuenta";
+}
+
+<div class="card panel" style="max-width:460px;margin:40px auto;text-align:center;padding:44px 30px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);">
+    @if (Model != null && Model.Success)
+    {
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(181,209,217,.4);color:#35648B;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;">✓</div>
+        <h3 style="font-size:18px;margin-bottom:8px;font-family:'Space Grotesk';">Cuenta activada correctamente</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;">@Model.Message</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary" style="background:#35648B;color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;display:inline-block;">Ir a Iniciar Sesión</a>
+    }
+    else
+    {
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(161,59,59,.1);color:#a13b3b;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;">✕</div>
+        <h3 style="font-size:18px;margin-bottom:8px;font-family:'Space Grotesk';">Error al activar cuenta</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;">@(Model?.Message ?? "El token de activación no es válido o ha expirado.")</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary" style="background:#35648B;color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;display:inline-block;">Volver al inicio</a>
+    }
+</div>
