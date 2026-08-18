@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Entities;
 
-namespace ArtemisBankingPro.Core.Domain.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces;
 
 public interface IAmortizationService
 {

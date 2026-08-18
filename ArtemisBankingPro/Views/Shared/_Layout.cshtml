@@ -1,50 +1,85 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ArtemisBankingPro</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Artemis Banking Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ArtemisBankingPro.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ArtemisBankingPro</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+<body data-theme="light">
+    <div class="shell">
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar">
+            <div class="brand">
+                <svg class="brand-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="19" fill="none" stroke="var(--border)" stroke-width="1"/>
+                    <path d="M20 5 L35 13 V16 H5 V13 Z" fill="var(--c5)"/>
+                    <rect x="8" y="17" width="4" height="13" fill="var(--c4)"/>
+                    <rect x="18" y="17" width="4" height="13" fill="var(--c3)"/>
+                    <rect x="28" y="17" width="4" height="13" fill="var(--c4)"/>
+                    <rect x="5" y="31" width="30" height="3" fill="var(--c5)"/>
+                </svg>
+                <div class="brand-name">Artemis Banking<span>Digital Banking</span></div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Administrador</div>
+                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
+                    <span class="dot"></span>Gestión de Préstamos
+                </a>
+                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
+                    <span class="dot"></span>Cuentas de Ahorro
+                </a>
+                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
+                    <span class="dot"></span>Tarjetas de Crédito
+                </a>
+                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
+                    <span class="dot"></span>Comercios
+                </a>
+            </div>
+        </aside>
+
+        <!-- ============ MAIN ============ -->
+        <div class="main-abp">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="crumb">Artemis Banking Pro</div>
+                    <h1>@(ViewData["Title"] ?? "Dashboard")</h1>
+                </div>
+                <div class="theme-toggle">
+                    <div class="toggle-knob" id="toggleKnob"></div>
+                    <button id="btnLight" class="on" onclick="setTheme('light')">☀ Claro</button>
+                    <button id="btnDark" onclick="setTheme('dark')">☾ Oscuro</button>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+            <div class="stage">
+                @RenderBody()
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ArtemisBankingPro - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function setTheme(t) {
+            document.body.setAttribute('data-theme', t);
+            const btnLight = document.getElementById('btnLight');
+            const btnDark = document.getElementById('btnDark');
+            if (btnLight && btnDark) {
+                btnLight.classList.toggle('on', t === 'light');
+                btnDark.classList.toggle('on', t === 'dark');
+            }
+            localStorage.setItem('abp-theme', t);
+        }
+        (function() {
+            const saved = localStorage.getItem('abp-theme') || 'light';
+            setTheme(saved);
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

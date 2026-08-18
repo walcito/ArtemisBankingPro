@@ -9,14 +9,18 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Context
     {
         public ArtemisBankingDbContext(DbContextOptions<ArtemisBankingDbContext> options) : base(options) { }
 
- 
-    public DbSet<ActivationToken> ActivationTokens => Set<ActivationToken>();
-    public DbSet<ResetToken> ResetTokens => Set<ResetToken>();
-    public DbSet<Loan> Loans { get; set; }
-    public DbSet<AmortizationInstallment> AmortizationInstallments { get; set; }
-    public DbSet<CreditCard> CreditCards { get; set; }
-    public DbSet<CardConsumption> CardConsumptions { get; set; }
-    public DbSet<CardProcessingLog> CardProcessingLogs { get; set; }
+        public DbSet<User> Users => Set<User>();
+        public DbSet<SavingsAccount> SavingsAccounts => Set<SavingsAccount>();
+        public DbSet<Loan> Loans => Set<Loan>();
+        public DbSet<AmortizationInstallment> AmortizationInstallments => Set<AmortizationInstallment>();
+        public DbSet<CreditCard> CreditCards => Set<CreditCard>();
+        public DbSet<CardConsumption> CardConsumptions => Set<CardConsumption>();
+        public DbSet<CardProcessingLog> CardProcessingLogs => Set<CardProcessingLog>();
+        public DbSet<Trade> Trades => Set<Trade>();
+        public DbSet<Transaction> Transactions => Set<Transaction>();
+        public DbSet<Beneficiary> Beneficiaries => Set<Beneficiary>();
+        public DbSet<ActivationToken> ActivationTokens => Set<ActivationToken>();
+        public DbSet<ResetToken> ResetTokens => Set<ResetToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
