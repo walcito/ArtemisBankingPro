@@ -10,10 +10,10 @@ namespace ArtemisBankingPro.Core.Application.ViewModels.Card
         public int ClientId { get; set; }
 
         [Display(Name = "Nombre del Cliente")]
-        public string? ClientFullName { get; set; }
+        public string ClientFullName { get; set; } = string.Empty;
 
         [Display(Name = "Cédula del Cliente")]
-        public string? ClientCedula { get; set; }
+        public string Identification { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El límite de crédito es obligatorio.")]
         [Range(0.01, 10000000.00, ErrorMessage = "El límite de crédito debe ser mayor a RD$0.00.")]

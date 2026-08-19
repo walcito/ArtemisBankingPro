@@ -1,10 +1,11 @@
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 
 public class LoanDto
 {
     public int Id { get; set; }
+    public string LoanNumber { get; set; } = string.Empty;
     public decimal DisbursedAmount { get; set; }
     public decimal AnnualInterestRate { get; set; }
     public int TermInMonths { get; set; }

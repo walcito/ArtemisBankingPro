@@ -1,12 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Domain.Interfaces;
+using ArtemisBankingPro.Core.Domain.Interfaces.Card;
+using ArtemisBankingPro.Core.Domain.Interfaces.Users;
+using ArtemisBankingPro.Infrastructure.Persistence.Context;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.User;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ArtemisBankingPro.Infrastructure.Persistence
+namespace ArtemisBankingPro.Infrastructure.Persistence;
+
+public static class ServicesRegistration
 {
-    internal class ServicesRegistration
+    public static void AddPersistenceLayerIoc(this IServiceCollection services, IConfiguration config)
     {
+        #region Contexts
+        if (config.GetValue<bool>("UseInMemoryDatabase"))
+        {
+            services.AddDbContext<ArtemisBankingDbContext>(opt =>
+                opt.UseInMemoryDatabase("ArtemisBankingDb"));
+        }
+        else
+        {
+            var connectionString = config.GetConnectionString("DefaultConnection");
+            services.AddDbContext<ArtemisBankingDbContext>(
+                (serviceProvider, opt) =>
+                {
+                    opt.EnableSensitiveDataLogging();
+                    opt.UseSqlServer(connectionString,
+                        m => m.MigrationsAssembly(typeof(ArtemisBankingDbContext).Assembly.FullName));
+                },
+                contextLifetime: ServiceLifetime.Scoped,
+                optionsLifetime: ServiceLifetime.Scoped
+            );
+        }
+        #endregion
+
+        #region Repositories IOC
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICardConsumptionRepository, CardConsumptionRepository>();
+        services.AddScoped<ICardProcessingLogRepository, CardProcessingLogRepository>();
+        services.AddScoped<ICreditCardRepository, CreditCardRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        #endregion
     }
 }

@@ -1,14 +1,21 @@
+using ArtemisBankingPro.Core.Application;
+using ArtemisBankingPro.Infrastructure.Identity;
+using ArtemisBankingPro.Infrastructure.Persistence;
+using ArtemisBankingPro.Infrastructure.Shared;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+builder.Services.AddApplicationLayerIoc();
+builder.Services.AddPersistenceLayerIoc(builder.Configuration);
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddSharedInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -16,6 +23,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,0 +1,61 @@
+﻿@model ArtemisBankingPro.Core.Application.ViewModels.Card.AssignCreditCardViewModel
+
+@{
+    ViewData["Title"] = "Asignar Tarjeta · Configuración";
+    var activeClients = ViewBag.ActiveClients as List<ArtemisBankingPro.Core.Domain.Entities.Users.User> ?? new();
+}
+
+<div class="mb-3">
+    <span class="text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: .12em;">Administrador</span>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700;">Asignar tarjeta de crédito</h2>
+</div>
+
+<div class="alert alert-info border-0 mb-4" style="background-color: rgba(143,163,202,.15); border-radius: 12px; color: var(--c5, #35648B);">
+    <i class="bi bi-info-circle me-1"></i> Se generará automáticamente el número de tarjeta (16 dígitos), el CVC hasheado (SHA-256) y la fecha de expiración a 3 años en estado <b>Activa</b>.
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card panel p-4 shadow-sm border" style="border-radius: 16px;">
+            <div class="section-title text-uppercase fw-bold text-muted mb-3" style="font-size: 11.5px; letter-spacing: .1em;">
+                Datos de Asignación
+            </div>
+
+            <form asp-action="Assign" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="font-size: 12.3px;">Seleccionar Cliente Activo <span class="text-danger">*</span></label>
+                    <select asp-for="ClientId" class="form-select" style="border-radius: 9px; padding: 11px 13px;">
+                        <option value="">-- Seleccione un cliente --</option>
+                        @foreach (var client in activeClients)
+                        {
+                            <option value="@client.Id">@client.FirstName @client.LastName (Cédula: @client.IdentificationNumber)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ClientId" class="text-danger" style="font-size: 11.5px;"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="CreditLimit" class="form-label fw-bold" style="font-size: 12.3px;">Límite de crédito <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light fw-bold" style="border-radius: 9px 0 0 9px;">RD$</span>
+                        <input asp-for="CreditLimit" class="form-control" type="number" step="0.01" placeholder="150,000.00" style="border-radius: 0 9px 9px 0; padding: 11px 13px;" />
+                    </div>
+                    <span asp-validation-for="CreditLimit" class="text-danger" style="font-size: 11.5px;"></span>
+                    <div class="text-muted mt-1" style="font-size: 11.3px;">La deuda inicial comenzará en RD$0.00.</div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary" style="border-radius: 10px; padding: 10px 18px;">Volver atrás</a>
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--c5, #35648B); border-color: var(--c5, #35648B); border-radius: 10px; padding: 10px 18px;">Asignar Tarjeta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

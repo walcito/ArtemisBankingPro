@@ -11,11 +11,11 @@ namespace ArtemisBankingPro.Core.Application.Dtos.Card
     }
     public class CreditCardPagedResultDto
     {
-            public int Page { get; set; }
-            public int PageSize { get; set; }
-            public int TotalRecords { get; set; }
-            public int TotalPages => (TotalRecords + PageSize - 1) / PageSize;
-            public List<ListCreditCardDto> Data { get; set; } = new();
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 20;
+        public int TotalRecords { get; set; }
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalRecords / PageSize) : 0;
+        public List<ListCreditCardDto> Data { get; set; } = new();
     }
         
 }

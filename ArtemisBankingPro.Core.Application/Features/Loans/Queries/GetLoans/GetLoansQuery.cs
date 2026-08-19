@@ -1,5 +1,5 @@
 using ArtemisBankingPro.Core.Application.Common.Models;
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;

@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using ArtemisBankingPro.Core.Application.Dtos.Card;
+﻿using ArtemisBankingPro.Core.Application.Dtos.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
+using AutoMapper;
 
 namespace ArtemisBankingPro.Core.Application.Mappings.EntitiesAndDtos.Card
 {
@@ -8,22 +8,13 @@ namespace ArtemisBankingPro.Core.Application.Mappings.EntitiesAndDtos.Card
     {
         public CardConsumptionMappingProfile()
         {
-            #region CardConsumption Mappings
-
             CreateMap<CardConsumption, CardConsumptionDto>()
-                .ForMember(dest => dest.MaskedCardNumber, opt => opt.MapFrom(src => src.CreditCard != null ? MaskCardNumber(src.CreditCard.CardNumber) : string.Empty));
+                .ForMember(dest => dest.MaskedCardNumber, opt => opt.MapFrom(src => src.CreditCard != null && src.CreditCard.CardNumber.Length >= 4 ? $"************{src.CreditCard.CardNumber[4]}" : "****************"))
+                .ForMember(dest => dest.CommerceName, opt => opt.MapFrom(src => src.Description));
 
-            CreateMap<CardConsumption, ConsumptionDetailDto>();
-
-            #endregion
-        }
-    
-    private static string MaskCardNumber(string cardNumber)
-        {
-            if (string.IsNullOrWhiteSpace(cardNumber) || cardNumber.Length < 4)
-                return "****";
-
-            return $"************{cardNumber[^4..]}";
+            CreateMap<CardConsumption, ConsumptionDetailDto>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.TransactionDate))
+                .ForMember(dest => dest.CommerceName, opt => opt.MapFrom(src => src.Description));
         }
     }
 }
