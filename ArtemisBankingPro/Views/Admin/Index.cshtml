@@ -1,0 +1,67 @@
+@model List<ArtemisBankingPro.Core.Application.ViewModels.User.UserViewModel>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<div class="stage" style="padding:26px 30px;max-width:1200px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h1 style="font-family:'Space Grotesk';font-size:22px;margin:0;">Gestión de Usuarios</h1>
+        <a asp-controller="Admin" asp-action="Create" class="btn btn-primary" style="background:#35648B;color:#fff;padding:10px 18px;border-radius:10px;font-weight:700;display:inline-block;">+ Crear usuario</a>
+    </div>
+
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+                <tr style="background:var(--surface-2);border-bottom:1px solid var(--border);">
+                    <th style="padding:12px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Usuario</th>
+                    <th style="padding:12px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Nombre</th>
+                    <th style="padding:12px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Cédula</th>
+                    <th style="padding:12px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Rol</th>
+                    <th style="padding:12px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Estado</th>
+                    <th style="padding:12px;text-align:center;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:12px;font-weight:700;">@user.UserName</td>
+                            <td style="padding:12px;">@user.FirstName @user.LastName<div style="font-size:11px;color:var(--text-faint);">@user.Email</div></td>
+                            <td style="padding:12px;">@user.Identification</td>
+                            <td style="padding:12px;"><span class="badge info" style="background:rgba(143,163,202,.18);color:#35648B;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@user.Role</span></td>
+                            <td style="padding:12px;">
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge ok" style="background:rgba(181,209,217,.5);color:#274b69;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bad" style="background:rgba(161,59,59,.1);color:#a13b3b;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">Inactivo</span>
+                                }
+                            </td>
+                            <td style="padding:12px;text-align:center;">
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-ghost btn-sm" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-right:6px;">Editar</a>
+                                <form asp-controller="Admin" asp-action="ChangeStatus" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <input type="hidden" name="status" value="@(!user.IsActive)" />
+                                    <button type="submit" class="btn btn-ghost btn-sm" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+                                        @(user.IsActive ? "Inactivar" : "Activar")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);">No hay usuarios registrados.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

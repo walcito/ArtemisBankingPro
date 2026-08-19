@@ -29,5 +29,20 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card
             return await _dbContext.Set<CreditCard>()
                 .AnyAsync(c => c.CardNumber == cardNumber);
         }
+        public async Task<IReadOnlyList<CreditCard>> GetAllWithUserAsync()
+        {
+            return await _dbContext.Set<CreditCard>()
+                .Include(c => c.User)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<CreditCard?> GetByIdWithConsumptionsAsync(int id)
+        {
+            return await _dbContext.Set<CreditCard>()
+                .Include(c => c.User)
+                .Include(c => c.Consumptions)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }

@@ -1,0 +1,91 @@
+@model ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo.DetallePrestamoDto
+
+@{
+    ViewData["Title"] = $"Préstamo {Model.LoanNumber} · Amortización";
+}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div>
+        <div style="font-size:18px; font-weight:700; color:var(--text);">@Model.UserFullName</div>
+        <div style="font-size:13px; color:var(--text-faint);">Cédula: @Model.UserIdentificationNumber</div>
+    </div>
+    <a asp-action="Index" class="btn-abp btn-abp-ghost">← Volver al listado</a>
+</div>
+
+<div class="stat-grid-abp">
+    <div class="card-abp stat-abp">
+        <div class="num">@Model.DisbursedAmount.ToString("C2")</div>
+        <div class="lbl">Capital Aprobado</div>
+    </div>
+    <div class="card-abp stat-abp">
+        <div class="num" style="color:var(--danger);">@Model.CurrentDebt.ToString("C2")</div>
+        <div class="lbl">Pendiente</div>
+    </div>
+    <div class="card-abp stat-abp">
+        <div class="num">@Model.AnnualInterestRate.ToString("0.00")%</div>
+        <div class="lbl">Tasa Anual</div>
+    </div>
+    <div class="card-abp stat-abp">
+        <div class="num">
+            @{
+                var isAct = Model.Status.ToString() == "Active";
+                var badgeCls = isAct ? "badge-abp ok" : "badge-abp warn";
+            }
+            <span class="@badgeCls" style="font-size:14px;">
+                @(isAct ? "Al día" : Model.Status.ToString())
+            </span>
+        </div>
+        <div class="lbl">Estado</div>
+    </div>
+</div>
+
+<div class="card-abp" style="overflow:hidden;">
+    <table class="table-abp">
+        <thead>
+            <tr>
+                <th style="text-align:center;">#</th>
+                <th style="text-align:right;">Valor cuota</th>
+                <th style="text-align:right;">Interés</th>
+                <th style="text-align:right;">Capital</th>
+                <th style="text-align:right;">Balance Pendiente</th>
+                <th style="text-align:center;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Installments != null && Model.Installments.Any())
+            {
+                @foreach (var inst in Model.Installments.OrderBy(i => i.InstallmentNumber))
+                {
+                    <tr>
+                        <td style="text-align:center; font-weight:700;">@inst.InstallmentNumber</td>
+                        <td style="text-align:right; font-weight:700;">@inst.InstallmentAmount.ToString("C2")</td>
+                        <td style="text-align:right; color:var(--text-dim);">@inst.Interest.ToString("C2")</td>
+                        <td style="text-align:right; color:var(--text-dim);">@inst.PrincipalAmortization.ToString("C2")</td>
+                        <td style="text-align:right; font-weight:700;">@inst.PendingBalance.ToString("C2")</td>
+                        <td style="text-align:center;">
+                            @{
+                                string badgeStyle = "badge-abp info";
+                                string statusLabel = inst.Status.ToString();
+                                if (statusLabel == "Pending") { badgeStyle = "badge-abp warn"; statusLabel = "Pendiente"; }
+                                else if (statusLabel == "Paid") { badgeStyle = "badge-abp ok"; statusLabel = "Pagada"; }
+                                else if (statusLabel == "PartiallyPaid") { badgeStyle = "badge-abp warn"; statusLabel = "Parcial"; }
+                                else if (statusLabel == "Late") { badgeStyle = "badge-abp bad"; statusLabel = "Atrasada"; }
+                            }
+                            <span class="@badgeStyle">
+                                @statusLabel
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:36px; color:var(--text-faint);">
+                        No hay cuotas generadas para este préstamo.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

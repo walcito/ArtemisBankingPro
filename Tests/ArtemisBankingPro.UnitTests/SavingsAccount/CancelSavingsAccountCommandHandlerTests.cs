@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CancelSavingsAccount;
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Application.Interfaces.Repositories;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Entities;
 using Moq;

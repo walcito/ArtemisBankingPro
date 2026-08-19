@@ -1,0 +1,119 @@
+﻿@model ArtemisBankingPro.Core.Application.ViewModels.Card.CreditCardListFilterViewModel
+
+@{
+    ViewData["Title"] = "Gestión de Tarjetas de Crédito";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <span class="text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: .12em;">Administrador</span>
+        <h2 class="mb-0" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700;">Tarjetas de Crédito</h2>
+    </div>
+    <a asp-action="Assign" class="btn btn-primary" style="background-color: var(--c5, #35648B); border-color: var(--c5, #35648B);">
+        + Asignar tarjeta
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
+        <span class="me-2">✓</span>
+        <div>@TempData["SuccessMessage"]</div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+        <span class="me-2">⚠</span>
+        <div>@TempData["ErrorMessage"]</div>
+    </div>
+}
+
+<form method="get" class="card panel p-3 mb-4 border shadow-sm" style="border-radius: 14px;">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label fw-bold" style="font-size: 12.3px; color: var(--text-dim, #5b6b80);">Buscar por cédula</label>
+            <input type="text" name="identification" value="@Model.Identification" class="form-control" placeholder="402-0000000-0" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold" style="font-size: 12.3px; color: var(--text-dim, #5b6b80);">Filtrar por estado</label>
+            <select name="status" class="form-select">
+                <option value="">Todas</option>
+                <option value="Active" selected="@(Model.Status == ArtemisBankingPro.Core.Domain.Common.Enums.Card.CardStatus.Active)">Activas</option>
+                <option value="Cancelled" selected="@(Model.Status == ArtemisBankingPro.Core.Domain.Common.Enums.Card.CardStatus.Cancelled)">Canceladas</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill" style="background-color: var(--c5, #35648B); border-color: var(--c5, #35648B);">Filtrar</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
+        </div>
+    </div>
+</form>
+
+<div class="card shadow-sm border" style="border-radius: 16px; overflow: hidden;">
+    <table class="table align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Tarjeta</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Cliente</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Límite</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Deuda</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Vence</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;">Estado</th>
+                <th style="font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;" class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Cards.Any())
+            {
+                @foreach (var card in Model.Cards)
+                {
+                    <tr>
+                        <td class="fw-bold" style="font-family: 'Space Grotesk', sans-serif;">@card.MaskedCardNumber</td>
+                        <td>@card.ClientFullName</td>
+                        <td class="fw-semibold">RD$@card.CreditLimit.ToString("N2")</td>
+                        <td class="fw-bold text-danger">RD$@card.CurrentDebt.ToString("N2")</td>
+                        <td>@card.ExpirationDate</td>
+                        <td>
+                            <span class="badge @(card.IsActive ? "bg-success" : "bg-secondary")" style="border-radius: 100px; padding: 4px 10px;">
+                                @(card.IsActive ? "Activa" : "Cancelada")
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@card.Id" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">Ver consumos</a>
+                            @if (card.IsActive)
+                            {
+                                <a asp-action="EditLimit" asp-route-id="@card.Id" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">Editar límite</a>
+                                <a asp-action="Cancel" asp-route-id="@card.Id" class="btn btn-outline-danger btn-sm" style="border-radius: 8px;">Cancelar</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🪪</div>
+                        <div class="fw-bold">No se encontraron tarjetas registradas</div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-identification="@Model.Identification" asp-route-status="@Model.Status">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

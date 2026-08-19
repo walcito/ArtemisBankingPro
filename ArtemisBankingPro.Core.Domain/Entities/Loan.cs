@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ArtemisBankingPro.Core.Domain.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 namespace ArtemisBankingPro.Core.Domain.Entities;
