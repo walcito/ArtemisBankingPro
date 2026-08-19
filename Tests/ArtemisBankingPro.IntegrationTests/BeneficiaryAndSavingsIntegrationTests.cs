@@ -29,20 +29,21 @@ public class BeneficiaryAndSavingsIntegrationTests : IClassFixture<CustomWebAppl
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ArtemisBankingDbContext>();
-        
+
         var beneficiaryRepo = new GenericRepository<Beneficiary>(dbContext);
         var savingsRepo = new GenericRepository<SavingsAccount>(dbContext);
 
-        // Seed destination account
-        var destAccount = new SavingsAccount { AccountNumber = "555666777", UserId = "other-user", Status = AccountStatus.Active };
+        // Seed destination account – UserId is int
+        var destAccount = new SavingsAccount { AccountNumber = "555666777", UserId = 99, Status = AccountStatus.Active };
         dbContext.SavingsAccounts.Add(destAccount);
         await dbContext.SaveChangesAsync();
 
-        var handler = new AddBeneficiaryCommandHandler(beneficiaryRepo, savingsRepo);
-        var command = new AddBeneficiaryCommand 
-        { 
-            RequestingUserId = "my-user", 
-            DestinationAccountNumber = "555666777" 
+        var handler = new AddBeneficiaryCommandHandler(savingsRepo, beneficiaryRepo);
+        // AddBeneficiaryCommand uses OwnerUserId (int) and BeneficiaryAccountNumber
+        var command = new AddBeneficiaryCommand
+        {
+            OwnerUserId = 1,
+            BeneficiaryAccountNumber = "555666777"
         };
 
         // Act
@@ -51,9 +52,8 @@ public class BeneficiaryAndSavingsIntegrationTests : IClassFixture<CustomWebAppl
         // Assert
         var savedBeneficiary = await dbContext.Beneficiaries.FindAsync(newBeneficiaryId);
         savedBeneficiary.Should().NotBeNull();
-        savedBeneficiary!.UserId.Should().Be("my-user");
-        savedBeneficiary.DestinationAccountNumber.Should().Be("555666777");
-        savedBeneficiary.IsActive.Should().BeTrue();
+        savedBeneficiary!.OwnerUserId.Should().Be(1);
+        savedBeneficiary.BeneficiaryAccountNumber.Should().Be("555666777");
     }
 
     [Fact]
@@ -62,13 +62,13 @@ public class BeneficiaryAndSavingsIntegrationTests : IClassFixture<CustomWebAppl
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ArtemisBankingDbContext>();
-        
+
         var savingsRepo = new GenericRepository<SavingsAccount>(dbContext);
         var transactionRepo = new GenericRepository<Transaction>(dbContext);
         var userRepo = new GenericRepository<User>(dbContext);
 
-        // Need to add user and a primary account so we can create a secondary account
-        var userId = "test-user-savings";
+        // UserId is int in SavingsAccount
+        const int userId = 42;
         dbContext.Users.Add(new User { Id = userId, IsActive = true });
         dbContext.SavingsAccounts.Add(new SavingsAccount { AccountNumber = "000000000", Type = AccountType.Principal, Status = AccountStatus.Active, UserId = userId });
         await dbContext.SaveChangesAsync();

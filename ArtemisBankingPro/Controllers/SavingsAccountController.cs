@@ -57,7 +57,7 @@ public class SavingsAccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create(string? selectedUserId = null, string? identificationNumber = null)
+    public async Task<IActionResult> Create(int? selectedUserId = null, string? identificationNumber = null)
     {
         var users = await _mediator.Send(new ArtemisBankingPro.Core.Application.Features.Users.GetUsersQuery());
         // Filtrar clientes activos
@@ -65,19 +65,19 @@ public class SavingsAccountController : Controller
         
         if (!string.IsNullOrEmpty(identificationNumber))
         {
-            clients = clients.Where(c => c.IdentificationNumber.Contains(identificationNumber)).ToList();
+            clients = clients.Where(c => c.Identification.Contains(identificationNumber)).ToList();
         }
 
         ViewBag.Clients = clients;
         ViewBag.SelectedUserId = selectedUserId;
         
-        if (!string.IsNullOrEmpty(selectedUserId))
+        if (selectedUserId.HasValue)
         {
-            var selectedUser = clients.FirstOrDefault(c => c.Id == selectedUserId);
+            var selectedUser = clients.FirstOrDefault(c => c.Id == selectedUserId.Value.ToString());
             ViewBag.SelectedUser = selectedUser;
         }
 
-        return View(new CreateSavingsAccountCommand { UserId = selectedUserId ?? "" });
+        return View(new CreateSavingsAccountCommand { UserId = selectedUserId ?? 0 });
     }
 
     [HttpPost]
@@ -86,7 +86,7 @@ public class SavingsAccountController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return await Create(command.UserId); // Re-render with errors
+            return await Create(command.UserId == 0 ? (int?)null : command.UserId); // Re-render with errors
         }
 
         await _mediator.Send(command);
