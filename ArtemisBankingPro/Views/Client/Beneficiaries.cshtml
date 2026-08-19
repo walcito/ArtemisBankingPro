@@ -1,0 +1,48 @@
+@model List<ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries.BeneficiaryDto>
+@{ ViewData["Title"] = "Beneficiarios"; }
+<div class="topbar"><div class="crumb">Cliente</div><h1 id="screen-title">Beneficiarios</h1></div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["SuccessMessage"]</div>
+}
+
+<div class="two-col">
+    <div class="card panel">
+        <div class="section-title">Tus beneficiarios</div>
+        @if (!Model.Any())
+        {
+            <div class="skeleton-empty">
+                <div class="ic">👤</div>
+                <h4>Aún no tienes beneficiarios</h4>
+            </div>
+        }
+        else
+        {
+            @foreach (var b in Model)
+            {
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
+                    <div>
+                        <div class="tx-title">@b.Alias</div>
+                        <div class="tx-sub">@b.BeneficiaryAccountNumber</div>
+                    </div>
+                    <form asp-action="RemoveBeneficiary" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@b.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="card panel">
+        <div class="section-title">Agregar beneficiario</div>
+        <form asp-action="AddBeneficiary" method="post">
+            @Html.AntiForgeryToken()
+            <div class="field"><label>Alias <span class="req">*</span></label><input name="Alias" /></div>
+            <div class="field"><label>Número de Cuenta <span class="req">*</span></label><input name="BeneficiaryAccountNumber" /></div>
+            <button type="submit" class="btn btn-primary btn-block">Agregar</button>
+        </form>
+    </div>
+</div>

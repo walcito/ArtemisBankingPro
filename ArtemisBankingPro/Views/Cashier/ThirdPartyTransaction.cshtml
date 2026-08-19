@@ -2,30 +2,45 @@
 
 @{ ViewData["Title"] = "Transacción a Terceros"; }
 
-<h2>Transacción a Cuenta de Terceros</h2>
+<div class="topbar">
+    <div class="crumb">Cajero</div>
+    <h1 id="screen-title">Transacción a cuentas de terceros</h1>
+</div>
 
-<form asp-action="ThirdPartyTransaction" method="post">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="All" class="text-danger"></div>
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="ThirdPartyTransaction" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info"></div>
 
-    <div class="mb-3">
-        <label asp-for="SourceAccountNumber" class="form-label">Cuenta de Origen</label>
-        <input asp-for="SourceAccountNumber" class="form-control" />
-        <span asp-validation-for="SourceAccountNumber" class="text-danger"></span>
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de Origen <span class="req">*</span></label>
+                <input asp-for="SourceAccountNumber" />
+                <span asp-validation-for="SourceAccountNumber" class="text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="DestinationAccountNumber">Cuenta de Destino <span class="req">*</span></label>
+                <input asp-for="DestinationAccountNumber" />
+                <span asp-validation-for="DestinationAccountNumber" class="text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Amount">Monto <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Continuar</button>
+        </form>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="DestinationAccountNumber" class="form-label">Cuenta de Destino</label>
-        <input asp-for="DestinationAccountNumber" class="form-control" />
-        <span asp-validation-for="DestinationAccountNumber" class="text-danger"></span>
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>Origen y destino deben ser cuentas distintas.</li>
+            <li>Ambas cuentas deben estar activas.</li>
+            <li>Si no hay fondos, se registra el intento como rechazado.</li>
+        </ul>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Amount" class="form-label">Monto</label>
-        <input asp-for="Amount" class="form-control" />
-        <span asp-validation-for="Amount" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success" onclick="return confirm('¿Confirmar transacción?');">Confirmar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+</div>

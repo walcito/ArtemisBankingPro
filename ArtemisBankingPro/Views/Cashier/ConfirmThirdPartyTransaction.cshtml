@@ -1,0 +1,26 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction.ThirdPartyTransactionCommand
+
+@{ ViewData["Title"] = "Confirmar Transacción"; }
+
+<div class="topbar">
+    <div class="crumb">Cajero</div>
+    <h1 id="screen-title">Confirmar transacción a terceros</h1>
+</div>
+
+<div class="card panel" style="max-width:480px;">
+    <div class="section-title">Confirmar operación</div>
+
+    <div class="confirm-box">
+        <div class="confirm-row"><span>Cuenta origen</span><b>@Model.SourceAccountNumber</b></div>
+        <div class="confirm-row"><span>Cuenta destino</span><b>@Model.DestinationAccountNumber</b></div>
+        <div class="confirm-row"><span>Monto</span><b>@Model.Amount.ToString("C2")</b></div>
+    </div>
+
+    <div style="font-size:13px;margin:16px 0;">¿Está seguro que desea realizar esta operación?</div>
+
+    <form asp-action="ConfirmThirdPartyTransaction" method="post" style="display:flex;gap:10px;">
+        @Html.AntiForgeryToken()
+        <button type="submit" name="confirmed" value="false" class="btn btn-ghost btn-block">Cancelar</button>
+        <button type="submit" name="confirmed" value="true" class="btn btn-primary btn-block">Confirmar</button>
+    </form>
+</div>

@@ -1,40 +1,31 @@
 @model ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome.CashierHomeDto
-
-@{
-    ViewData["Title"] = "Home del Cajero";
-}
+@{ ViewData["Title"] = "Home del Cajero"; }
+<div class="topbar"><div class="crumb">Cajero</div><h1 id="screen-title">Home del cajero</h1></div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    <div class="alert alert-info">@TempData["SuccessMessage"]</div>
 }
 
-<h2>Panel del Cajero</h2>
-
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-center p-3">
-            <h5>Transacciones Hoy</h5>
-            <p class="fs-3">@Model.TotalTransactionsToday</p>
-        </div>
+<div class="two-col" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+    <div class="card panel">
+        <div class="section-title">Transacciones Hoy</div>
+        <div style="font-size:26px;font-weight:800;">@Model.TotalTransactionsToday</div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-center p-3">
-            <h5>Monto Procesado Hoy</h5>
-            <p class="fs-3">@Model.TotalAmountProcessedToday.ToString("C2")</p>
-        </div>
+    <div class="card panel">
+        <div class="section-title">Monto Procesado Hoy</div>
+        <div style="font-size:26px;font-weight:800;" class="num">@Model.TotalAmountProcessedToday.ToString("C2")</div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-center p-3">
-            <h5>Rechazadas Hoy</h5>
-            <p class="fs-3">@Model.RejectedTransactionsToday</p>
-        </div>
+    <div class="card panel">
+        <div class="section-title">Rechazadas Hoy</div>
+        <div style="font-size:26px;font-weight:800;">@Model.RejectedTransactionsToday</div>
     </div>
 </div>
 
-<div class="d-flex gap-2">
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
     <a asp-action="Deposit" class="btn btn-primary">Depositar</a>
     <a asp-action="Withdraw" class="btn btn-primary">Retirar</a>
     <a asp-action="ThirdPartyTransaction" class="btn btn-primary">Transacción a Terceros</a>
     <a asp-action="PayLoan" class="btn btn-primary">Pagar Préstamo</a>
+    <a asp-action="PayCreditCard" class="btn btn-primary">Pagar Tarjeta</a>
 </div>

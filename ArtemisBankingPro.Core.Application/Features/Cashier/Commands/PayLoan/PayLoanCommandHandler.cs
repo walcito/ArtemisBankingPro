@@ -2,7 +2,6 @@ using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Entities;
-using ArtemisBankingPro.Core.Domain.Enums;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;

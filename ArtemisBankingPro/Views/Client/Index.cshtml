@@ -1,0 +1,44 @@
+@model ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome.ClientHomeDto
+@{ ViewData["Title"] = "Home del Cliente"; }
+<div class="topbar"><div class="crumb">Cliente</div><h1 id="screen-title">Mis productos</h1></div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["SuccessMessage"]</div>
+}
+
+<div class="card panel" style="margin-bottom:20px;">
+    <div class="section-title">Cuentas de Ahorro</div>
+    @foreach (var a in Model.SavingsAccounts)
+    {
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
+            <div><div class="tx-title">@a.Identifier</div><div class="tx-sub">@a.Status</div></div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <b class="num">@a.RelevantAmount.ToString("C2")</b>
+                <a asp-action="AccountDetails" asp-route-accountNumber="@a.Identifier" class="btn btn-ghost btn-sm">Ver</a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card panel" style="margin-bottom:20px;">
+    <div class="section-title">Préstamos</div>
+    @foreach (var l in Model.Loans)
+    {
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
+            <div><div class="tx-title">@l.Identifier</div><div class="tx-sub">@l.Status</div></div>
+            <b class="num">@l.RelevantAmount.ToString("C2")</b>
+        </div>
+    }
+</div>
+
+<div class="card panel">
+    <div class="section-title">Tarjetas de Crédito</div>
+    @foreach (var c in Model.CreditCards)
+    {
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
+            <div><div class="tx-title">@c.Identifier</div><div class="tx-sub">@c.Status</div></div>
+            <b class="num">@c.RelevantAmount.ToString("C2")</b>
+        </div>
+    }
+</div>
