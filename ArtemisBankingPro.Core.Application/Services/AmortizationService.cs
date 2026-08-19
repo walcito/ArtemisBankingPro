@@ -1,20 +1,20 @@
-using ArtemisBankingPro.Core.Domain.Entities;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using ArtemisBankingPro.Core.Application.Interfaces;
 
 namespace ArtemisBankingPro.Core.Application.Services;
 
-// Implementación del sistema de amortización francés (cuota fija)
-public class CalculadoraAmortizationService : IAmortizationService
+// French amortization system implementation (fixed installment)
+public class AmortizationService : IAmortizationService
 {
     public List<AmortizationInstallment> GenerateAmortizationTable(decimal disbursedAmount, decimal annualInterestRate, int termInMonths)
     {
         var installments = new List<AmortizationInstallment>();
 
-        // Tasa mensual (ej: 12% anual → 0.01 mensual)
+        // Monthly rate (e.g., 12% annual -> 0.01 monthly)
         decimal monthlyRate = annualInterestRate / 12m / 100m;
 
-        // Cuota fija: 
+        // Fixed installment: 
         decimal fixedInstallment;
 
         if (monthlyRate == 0)

@@ -1,5 +1,5 @@
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Trades.Commands.UpdateTrade;

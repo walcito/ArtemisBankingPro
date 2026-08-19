@@ -1,9 +1,10 @@
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using MediatR;
-using SavingsAccount = ArtemisBankingPro.Core.Domain.Entities.SavingsAccount;
 
 namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 

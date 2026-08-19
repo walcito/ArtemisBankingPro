@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.UpdateTrade;
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
 using Moq;
 using Xunit;
 

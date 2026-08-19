@@ -1,7 +1,6 @@
-using System;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 
-namespace ArtemisBankingPro.Core.Domain.Entities;
+namespace ArtemisBankingPro.Core.Domain.Entities.Loans;
 
 public class AmortizationInstallment
 {
@@ -12,7 +11,6 @@ public class AmortizationInstallment
     public Loan? Loan { get; set; }
 
     // Datos de la Cuota, se utiliza el sistema de amortización francés
-    
     public int InstallmentNumber { get; set; } // Número de cuota
     public decimal InstallmentAmount { get; set; } // Cuota fija del sistema francés
     public decimal Interest { get; set; } // Interés cobrado en esta cuota

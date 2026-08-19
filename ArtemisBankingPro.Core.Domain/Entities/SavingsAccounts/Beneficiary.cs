@@ -1,4 +1,4 @@
-using System;
+namespace ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 
 public class Beneficiary
 {
@@ -6,6 +6,5 @@ public class Beneficiary
 
     public Beneficiary()
     {
-        //Aliandy
     }
 }

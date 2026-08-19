@@ -404,7 +404,7 @@
           <tr>
             <td>Lun 3<small>Día 6</small></td>
             <td class="p1cell">Usuarios: creación automática de la cuenta principal al registrar un cliente; activar/inactivar sin auto-modificarse.<span class="classes">Clases: <code>CrearUsuarioCommandHandler</code> (ajuste), invoca <code>ICuentaAhorroService.CrearCuentaPrincipal()</code>, <code>ActivarInactivarUsuarioCommand</code></span></td>
-            <td class="p2cell">Cálculo de cuota fija (sistema francés) + tabla de amortización completa.<span class="classes">Clases: <code>IAmortizacionService</code>, <code>CalculadoraAmortizacionService</code>, puebla <code>CuotaAmortizacion</code></span></td>
+            <td class="p2cell">Cálculo de cuota fija (sistema francés) + tabla de amortización completa.<span class="classes">Clases: <code>IAmortizationService</code>, <code>AmortizationService</code>, puebla <code>AmortizationInstallment</code></span></td>
             <td class="p3cell">Genera número de tarjeta (16 dígitos), expiración y CVC como hash; tarjeta enmascarada en pantalla.<span class="classes">Clases: <code>GeneradorNumeroTarjetaService</code>, <code>HashService</code> (hash del CVC), <code>AsignarTarjetaCommand</code></span></td>
             <td class="p4cell">Reglas de cuenta principal/secundaria — solo una secundaria si ya existe una principal activa.<span class="classes">Clases: <code>CrearCuentaSecundariaCommand</code>, <code>CrearCuentaSecundariaCommandValidator</code></span></td>
           </tr>
@@ -412,7 +412,7 @@
           <tr>
             <td>Mar 4<small>Día 7</small></td>
             <td class="p1cell">Seguridad WebApp (bloqueo por rol) + Seguridad API JWT (401 sin token / 403 sin permiso).<span class="classes">Clases: <code>AuthorizeRoleAttribute</code> (WebApp), configuración de <code>JwtBearerOptions</code> y respuestas 401/403 (API)</span></td>
-            <td class="p2cell">Número de préstamo único (9 dígitos, texto); valida cliente activo sin préstamo activo.<span class="classes">Clases: <code>AsignarPrestamoCommand</code>, <code>AsignarPrestamoCommandValidator</code>, <code>GeneradorNumeroPrestamoService</code></span></td>
+            <td class="p2cell">Número de préstamo único (9 dígitos, texto); valida cliente activo sin préstamo activo.<span class="classes">Clases: <code>AsignarPrestamoCommand</code>, <code>AsignarPrestamoCommandValidator</code>, <code>ILoanNumberGeneratorService</code>, <code>LoanNumberGeneratorService</code></span></td>
             <td class="p3cell">Reglas de límite de crédito (no bajar del límite bajo la deuda actual) y cancelación sin deuda pendiente.<span class="classes">Clases: <code>EditarLimiteTarjetaCommand</code>, <code>CancelarTarjetaCommand</code>, <code>CancelarTarjetaCommandValidator</code></span></td>
             <td class="p4cell">Cancelación de cuenta secundaria con transferencia automática de balance a la principal.<span class="classes">Clases: <code>CancelarCuentaSecundariaCommand</code>, <code>CancelarCuentaSecundariaCommandHandler</code>, genera <code>Transaccion</code> (débito/crédito)</span></td>
           </tr>
@@ -426,7 +426,7 @@
           <tr>
             <td>Jue 6<small>Día 9</small></td>
             <td class="p1cell">Primeras consultas agregadas para el Home del Administrador (aún sin datos reales).<span class="classes">Clases: <code>ObtenerIndicadoresAdminQuery</code>, <code>IndicadoresAdminDto</code></span></td>
-            <td class="p2cell">Validación de "alto riesgo" por deuda promedio (409 Conflict); primeros unit tests de cuotas.<span class="classes">Clases: <code>ClienteAltoRiesgoException</code>, <code>CalculadoraAmortizacionServiceTests</code></span></td>
+            <td class="p2cell">Validación de "alto riesgo" por deuda promedio (409 Conflict); primeros unit tests de cuotas.<span class="classes">Clases: <code>ClienteAltoRiesgoException</code>, <code>AmortizationServiceTests</code></span></td>
             <td class="p3cell">Confirma con P1 qué trae el JWT del rol Comercio; arranca Hermes Pay (validar tarjeta/CVC/crédito).<span class="classes">Clases: <code>ProcesarPagoHermesPayCommand</code>, <code>ProcesarPagoHermesPayCommandValidator</code></span></td>
             <td class="p4cell">Comercios — editar datos y activar/desactivar en cascada.<span class="classes">Clases: <code>EditarComercioCommand</code>, <code>ActivarDesactivarComercioCommand</code>, <code>ActivarDesactivarComercioCommandHandler</code></span></td>
           </tr>

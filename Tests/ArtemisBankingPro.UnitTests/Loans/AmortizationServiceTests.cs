@@ -1,16 +1,16 @@
 using ArtemisBankingPro.Core.Application.Services;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using Xunit;
 
 namespace ArtemisBankingPro.UnitTests.Loans;
 
-public class CalculadoraAmortizacionServiceTests
+public class AmortizationServiceTests
 {
-    private readonly CalculadoraAmortizationService _calculadora;
+    private readonly AmortizationService _amortizationService;
 
-    public CalculadoraAmortizacionServiceTests()
+    public AmortizationServiceTests()
     {
-        _calculadora = new CalculadoraAmortizationService();
+        _amortizationService = new AmortizationService();
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class CalculadoraAmortizacionServiceTests
         int termInMonths = 12;
 
         // Act
-        var result = _calculadora.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
+        var result = _amortizationService.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
 
         // Assert
         Assert.Equal(termInMonths, result.Count);
@@ -42,7 +42,7 @@ public class CalculadoraAmortizacionServiceTests
         int termInMonths = 12;
 
         // Act
-        var result = _calculadora.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
+        var result = _amortizationService.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
 
         // Assert
         Assert.Equal(termInMonths, result.Count);
@@ -68,7 +68,7 @@ public class CalculadoraAmortizacionServiceTests
         // Cuota redondeada = 340.02
 
         // Act
-        var result = _calculadora.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
+        var result = _amortizationService.GenerateAmortizationTable(disbursedAmount, annualInterestRate, termInMonths);
 
         // Assert
         Assert.Equal(3, result.Count);
