@@ -1,0 +1,41 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction.ThirdPartyTransactionCommand
+
+@{ ViewData["Title"] = "Transacción a terceros"; }
+
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="ThirdPartyTransaction" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de origen <span class="req">*</span></label>
+                <input asp-for="SourceAccountNumber" placeholder="Ej. 410207765" />
+                <span asp-validation-for="SourceAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="DestinationAccountNumber">Cuenta de destino <span class="req">*</span></label>
+                <input asp-for="DestinationAccountNumber" placeholder="Ej. 410207766" />
+                <span asp-validation-for="DestinationAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Amount">Monto a transferir <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Continuar</button>
+        </form>
+    </div>
+
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>Origen y destino deben ser cuentas distintas.</li>
+            <li>Ambas cuentas deben estar activas.</li>
+            <li>Si no hay fondos en la cuenta de origen, se registra como intento rechazado.</li>
+        </ul>
+    </div>
+</div>

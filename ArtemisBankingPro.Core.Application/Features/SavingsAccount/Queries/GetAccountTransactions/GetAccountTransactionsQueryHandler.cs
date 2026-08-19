@@ -45,7 +45,8 @@ public class GetAccountTransactionsQueryHandler
                 Id = t.Id,
                 Amount = t.Amount,
                 Type = t.Type,
-                Date = t.Date
+                Date = t.Date,
+                Description = t.Type.ToString()
             })
             .ToList();
 

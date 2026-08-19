@@ -1,0 +1,51 @@
+@model ArtemisBankingPro.Core.Application.Features.Clients.Commands.ExpressTransaction.ExpressTransactionCommand
+@{ ViewData["Title"] = "Transacción Express"; }
+
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="ExpressTransaction" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+            
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de origen <span class="req">*</span></label>
+                <select asp-for="SourceAccountNumber">
+                    <option value="">-- Seleccionar --</option>
+                    @if(ViewBag.Accounts != null)
+                    {
+                        foreach(var acc in ViewBag.Accounts)
+                        {
+                            <option value="@acc.Identifier">@acc.Identifier — @acc.RelevantAmount.ToString("C2")</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="SourceAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="DestinationAccountNumber">Número de cuenta destino <span class="req">*</span></label>
+                <input asp-for="DestinationAccountNumber" placeholder="Ej. 410207765" />
+                <span asp-validation-for="DestinationAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="Amount">Monto a transferir <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Continuar</button>
+        </form>
+    </div>
+    
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>La cuenta destino debe existir y estar activa.</li>
+            <li>El monto debe ser mayor que cero.</li>
+            <li>La cuenta de origen debe tener fondos suficientes.</li>
+            <li>Origen y destino no pueden ser la misma cuenta.</li>
+            <li>Se notifica por correo a ambos clientes.</li>
+        </ul>
+    </div>
+</div>

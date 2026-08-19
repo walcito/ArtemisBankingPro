@@ -1,0 +1,41 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan.PayLoanCommand
+
+@{ ViewData["Title"] = "Pago a préstamo"; }
+
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="PayLoan" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de origen <span class="req">*</span></label>
+                <input asp-for="SourceAccountNumber" placeholder="Ej. 410207765" />
+                <span asp-validation-for="SourceAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="LoanId">Préstamo destino (ID) <span class="req">*</span></label>
+                <input asp-for="LoanId" type="number" placeholder="Ej. 12" />
+                <span asp-validation-for="LoanId" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Amount">Monto a pagar <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Continuar</button>
+        </form>
+    </div>
+
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>El monto no puede superar la deuda actual del préstamo.</li>
+            <li>Se aplica primero a la cuota más antigua pendiente.</li>
+            <li>Si cubre toda la deuda, el préstamo pasa a estado Pagado.</li>
+        </ul>
+    </div>
+</div>

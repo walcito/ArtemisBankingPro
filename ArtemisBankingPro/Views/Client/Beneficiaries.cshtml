@@ -1,0 +1,54 @@
+@model List<ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries.BeneficiaryDto>
+@{ ViewData["Title"] = "Beneficiarios"; }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<div class="card">
+    <table>
+        <tr>
+            <th>Alias</th>
+            <th>N° de cuenta</th>
+            <th>Acciones</th>
+        </tr>
+        @foreach (var b in Model)
+        {
+            <tr>
+                <td style="font-weight:700">@b.Alias</td>
+                <td>@b.BeneficiaryAccountNumber</td>
+                <td class="row-actions">
+                    <form asp-action="RemoveBeneficiary" method="post" style="margin:0;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@b.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que desea eliminar a este beneficiario?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="3" class="skeleton-empty">
+                    <div class="ic">👥</div>
+                    <h4>Sin beneficiarios</h4>
+                    <p>Aún no has agregado ningún beneficiario.</p>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="card panel" style="max-width:420px;margin-top:20px;">
+    <div class="section-title">Agregar beneficiario</div>
+    <form asp-action="AddBeneficiary" method="post">
+        @Html.AntiForgeryToken()
+        <div class="field"><label>Número de cuenta <span class="req">*</span></label><input name="BeneficiaryAccountNumber" placeholder="410207765" required></div>
+        <div class="field"><label>Alias <span class="req">*</span></label><input name="Alias" placeholder="Ej. Juan Pérez" required></div>
+        <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+        <div class="field-hint" style="margin-top:8px;">Debe ser una cuenta activa de otro cliente.</div>
+    </form>
+</div>
