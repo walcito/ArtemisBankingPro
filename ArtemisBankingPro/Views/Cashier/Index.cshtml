@@ -1,0 +1,46 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome.CashierHomeDto
+@{ ViewData["Title"] = "Dashboard del Cajero"; }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<div class="two-col" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+    <div class="card panel amount-hero" style="padding:24px;">
+        <div class="lbl">Transacciones Hoy</div>
+        <div class="val">@Model.TotalTransactionsToday</div>
+    </div>
+    <div class="card panel amount-hero" style="padding:24px; background:linear-gradient(135deg, var(--c5) 0%, var(--c4) 100%);">
+        <div class="lbl" style="color:rgba(255,255,255,0.7)">Monto Procesado Hoy</div>
+        <div class="val" style="color:#fff">@Model.TotalAmountProcessedToday.ToString("C2")</div>
+    </div>
+    <div class="card panel amount-hero" style="padding:24px;">
+        <div class="lbl">Rechazadas Hoy</div>
+        <div class="val" style="color:var(--danger)">@Model.RejectedTransactionsToday</div>
+    </div>
+</div>
+
+<h3 style="font-size:16px; margin-bottom:16px; margin-top:32px;">Operaciones de Caja</h3>
+<div class="menu-tiles">
+    <a asp-action="Deposit" class="menu-tile">
+        <div class="ic">📥</div>
+        <div class="txt">Depósito</div>
+    </a>
+    <a asp-action="Withdraw" class="menu-tile">
+        <div class="ic">📤</div>
+        <div class="txt">Retiro</div>
+    </a>
+    <a asp-action="ThirdPartyTransaction" class="menu-tile">
+        <div class="ic">💸</div>
+        <div class="txt">Transacción a terceros</div>
+    </a>
+    <a asp-action="PayCreditCard" class="menu-tile">
+        <div class="ic">💳</div>
+        <div class="txt">Pago a tarjeta</div>
+    </a>
+    <a asp-action="PayLoan" class="menu-tile">
+        <div class="ic">📄</div>
+        <div class="txt">Pago a préstamo</div>
+    </a>
+</div>

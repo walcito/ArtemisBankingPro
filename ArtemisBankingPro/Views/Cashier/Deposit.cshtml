@@ -1,0 +1,36 @@
+@model ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit.DepositCommand
+
+@{ ViewData["Title"] = "Depósito en cuenta"; }
+
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="Deposit" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+
+            <div class="field">
+                <label asp-for="AccountNumber">Número de cuenta de ahorro <span class="req">*</span></label>
+                <input asp-for="AccountNumber" placeholder="Ej. 410207765" />
+                <span asp-validation-for="AccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Amount">Monto a depositar <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Continuar</button>
+        </form>
+    </div>
+
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>La cuenta debe existir y estar activa.</li>
+            <li>El monto debe ser mayor a cero.</li>
+            <li>El depósito se registra como transacción de tipo Crédito.</li>
+            <li>Se notifica por correo al cliente.</li>
+        </ul>
+    </div>
+</div>

@@ -1,11 +1,11 @@
-using System;
+namespace ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 public class Beneficiary
 {
     public int Id { get; set; }
-
-    public Beneficiary()
-    {
-        //Aliandy
-    }
+    public int OwnerUserId { get; set; }
+    public User? OwnerUser { get; set; }
+    public string BeneficiaryAccountNumber { get; set; } = string.Empty;
+    public string Alias { get; set; } = string.Empty;
 }

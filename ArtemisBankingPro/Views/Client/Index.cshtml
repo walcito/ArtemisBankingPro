@@ -1,0 +1,77 @@
+@model ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome.ClientHomeDto
+@{ ViewData["Title"] = "Mis productos"; }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<div class="section-title">Cuentas de ahorro</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:28px;">
+    @foreach (var a in Model.SavingsAccounts)
+    {
+        <div class="card panel hoverable" style="cursor: default;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:6px;">@a.Identifier</div>
+                    <div style="font-size:11.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Cuenta @a.Status</div>
+                </div>
+            </div>
+            <div class="amount-hero">@a.RelevantAmount.ToString("C2") <small>disponible</small></div>
+        </div>
+    }
+    @if (!Model.SavingsAccounts.Any())
+    {
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">🏦</div>
+            <h4>Sin cuentas de ahorro</h4>
+            <p>No tienes cuentas de ahorro activas.</p>
+        </div>
+    }
+</div>
+
+<div class="section-title">Préstamos vigentes</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:28px;">
+    @foreach (var l in Model.Loans)
+    {
+        <div class="card panel hoverable">
+            <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:6px;">@l.Identifier</div>
+            <div style="font-size:11.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Préstamo @l.Status</div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                <div class="amount-hero" style="font-size:24px;">@l.RelevantAmount.ToString("C2") <small>pendiente</small></div>
+            </div>
+        </div>
+    }
+    @if (!Model.Loans.Any())
+    {
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">💳</div>
+            <h4>Sin préstamos</h4>
+            <p>No tienes préstamos vigentes actualmente.</p>
+        </div>
+    }
+</div>
+
+<div class="section-title">Tarjetas de crédito</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+    @foreach (var c in Model.CreditCards)
+    {
+        <div class="card panel hoverable">
+            <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:10px;">@c.Identifier</div>
+            <div class="field-row" style="margin-bottom:8px;">
+                <div><div class="lbl" style="font-size:10.5px;color:var(--text-faint)">Estado</div><div style="font-weight:700">@c.Status</div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div class="lbl" style="font-size:10.5px;color:var(--text-faint)">Adeudado</div><div style="font-weight:700;color:var(--danger)">@c.RelevantAmount.ToString("C2")</div></div>
+            </div>
+        </div>
+    }
+    @if (!Model.CreditCards.Any())
+    {
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">🪪</div>
+            <h4>Sin tarjetas</h4>
+            <p>No tienes tarjetas de crédito activas.</p>
+        </div>
+    }
+</div>
