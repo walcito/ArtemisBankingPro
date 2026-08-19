@@ -11,6 +11,8 @@ builder.Services.AddApplicationLayerIoc();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
@@ -36,6 +38,7 @@ app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 app.UseRouting();
 
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -48,4 +51,4 @@ app.MapControllerRoute(
 app.Run();
 
 // Required for WebApplicationFactory<Program> in integration tests
-public partial class Program { }
+public partial class Program { }
