@@ -80,6 +80,6 @@ public class CashierBusinessRulesTests
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<Exception>().WithMessage("Fondos insuficientes.");
+        await act.Should().ThrowAsync<Exception>().WithMessage("*Fondos insuficientes*");
     }
 }

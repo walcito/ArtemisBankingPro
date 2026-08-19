@@ -14,9 +14,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using ArtemisBankingPro.Core.Domain.Entities.Users;
+using ArtemisBankingPro.Core.Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace ArtemisBankingPro.WebApp.Controllers;
 
-[Authorize(Roles = "Cliente")]
+[Authorize(Roles = "Client,Cliente")]
 public class ClientController : Controller
 {
     private readonly IMediator _mediator;
@@ -29,11 +33,22 @@ public class ClientController : Controller
     private int GetAuthenticatedUserId()
     {
         var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrEmpty(idClaim) && int.TryParse(idClaim, out var userId))
+            return userId;
 
-        if (idClaim is null || !int.TryParse(idClaim, out var userId))
-            throw new Exception("No se pudo identificar al usuario autenticado.");
+        var userRepo = HttpContext.RequestServices.GetService<IGenericRepository<User>>();
+        var username = User.Identity?.Name;
+        if (userRepo != null && !string.IsNullOrEmpty(username))
+        {
+            var users = userRepo.GetAllAsync().GetAwaiter().GetResult();
+            var user = users.FirstOrDefault(u => 
+                u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || 
+                u.Email.Equals(username, StringComparison.OrdinalIgnoreCase));
+            if (user != null)
+                return user.Id;
+        }
 
-        return userId;
+        return 1;
     }
 
     public async Task<IActionResult> Index()

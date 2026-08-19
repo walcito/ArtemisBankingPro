@@ -24,7 +24,11 @@ public class EmailService : IEmailService
         try
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.EmailFrom));
+
+            var senderName = string.IsNullOrEmpty(_mailSettings.DisplayName) ? "ArtemisBankingPro" : _mailSettings.DisplayName;
+            var senderEmail = string.IsNullOrEmpty(_mailSettings.EmailFrom) ? _mailSettings.SmtpUser : _mailSettings.EmailFrom;
+
+            email.From.Add(new MailboxAddress(senderName, senderEmail));
             email.To.Add(MailboxAddress.Parse(to));
             email.Subject = subject;
 
@@ -32,6 +36,10 @@ public class EmailService : IEmailService
             email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
+
+            // Bypass de validación de certificado SSL para desarrollo local/SMTP personalizado (propuesto por Yailyn)
+            smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
             await smtp.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass);
             await smtp.SendAsync(email);
