@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using ArtemisBankingPro.Core.Application.Dtos.Account;
 using ArtemisBankingPro.Core.Application.Dtos.User;
@@ -11,15 +12,21 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthRequest request)
@@ -27,7 +34,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
             var user = await _userManager.FindByNameAsync(request.UserName)
                        ?? await _userManager.FindByEmailAsync(request.UserName);
 
-            if (user == null || !user.EmailConfirmed)
+            if (user == null || !user.IsActive || !user.EmailConfirmed)
                 return new AuthResponse { HasError = true, Error = "Usuario no encontrado o no activado." };
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, false);
@@ -42,16 +49,46 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                 UserName = user.UserName!,
                 Email = user.Email!,
                 Role = roles.FirstOrDefault() ?? "",
-                IsActive = user.EmailConfirmed
+                IsActive = user.IsActive && user.EmailConfirmed
             };
         }
 
-        public async Task<bool> ConfirmAccountAsync(string token)
+        public async Task SignOutAsync()
         {
-            var user = _userManager.Users.FirstOrDefault(u => u.SecurityStamp == token);
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task<bool> ConfirmAccountAsync(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return false;
-            user.EmailConfirmed = true;
-            await _userManager.UpdateAsync(user);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                user.EmailConfirmed = true;
+                user.IsActive = true;
+                await _userManager.UpdateAsync(user);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> ResendActivationEmailAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName) ?? await _userManager.FindByEmailAsync(userName);
+            if (user == null || user.EmailConfirmed) return false;
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var origin = _httpContextAccessor.HttpContext?.Request.Scheme + "://" + _httpContextAccessor.HttpContext?.Request.Host;
+            var uri = new Uri($"{origin}/Account/ConfirmAccount?userId={user.Id}&token={Uri.EscapeDataString(token)}");
+
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Activación de cuenta - Artemis Banking Pro",
+                $"<p>Hola <strong>{user.FirstName}</strong>,</p>" +
+                $"<p>Solicitaste reenviar el enlace de activación de tu cuenta. Haz clic en el siguiente enlace para activar tu acceso:</p>" +
+                $"<p style='margin-top:16px;'><a href='{uri}' style='display:inline-block;padding:10px 18px;background:#35648B;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;'>Activar mi Cuenta</a></p>");
+
             return true;
         }
 
@@ -98,7 +135,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                     Email = u.Email ?? "",
                     UserName = u.UserName ?? "",
                     Identification = u.IdentificationNumber,
-                    IsActive = u.EmailConfirmed,
+                    IsActive = u.IsActive && u.EmailConfirmed,
                     Role = roles.FirstOrDefault() ?? ""
                 });
             }
@@ -121,7 +158,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                 Email = u.Email ?? "",
                 UserName = u.UserName ?? "",
                 Identification = u.IdentificationNumber,
-                IsActive = u.EmailConfirmed,
+                IsActive = u.IsActive && u.EmailConfirmed,
                 Role = roles.FirstOrDefault() ?? ""
             };
         }
@@ -131,6 +168,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return false;
 
+            user.IsActive = status;
             user.EmailConfirmed = status;
             await _userManager.UpdateAsync(user);
             return true;

@@ -1,27 +1,31 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace ArtemisBankingPro.Controllers
+namespace ArtemisBankingPro.Controllers;
+
+[Authorize]
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        if (User.IsInRole("Admin"))
         {
-            _logger = logger;
+            return RedirectToAction("Index", "Admin");
         }
-
-        public IActionResult Index()
+        else if (User.IsInRole("Teller") || User.IsInRole("Cashier"))
         {
-            return View();
+            return RedirectToAction("Index", "Teller");
         }
-
-        public IActionResult Privacy()
+        else if (User.IsInRole("Client"))
         {
             return View();
         }
 
-        
+        return RedirectToAction("Login", "Account");
+    }
+
+    public IActionResult Privacy()
+    {
+        return View();
     }
 }

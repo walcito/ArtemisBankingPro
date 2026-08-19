@@ -2,10 +2,12 @@ using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Application.Features.Users;
 using ArtemisBankingPro.Core.Application.ViewModels.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IMediator _mediator;
@@ -46,55 +48,64 @@ public class AdminController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        if (vm.Role == "Commerce")
+        try
         {
-            var commerceDto = new CreateCommerceUserDto
+            if (vm.Role == "Commerce")
             {
-                FirstName = vm.FirstName,
-                LastName = vm.LastName,
-                Identification = vm.Identification,
-                Email = vm.Email,
-                UserName = vm.UserName,
-                Password = vm.Password ?? string.Empty,
-                ConfirmPassword = vm.ConfirmPassword ?? string.Empty,
-                InitialAmount = vm.InitialAmount
-            };
-
-            await _mediator.Send(new CreateUserCommand
-            {
-                User = new CreateUserDto
+                var commerceDto = new CreateCommerceUserDto
                 {
-                    FirstName = commerceDto.FirstName,
-                    LastName = commerceDto.LastName,
-                    Identification = commerceDto.Identification,
-                    Email = commerceDto.Email,
-                    UserName = commerceDto.UserName,
-                    Password = commerceDto.Password,
-                    ConfirmPassword = commerceDto.ConfirmPassword,
-                    Role = "Commerce",
-                    InitialAmount = commerceDto.InitialAmount
-                }
-            });
-        }
-        else
-        {
-            var dto = new CreateUserDto
+                    FirstName = vm.FirstName,
+                    LastName = vm.LastName,
+                    Identification = vm.Identification,
+                    Email = vm.Email,
+                    UserName = vm.UserName,
+                    Password = vm.Password ?? string.Empty,
+                    ConfirmPassword = vm.ConfirmPassword ?? string.Empty,
+                    InitialAmount = vm.InitialAmount
+                };
+
+                await _mediator.Send(new CreateUserCommand
+                {
+                    User = new CreateUserDto
+                    {
+                        FirstName = commerceDto.FirstName,
+                        LastName = commerceDto.LastName,
+                        Identification = commerceDto.Identification,
+                        Email = commerceDto.Email,
+                        UserName = commerceDto.UserName,
+                        Password = commerceDto.Password,
+                        ConfirmPassword = commerceDto.ConfirmPassword,
+                        Role = "Commerce",
+                        InitialAmount = commerceDto.InitialAmount
+                    }
+                });
+            }
+            else
             {
-                FirstName = vm.FirstName,
-                LastName = vm.LastName,
-                Identification = vm.Identification,
-                Email = vm.Email,
-                UserName = vm.UserName,
-                Password = vm.Password ?? string.Empty,
-                ConfirmPassword = vm.ConfirmPassword ?? string.Empty,
-                Role = vm.Role,
-                InitialAmount = vm.InitialAmount
-            };
+                var dto = new CreateUserDto
+                {
+                    FirstName = vm.FirstName,
+                    LastName = vm.LastName,
+                    Identification = vm.Identification,
+                    Email = vm.Email,
+                    UserName = vm.UserName,
+                    Password = vm.Password ?? string.Empty,
+                    ConfirmPassword = vm.ConfirmPassword ?? string.Empty,
+                    Role = vm.Role,
+                    InitialAmount = vm.InitialAmount
+                };
 
-            await _mediator.Send(new CreateUserCommand { User = dto });
+                await _mediator.Send(new CreateUserCommand { User = dto });
+            }
+
+            return RedirectToAction("Index");
         }
-
-        return RedirectToAction("Index");
+        catch (Exception ex)
+        {
+            vm.HasError = true;
+            vm.Error = ex.Message;
+            return View(vm);
+        }
     }
 
     [HttpGet]
@@ -124,30 +135,39 @@ public class AdminController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        var editDto = new EditUserDto
+        try
         {
-            FirstName = vm.FirstName,
-            LastName = vm.LastName,
-            Identification = vm.Identification,
-            Email = vm.Email,
-            UserName = vm.UserName,
-            Password = vm.Password,
-            ConfirmPassword = vm.ConfirmPassword
-        };
+            var editDto = new EditUserDto
+            {
+                FirstName = vm.FirstName,
+                LastName = vm.LastName,
+                Identification = vm.Identification,
+                Email = vm.Email,
+                UserName = vm.UserName,
+                Password = vm.Password,
+                ConfirmPassword = vm.ConfirmPassword
+            };
 
-        var userDto = new UserDto
+            var userDto = new UserDto
+            {
+                Id = vm.Id ?? string.Empty,
+                FirstName = editDto.FirstName,
+                LastName = editDto.LastName,
+                Identification = editDto.Identification,
+                Email = editDto.Email,
+                UserName = editDto.UserName,
+                Role = vm.Role
+            };
+
+            await _mediator.Send(new EditUserCommand { Id = vm.Id ?? string.Empty, User = userDto });
+            return RedirectToAction("Index");
+        }
+        catch (Exception ex)
         {
-            Id = vm.Id ?? string.Empty,
-            FirstName = editDto.FirstName,
-            LastName = editDto.LastName,
-            Identification = editDto.Identification,
-            Email = editDto.Email,
-            UserName = editDto.UserName,
-            Role = vm.Role
-        };
-
-        await _mediator.Send(new EditUserCommand { Id = vm.Id ?? string.Empty, User = userDto });
-        return RedirectToAction("Index");
+            vm.HasError = true;
+            vm.Error = ex.Message;
+            return View(vm);
+        }
     }
 
     [HttpPost]

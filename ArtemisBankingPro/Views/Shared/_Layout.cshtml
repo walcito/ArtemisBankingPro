@@ -25,21 +25,50 @@
                 <div class="brand-name">Artemis Banking<span>Digital Banking</span></div>
             </div>
 
-            <div class="nav-group">
-                <div class="nav-title">Administrador</div>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
-                    <span class="dot"></span>Gestión de Préstamos
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
-                    <span class="dot"></span>Cuentas de Ahorro
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
-                    <span class="dot"></span>Tarjetas de Crédito
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
-                    <span class="dot"></span>Comercios
-                </a>
-            </div>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="nav-group">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="nav-title">Administrador</div>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">
+                            <span class="dot"></span>Gestión de Usuarios
+                        </a>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
+                            <span class="dot"></span>Gestión de Préstamos
+                        </a>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
+                            <span class="dot"></span>Cuentas de Ahorro
+                        </a>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
+                            <span class="dot"></span>Tarjetas de Crédito
+                        </a>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
+                            <span class="dot"></span>Comercios
+                        </a>
+                    }
+                    else if (User.IsInRole("Teller") || User.IsInRole("Cashier"))
+                    {
+                        <div class="nav-title">Cajero</div>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Teller" ? "active" : "")" asp-controller="Teller" asp-action="Index">
+                            <span class="dot"></span>Operaciones de Caja
+                        </a>
+                    }
+                    else if (User.IsInRole("Client"))
+                    {
+                        <div class="nav-title">Cliente</div>
+                        <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
+                            <span class="dot"></span>Mis Productos
+                        </a>
+                    }
+                    
+                    <div style="margin-top:20px;padding:0 12px;">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100" style="border-radius:8px;font-weight:600;">Cerrar Sesión</button>
+                        </form>
+                    </div>
+                </div>
+            }
         </aside>
 
         <!-- ============ MAIN ============ -->
