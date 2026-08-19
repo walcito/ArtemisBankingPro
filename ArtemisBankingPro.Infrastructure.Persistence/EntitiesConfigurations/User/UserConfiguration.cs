@@ -35,7 +35,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         #region Relationship Configuration
         builder.HasOne(u => u.Trade)
             .WithOne(t => t.AssociatedUser)
-            .HasForeignKey<Trade>(t => t.AssociatedUserId)
+            .HasForeignKey<UserEntity>(u => u.TradeId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany<ActivationToken>()

@@ -25,13 +25,6 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Trade)
-                .WithOne(t => t.AssociatedUser)
-                .HasForeignKey<User>(u => u.TradeId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ArtemisBankingDbContext).Assembly);
         }
     }
