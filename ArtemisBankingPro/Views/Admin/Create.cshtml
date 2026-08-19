@@ -8,6 +8,13 @@
     <div class="card panel" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:var(--shadow);">
         <h2 style="font-family:'Space Grotesk';font-size:20px;margin-bottom:18px;">Crear Usuario</h2>
 
+        @if (Model != null && Model.HasError)
+        {
+            <div class="alert alert-danger" style="border-radius:10px;font-size:13px;margin-bottom:16px;background:rgba(161,59,59,.1);color:#a13b3b;border:1px solid rgba(161,59,59,.3);padding:12px 16px;">
+                @Model.Error
+            </div>
+        }
+
         <form asp-controller="Admin" asp-action="Create" method="post">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
                 <div>
@@ -57,6 +64,7 @@
                     <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Contraseña *</label>
                     <input asp-for="Password" type="password" placeholder="••••••••" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);" />
                     <span asp-validation-for="Password" class="text-danger" style="font-size:11px;"></span>
+                    <small style="display:block;font-size:11px;color:var(--text-faint);margin-top:4px;">Min 6 caracteres (incluir mayúscula, número y carácter especial ej: @@, #, $)</small>
                 </div>
                 <div>
                     <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Confirmar Contraseña *</label>

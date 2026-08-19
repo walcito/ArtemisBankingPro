@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Account;
+using ArtemisBankingPro.Core.Application.Dtos.Account;
 using ArtemisBankingPro.Core.Application.Dtos.User;
 
 namespace ArtemisBankingPro.Core.Application.Interfaces;
@@ -6,7 +6,9 @@ namespace ArtemisBankingPro.Core.Application.Interfaces;
 public interface IAccountService
 {
     Task<AuthResponse> AuthenticateAsync(AuthRequest request);
-    Task<bool> ConfirmAccountAsync(string token);
+    Task SignOutAsync();
+    Task<bool> ConfirmAccountAsync(string userId, string token);
+    Task<bool> ResendActivationEmailAsync(string userName);
     Task<string> GetResetTokenAsync(string userName);
     Task<bool> ResetPasswordAsync(ResetPasswordRequest request);
     Task<bool> UserExistsAsync(string username);

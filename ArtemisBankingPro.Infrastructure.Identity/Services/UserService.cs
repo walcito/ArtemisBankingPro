@@ -1,6 +1,7 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.User;
+using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Infrastructure.Identity.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,17 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEmailService _emailService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public UserService(
+        UserManager<ApplicationUser> userManager,
+        IEmailService emailService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
+        _emailService = emailService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<UserDto>> GetAllAsync()
@@ -32,7 +40,7 @@ public class UserService : IUserService
                 Email = user.Email ?? string.Empty,
                 UserName = user.UserName ?? string.Empty,
                 Role = roles.FirstOrDefault() ?? string.Empty,
-                IsActive = user.EmailConfirmed
+                IsActive = user.IsActive && user.EmailConfirmed
             });
         }
 
@@ -55,7 +63,7 @@ public class UserService : IUserService
             Email = user.Email ?? string.Empty,
             UserName = user.UserName ?? string.Empty,
             Role = roles.FirstOrDefault() ?? string.Empty,
-            IsActive = user.EmailConfirmed
+            IsActive = user.IsActive && user.EmailConfirmed
         };
     }
 
@@ -68,7 +76,8 @@ public class UserService : IUserService
             IdentificationNumber = dto.Identification,
             Email = dto.Email,
             UserName = dto.UserName,
-            EmailConfirmed = false
+            EmailConfirmed = false,
+            IsActive = false
         };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
@@ -76,6 +85,18 @@ public class UserService : IUserService
             throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
         await _userManager.AddToRoleAsync(user, dto.Role);
+
+        // Generar Token de Activacion de correo
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var origin = _httpContextAccessor.HttpContext?.Request.Scheme + "://" + _httpContextAccessor.HttpContext?.Request.Host;
+        var uri = new Uri($"{origin}/Account/ConfirmAccount?userId={user.Id}&token={Uri.EscapeDataString(token)}");
+
+        await _emailService.SendEmailAsync(
+            user.Email,
+            "Activación de cuenta - Artemis Banking Pro",
+            $"<p>Hola <strong>{user.FirstName}</strong>,</p>" +
+            $"<p>Tu cuenta ha sido creada exitosamente. Para activarla y poder iniciar sesión en el sistema, haz clic en el siguiente enlace:</p>" +
+            $"<p style='margin-top:16px;'><a href='{uri}' style='display:inline-block;padding:10px 18px;background:#35648B;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;'>Activar mi Cuenta</a></p>");
 
         return new UserDto
         {
@@ -116,6 +137,7 @@ public class UserService : IUserService
         var user = await _userManager.FindByIdAsync(id);
         if (user is not null)
         {
+            user.IsActive = status;
             user.EmailConfirmed = status;
             await _userManager.UpdateAsync(user);
         }

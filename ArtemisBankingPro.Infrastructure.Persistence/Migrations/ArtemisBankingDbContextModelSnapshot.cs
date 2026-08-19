@@ -402,14 +402,19 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ActivationTokens");
+                    b.HasIndex("Token");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActivationTokens", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.ResetToken", b =>
@@ -428,14 +433,44 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ResetTokens");
+                    b.HasIndex("Token");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResetTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.User", b =>
@@ -448,31 +483,53 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("IdentificationNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TradeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("IdentificationNumber")
+                        .IsUnique();
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
                 });
@@ -590,6 +647,31 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.Navigation("SavingsAccount");
                 });
 
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.ActivationToken", b =>
+                {
+                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.ResetToken", b =>
+                {
+                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.User", b =>
+                {
+                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.Role", null)
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId");
+                });
+
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Card.CardConsumption", b =>
                 {
                     b.Navigation("ProcessingLog");
@@ -605,6 +687,11 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Loan", b =>
                 {
                     b.Navigation("Installments");
+                });
+
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.User", b =>

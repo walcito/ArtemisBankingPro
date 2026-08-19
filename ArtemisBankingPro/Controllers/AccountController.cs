@@ -1,5 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.Account;
 using ArtemisBankingPro.Core.Application.Features.Account;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Account;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace ArtemisBankingPro.Controllers;
 public class AccountController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly IAccountService _accountService;
 
-    public AccountController(IMediator mediator)
+    public AccountController(IMediator mediator, IAccountService accountService)
     {
         _mediator = mediator;
+        _accountService = accountService;
     }
 
     [HttpGet]
@@ -43,13 +46,38 @@ public class AccountController : Controller
             return View(vm);
         }
 
+        // Redireccionar al Admin si es Admin, o a Home si es otro rol
+        if (result.Role == "Admin")
+        {
+            return RedirectToAction("Index", "Admin");
+        }
+
         return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
-    public async Task<IActionResult> ConfirmAccount(string token)
+    [HttpPost]
+    public async Task<IActionResult> Logout()
     {
-        var request = new ConfirmAccountRequest { Token = token };
+        await _accountService.SignOutAsync();
+        return RedirectToAction("Login", "Account");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ResendActivationLink(string userName)
+    {
+        if (!string.IsNullOrEmpty(userName))
+        {
+            await _accountService.ResendActivationEmailAsync(userName);
+            ViewBag.Message = "Se ha reenviado el enlace de activación a su correo electrónico.";
+        }
+        return View("Login", new LoginViewModel());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmAccount(string userId, string token)
+    {
+        var request = new ConfirmAccountRequest { UserId = userId, Token = token };
         var success = await _mediator.Send(new ConfirmAccountCommand { Request = request });
 
         var vm = new ConfirmAccountViewModel
