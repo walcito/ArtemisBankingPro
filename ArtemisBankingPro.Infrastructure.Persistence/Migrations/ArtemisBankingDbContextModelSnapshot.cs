@@ -305,7 +305,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavingsAccounts");
+                    b.ToTable("SavingsAccounts", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Trade", b =>
@@ -383,7 +383,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SavingsAccountId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.ActivationToken", b =>
@@ -544,7 +544,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Beneficiaries");
+                    b.ToTable("Beneficiaries", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.AmortizationInstallment", b =>
