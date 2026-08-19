@@ -46,10 +46,18 @@ public class AccountController : Controller
             return View(vm);
         }
 
-        // Redireccionar al Admin si es Admin, o a Home si es otro rol
+        // Redirección por rol exacto
         if (result.Role == "Admin")
         {
             return RedirectToAction("Index", "Admin");
+        }
+        else if (result.Role == "Client" || result.Role == "Cliente")
+        {
+            return RedirectToAction("Index", "Client");
+        }
+        else if (result.Role == "Teller" || result.Role == "Cashier")
+        {
+            return RedirectToAction("Index", "Teller");
         }
 
         return RedirectToAction("Index", "Home");

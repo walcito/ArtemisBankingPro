@@ -16,9 +16,9 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index", "Teller");
         }
-        else if (User.IsInRole("Client"))
+        else if (User.IsInRole("Client") || User.IsInRole("Cliente"))
         {
-            return View();
+            return RedirectToAction("Index", "Client");
         }
 
         return RedirectToAction("Login", "Account");
