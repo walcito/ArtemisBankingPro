@@ -1,25 +1,29 @@
 @model ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw.WithdrawCommand
 
-@{ ViewData["Title"] = "Confirmar Retiro"; }
+@{ ViewData["Title"] = "Confirmar retiro"; }
 
-<div class="topbar">
-    <div class="crumb">Cajero</div>
-    <h1 id="screen-title">Confirmar retiro</h1>
-</div>
-
-<div class="card panel" style="max-width:480px;">
+<div class="card panel" style="max-width:480px; margin: 0 auto;">
     <div class="section-title">Confirmar operación</div>
-
+    
     <div class="confirm-box">
-        <div class="confirm-row"><span>Cuenta origen</span><b>@Model.AccountNumber</b></div>
-        <div class="confirm-row"><span>Monto</span><b>@Model.Amount.ToString("C2")</b></div>
+        <div class="confirm-row">
+            <span>Cuenta origen</span>
+            <b>@Model.AccountNumber</b>
+        </div>
+        <div class="confirm-row">
+            <span>Monto a retirar</span>
+            <b>@Model.Amount.ToString("C2")</b>
+        </div>
     </div>
-
+    
     <div style="font-size:13px;margin:16px 0;">¿Está seguro que desea realizar esta operación?</div>
-
-    <form asp-action="ConfirmWithdraw" method="post" style="display:flex;gap:10px;">
+    
+    <form asp-action="ConfirmWithdraw" method="post" style="margin:0;">
         @Html.AntiForgeryToken()
-        <button type="submit" name="confirmed" value="false" class="btn btn-ghost btn-block">Cancelar</button>
-        <button type="submit" name="confirmed" value="true" class="btn btn-primary btn-block">Confirmar</button>
+        <input type="hidden" name="confirmed" value="true" />
+        <div style="display:flex;gap:10px;">
+            <a asp-action="Withdraw" class="btn btn-ghost btn-block">Cancelar</a>
+            <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
+        </div>
     </form>
 </div>

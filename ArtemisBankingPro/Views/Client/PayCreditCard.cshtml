@@ -1,22 +1,58 @@
 @model ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayCreditCardFromClient.PayCreditCardFromClientCommand
-@{ ViewData["Title"] = "Pago a Tarjeta"; }
-<div class="topbar"><div class="crumb">Cliente</div><h1 id="screen-title">Pago a tarjeta de crédito</h1></div>
+@{ ViewData["Title"] = "Pago a tarjeta de crédito"; }
+
 <div class="two-col">
     <div class="card panel">
         <form asp-action="PayCreditCard" method="post">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="All" class="alert alert-info"></div>
-            <div class="field"><label asp-for="SourceAccountNumber">Cuenta de Origen <span class="req">*</span></label><input asp-for="SourceAccountNumber" /><span asp-validation-for="SourceAccountNumber" class="text-danger"></span></div>
-            <div class="field"><label asp-for="CreditCardId">ID de la Tarjeta <span class="req">*</span></label><input asp-for="CreditCardId" type="number" /><span asp-validation-for="CreditCardId" class="text-danger"></span></div>
-            <div class="field"><label asp-for="Amount">Monto a Pagar <span class="req">*</span></label><input asp-for="Amount" type="number" step="0.01" /><span asp-validation-for="Amount" class="text-danger"></span></div>
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+            
+            <div class="field">
+                <label asp-for="CreditCardId">Tarjeta de crédito destino <span class="req">*</span></label>
+                <select asp-for="CreditCardId">
+                    <option value="">-- Seleccionar --</option>
+                    @if(ViewBag.Cards != null)
+                    {
+                        foreach(var card in ViewBag.Cards)
+                        {
+                            <option value="@card.Id">@card.Identifier — deuda @card.RelevantAmount.ToString("C2")</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CreditCardId" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de origen <span class="req">*</span></label>
+                <select asp-for="SourceAccountNumber">
+                    <option value="">-- Seleccionar --</option>
+                    @if(ViewBag.Accounts != null)
+                    {
+                        foreach(var acc in ViewBag.Accounts)
+                        {
+                            <option value="@acc.Identifier">@acc.Identifier — @acc.RelevantAmount.ToString("C2")</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="SourceAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="Amount">Monto a pagar <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
             <button type="submit" class="btn btn-primary btn-block">Continuar</button>
         </form>
     </div>
+    
     <div class="card panel">
         <div class="section-title">Reglas clave</div>
         <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
-            <li>La tarjeta debe ser de tu propiedad.</li>
-            <li>El monto no puede superar la deuda actual.</li>
+            <li>Si el monto supera la deuda, solo se cobra el monto de la deuda actual.</li>
+            <li>La tarjeta debe tener deuda pendiente.</li>
+            <li>La cuenta de origen debe tener fondos suficientes.</li>
         </ul>
     </div>
 </div>

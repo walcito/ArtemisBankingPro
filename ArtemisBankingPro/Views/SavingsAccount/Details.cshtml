@@ -1,46 +1,46 @@
 @model ArtemisBankingPro.Core.Application.Common.Models.PagedResult<ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions.TransactionDto>
-
 @{
-    ViewData["Title"] = "Historial de Transacciones";
-    var accountNumber = ViewBag.AccountNumber as string;
+    ViewData["Title"] = $"Cuenta {ViewBag.AccountNumber} · Movimientos";
 }
 
-<h2>Historial — Cuenta @accountNumber</h2>
+<div class="card panel" style="margin-bottom:18px;">
+    <div class="amount-hero">@(((decimal)ViewBag.Balance).ToString("C2")) <small>balance disponible</small></div>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Tipo</th>
-            <th>Monto</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transaction in Model.Items)
-        {
-            <tr>
-                <td>@transaction.Date.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>
-                    <span class="badge @(transaction.Type.ToString() == "Credit" ? "bg-success" : "bg-danger")">
-                        @transaction.Type
-                    </span>
-                </td>
-                <td>@transaction.Amount.ToString("C2")</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card panel">
+    <div class="section-title">Transacciones (más recientes primero)</div>
+    @foreach (var tx in Model.Items)
+    {
+        var isCredit = tx.Type.ToString() == "Credit" || tx.Type.ToString() == "Deposit";
+        <div class="tx-row">
+            <div class="tx-left">
+                <div class="tx-ic @(isCredit ? "credit" : "debit")">@(isCredit ? "↓" : "↑")</div>
+                <div>
+                    <div class="tx-title">@tx.Description</div>
+                    <div class="tx-sub">@tx.Date.ToString("dd/MM/yyyy HH:mm") · <span class="badge ok" style="padding:2px 8px;">APROBADA</span></div>
+                </div>
+            </div>
+            <div class="tx-amt @(isCredit ? "credit" : "debit")">@(isCredit ? "+" : "−") @tx.Amount.ToString("C2")</div>
+        </div>
+    }
+    @if (!Model.Items.Any())
+    {
+        <div class="skeleton-empty">
+            <div class="ic">📄</div>
+            <h4>Sin movimientos</h4>
+            <p>Esta cuenta no tiene transacciones registradas aún.</p>
+        </div>
+    }
+</div>
 
-<nav>
-    <ul class="pagination">
+@if (Model.TotalPages > 1)
+{
+    <div class="switch-tabs" style="margin-top: 20px;">
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" asp-action="Details"
-                    asp-route-accountNumber="@accountNumber" asp-route-pageNumber="@i">@i</a>
-            </li>
+            <a href="?pageNumber=@i" class="btn btn-ghost @(i == Model.PageNumber ? "on" : "")" style="border: none; padding: 8px 16px;">@i</a>
         }
-    </ul>
-</nav>
+    </div>
+}
 
-<a asp-action="Index" class="btn btn-secondary">Volver</a>
+<a asp-action="Index" class="btn btn-ghost" style="margin-top:16px;">← Volver atrás</a>

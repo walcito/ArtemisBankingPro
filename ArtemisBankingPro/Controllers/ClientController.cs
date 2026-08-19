@@ -65,14 +65,24 @@ public class ClientController : Controller
         return RedirectToAction(nameof(Beneficiaries));
     }
 
-    public IActionResult TransferOwnAccounts() => View();
+    public async Task<IActionResult> TransferOwnAccounts()
+    {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult TransferOwnAccounts(TransferBetweenOwnAccountsCommand command)
+    public async Task<IActionResult> TransferOwnAccounts(TransferBetweenOwnAccountsCommand command)
     {
         command.RequestingUserId = GetAuthenticatedUserId();
-        if (!ModelState.IsValid) return View(command);
+        if (!ModelState.IsValid)
+        {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
+            return View(command);
+        }
 
         TempData["PendingTransferOwn"] = JsonSerializer.Serialize(command);
         return RedirectToAction(nameof(ConfirmTransferOwnAccounts));
@@ -103,14 +113,24 @@ public class ClientController : Controller
 
     public IActionResult TransferOwnAccountsSuccess() => View();
 
-    public IActionResult ExpressTransaction() => View();
+    public async Task<IActionResult> ExpressTransaction()
+    {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult ExpressTransaction(ExpressTransactionCommand command)
+    public async Task<IActionResult> ExpressTransaction(ExpressTransactionCommand command)
     {
         command.RequestingUserId = GetAuthenticatedUserId();
-        if (!ModelState.IsValid) return View(command);
+        if (!ModelState.IsValid)
+        {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
+            return View(command);
+        }
 
         TempData["PendingExpress"] = JsonSerializer.Serialize(command);
         return RedirectToAction(nameof(ConfirmExpressTransaction));
@@ -143,6 +163,8 @@ public class ClientController : Controller
 
     public async Task<IActionResult> TransferToBeneficiary()
     {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
         var beneficiaries = await _mediator.Send(new GetBeneficiariesQuery { OwnerUserId = GetAuthenticatedUserId() });
         ViewBag.Beneficiaries = beneficiaries;
         return View();
@@ -156,6 +178,8 @@ public class ClientController : Controller
 
         if (!ModelState.IsValid)
         {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
             var beneficiaries = await _mediator.Send(new GetBeneficiariesQuery { OwnerUserId = GetAuthenticatedUserId() });
             ViewBag.Beneficiaries = beneficiaries;
             return View(command);
@@ -190,14 +214,26 @@ public class ClientController : Controller
 
     public IActionResult TransferToBeneficiarySuccess() => View();
 
-    public IActionResult CashAdvance() => View();
+    public async Task<IActionResult> CashAdvance()
+    {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
+        ViewBag.Cards = homeData.CreditCards;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult CashAdvance(CashAdvanceCommand command)
+    public async Task<IActionResult> CashAdvance(CashAdvanceCommand command)
     {
         command.RequestingUserId = GetAuthenticatedUserId();
-        if (!ModelState.IsValid) return View(command);
+        if (!ModelState.IsValid)
+        {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
+            ViewBag.Cards = homeData.CreditCards;
+            return View(command);
+        }
 
         TempData["PendingCashAdvance"] = JsonSerializer.Serialize(command);
         return RedirectToAction(nameof(ConfirmCashAdvance));
@@ -228,14 +264,26 @@ public class ClientController : Controller
 
     public IActionResult CashAdvanceSuccess() => View();
 
-    public IActionResult PayLoan() => View();
+    public async Task<IActionResult> PayLoan()
+    {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
+        ViewBag.Loans = homeData.Loans;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult PayLoan(PayLoanFromClientCommand command)
+    public async Task<IActionResult> PayLoan(PayLoanFromClientCommand command)
     {
         command.RequestingUserId = GetAuthenticatedUserId();
-        if (!ModelState.IsValid) return View(command);
+        if (!ModelState.IsValid)
+        {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
+            ViewBag.Loans = homeData.Loans;
+            return View(command);
+        }
 
         TempData["PendingPayLoan"] = JsonSerializer.Serialize(command);
         return RedirectToAction(nameof(ConfirmPayLoan));
@@ -266,14 +314,26 @@ public class ClientController : Controller
 
     public IActionResult PayLoanSuccess() => View();
 
-    public IActionResult PayCreditCard() => View();
+    public async Task<IActionResult> PayCreditCard()
+    {
+        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        ViewBag.Accounts = homeData.SavingsAccounts;
+        ViewBag.Cards = homeData.CreditCards;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult PayCreditCard(PayCreditCardFromClientCommand command)
+    public async Task<IActionResult> PayCreditCard(PayCreditCardFromClientCommand command)
     {
         command.RequestingUserId = GetAuthenticatedUserId();
-        if (!ModelState.IsValid) return View(command);
+        if (!ModelState.IsValid)
+        {
+            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            ViewBag.Accounts = homeData.SavingsAccounts;
+            ViewBag.Cards = homeData.CreditCards;
+            return View(command);
+        }
 
         TempData["PendingPayCreditCard"] = JsonSerializer.Serialize(command);
         return RedirectToAction(nameof(ConfirmPayCreditCard));

@@ -1,23 +1,40 @@
 @model ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance.CashAdvanceCommand
-@{
-    ViewData["Title"] = "Confirmar Avance de Efectivo";
-    var interest = Model.Amount * 0.0625m;
-    var totalDebt = Model.Amount + interest;
-}
-<div class="topbar"><div class="crumb">Cliente</div><h1 id="screen-title">Confirmar avance de efectivo</h1></div>
-<div class="card panel" style="max-width:480px;">
+@{ ViewData["Title"] = "Confirmar avance de efectivo"; }
+
+<div class="card panel" style="max-width:480px; margin: 0 auto;">
     <div class="section-title">Confirmar operación</div>
+    
     <div class="confirm-box">
-        <div class="confirm-row"><span>Tarjeta</span><b>#@Model.CreditCardId</b></div>
-        <div class="confirm-row"><span>Cuenta destino</span><b>@Model.DestinationAccountNumber</b></div>
-        <div class="confirm-row"><span>Monto a recibir</span><b>@Model.Amount.ToString("C2")</b></div>
-        <div class="confirm-row"><span>Interés (6.25%)</span><b>@interest.ToString("C2")</b></div>
-        <div class="confirm-row"><span>Deuda total a agregar</span><b>@totalDebt.ToString("C2")</b></div>
+        <div class="confirm-row">
+            <span>Tarjeta origen (ID)</span>
+            <b>#@Model.CreditCardId</b>
+        </div>
+        <div class="confirm-row">
+            <span>Cuenta destino</span>
+            <b>@Model.DestinationAccountNumber</b>
+        </div>
+        <div class="confirm-row">
+            <span>Monto solicitado</span>
+            <b>@Model.Amount.ToString("C2")</b>
+        </div>
+        <div class="confirm-row" style="color:var(--danger)">
+            <span>Interés (6.25%)</span>
+            <b>@((Model.Amount * 0.0625m).ToString("C2"))</b>
+        </div>
+        <div class="confirm-row" style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">
+            <span>Total cargado a tarjeta</span>
+            <b>@((Model.Amount * 1.0625m).ToString("C2"))</b>
+        </div>
     </div>
+    
     <div style="font-size:13px;margin:16px 0;">¿Está seguro que desea realizar esta operación?</div>
-    <form asp-action="ConfirmCashAdvance" method="post" style="display:flex;gap:10px;">
+    
+    <form asp-action="ConfirmCashAdvance" method="post" style="margin:0;">
         @Html.AntiForgeryToken()
-        <button type="submit" name="confirmed" value="false" class="btn btn-ghost btn-block">Cancelar</button>
-        <button type="submit" name="confirmed" value="true" class="btn btn-primary btn-block">Confirmar</button>
+        <input type="hidden" name="confirmed" value="true" />
+        <div style="display:flex;gap:10px;">
+            <a asp-action="CashAdvance" class="btn btn-ghost btn-block">Cancelar</a>
+            <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
+        </div>
     </form>
 </div>

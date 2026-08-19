@@ -1,44 +1,77 @@
 @model ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome.ClientHomeDto
-@{ ViewData["Title"] = "Home del Cliente"; }
-<div class="topbar"><div class="crumb">Cliente</div><h1 id="screen-title">Mis productos</h1></div>
+@{ ViewData["Title"] = "Mis productos"; }
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-info">@TempData["SuccessMessage"]</div>
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-<div class="card panel" style="margin-bottom:20px;">
-    <div class="section-title">Cuentas de Ahorro</div>
+<div class="section-title">Cuentas de ahorro</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:28px;">
     @foreach (var a in Model.SavingsAccounts)
     {
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
-            <div><div class="tx-title">@a.Identifier</div><div class="tx-sub">@a.Status</div></div>
-            <div style="display:flex;align-items:center;gap:12px;">
-                <b class="num">@a.RelevantAmount.ToString("C2")</b>
-                <a asp-action="AccountDetails" asp-route-accountNumber="@a.Identifier" class="btn btn-ghost btn-sm">Ver</a>
+        <div class="card panel hoverable" style="cursor: default;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:6px;">@a.Identifier</div>
+                    <div style="font-size:11.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Cuenta @a.Status</div>
+                </div>
+            </div>
+            <div class="amount-hero">@a.RelevantAmount.ToString("C2") <small>disponible</small></div>
+        </div>
+    }
+    @if (!Model.SavingsAccounts.Any())
+    {
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">🏦</div>
+            <h4>Sin cuentas de ahorro</h4>
+            <p>No tienes cuentas de ahorro activas.</p>
+        </div>
+    }
+</div>
+
+<div class="section-title">Préstamos vigentes</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:28px;">
+    @foreach (var l in Model.Loans)
+    {
+        <div class="card panel hoverable">
+            <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:6px;">@l.Identifier</div>
+            <div style="font-size:11.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Préstamo @l.Status</div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                <div class="amount-hero" style="font-size:24px;">@l.RelevantAmount.ToString("C2") <small>pendiente</small></div>
             </div>
         </div>
     }
-</div>
-
-<div class="card panel" style="margin-bottom:20px;">
-    <div class="section-title">Préstamos</div>
-    @foreach (var l in Model.Loans)
+    @if (!Model.Loans.Any())
     {
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
-            <div><div class="tx-title">@l.Identifier</div><div class="tx-sub">@l.Status</div></div>
-            <b class="num">@l.RelevantAmount.ToString("C2")</b>
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">💳</div>
+            <h4>Sin préstamos</h4>
+            <p>No tienes préstamos vigentes actualmente.</p>
         </div>
     }
 </div>
 
-<div class="card panel">
-    <div class="section-title">Tarjetas de Crédito</div>
+<div class="section-title">Tarjetas de crédito</div>
+<div class="menu-tiles" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
     @foreach (var c in Model.CreditCards)
     {
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);">
-            <div><div class="tx-title">@c.Identifier</div><div class="tx-sub">@c.Status</div></div>
-            <b class="num">@c.RelevantAmount.ToString("C2")</b>
+        <div class="card panel hoverable">
+            <div style="font-family:'Space Grotesk';font-weight:700;letter-spacing:.08em;margin-bottom:10px;">@c.Identifier</div>
+            <div class="field-row" style="margin-bottom:8px;">
+                <div><div class="lbl" style="font-size:10.5px;color:var(--text-faint)">Estado</div><div style="font-weight:700">@c.Status</div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div class="lbl" style="font-size:10.5px;color:var(--text-faint)">Adeudado</div><div style="font-weight:700;color:var(--danger)">@c.RelevantAmount.ToString("C2")</div></div>
+            </div>
+        </div>
+    }
+    @if (!Model.CreditCards.Any())
+    {
+        <div class="skeleton-empty" style="grid-column: 1 / -1;">
+            <div class="ic">🪪</div>
+            <h4>Sin tarjetas</h4>
+            <p>No tienes tarjetas de crédito activas.</p>
         </div>
     }
 </div>

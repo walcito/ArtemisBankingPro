@@ -3,6 +3,7 @@ using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Entities;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 namespace ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayLoanFromClient;
 
@@ -13,19 +14,23 @@ public class PayLoanFromClientCommandHandler : IRequestHandler<PayLoanFromClient
     private readonly IGenericRepository<AmortizationInstallment> _installmentRepository;
     private readonly IGenericRepository<Transaction> _transactionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailService _emailService;
+    private readonly IGenericRepository<User> _userRepository;
 
     public PayLoanFromClientCommandHandler(
         IGenericRepository<SavingsAccount> savingsAccountRepository,
         IGenericRepository<Loan> loanRepository,
         IGenericRepository<AmortizationInstallment> installmentRepository,
         IGenericRepository<Transaction> transactionRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, IEmailService emailService, IGenericRepository<User> userRepository)
     {
         _savingsAccountRepository = savingsAccountRepository;
         _loanRepository = loanRepository;
         _installmentRepository = installmentRepository;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
+        _emailService = emailService;
+        _userRepository = userRepository;
     }
 
     public async Task<Unit> Handle(PayLoanFromClientCommand request, CancellationToken cancellationToken)
@@ -123,6 +128,12 @@ public class PayLoanFromClientCommandHandler : IRequestHandler<PayLoanFromClient
         {
             await _unitOfWork.RollbackTransactionAsync();
             throw;
+        }
+
+                var user = await _userRepository.GetByIdAsync(request.RequestingUserId);
+        if (user != null)
+        {
+            await _emailService.SendEmailAsync(user.Email, "Notificación de Transacción", "Se ha procesado una transacción exitosamente.");
         }
 
         return Unit.Value;
