@@ -55,9 +55,9 @@ public class AccountController : Controller
         {
             return RedirectToAction("Index", "Client");
         }
-        else if (result.Role == "Teller" || result.Role == "Cashier")
+        else if (result.Role == "Teller" || result.Role == "Cashier" || result.Role == "Cajero")
         {
-            return RedirectToAction("Index", "Teller");
+            return RedirectToAction("Index", "Cashier");
         }
 
         return RedirectToAction("Index", "Home");
