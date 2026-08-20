@@ -10,9 +10,15 @@ public static class IdentitySeeder
         var roles = new[]
         {
             new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+            new IdentityRole { Name = "Administrador", NormalizedName = "ADMINISTRADOR" },
             new IdentityRole { Name = "Teller", NormalizedName = "TELLER" },
+            new IdentityRole { Name = "Cashier", NormalizedName = "CASHIER" },
+            new IdentityRole { Name = "Cajero", NormalizedName = "CAJERO" },
             new IdentityRole { Name = "Client", NormalizedName = "CLIENT" },
-            new IdentityRole { Name = "Merchant", NormalizedName = "MERCHANT" }
+            new IdentityRole { Name = "Cliente", NormalizedName = "CLIENTE" },
+            new IdentityRole { Name = "Merchant", NormalizedName = "MERCHANT" },
+            new IdentityRole { Name = "Commerce", NormalizedName = "COMMERCE" },
+            new IdentityRole { Name = "Comercio", NormalizedName = "COMERCIO" }
         };
 
         foreach (var role in roles)
@@ -40,6 +46,29 @@ public static class IdentitySeeder
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(defaultAdmin, "Admin");
+                await userManager.AddToRoleAsync(defaultAdmin, "Administrador");
+            }
+        }
+
+        var defaultCashier = new ApplicationUser
+        {
+            UserName = "cajero",
+            Email = "cajero@artemisbanking.com",
+            FirstName = "Cajero",
+            LastName = "Ventanilla",
+            IdentificationNumber = "00000000001",
+            EmailConfirmed = true,
+            IsActive = true
+        };
+
+        if (await userManager.FindByEmailAsync(defaultCashier.Email) == null)
+        {
+            var result = await userManager.CreateAsync(defaultCashier, "123P@$$word!");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(defaultCashier, "Cashier");
+                await userManager.AddToRoleAsync(defaultCashier, "Cajero");
+                await userManager.AddToRoleAsync(defaultCashier, "Teller");
             }
         }
     }

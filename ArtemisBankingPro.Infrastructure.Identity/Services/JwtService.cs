@@ -19,14 +19,23 @@ public class JwtService : IJwtService
 
     public string GenerateJwtToken(User user)
     {
+        return GenerateJwtToken(user.Id.ToString(), user.Username, user.Email, new List<string> { user.Role.ToString() });
+    }
+
+    public string GenerateJwtToken(string id, string userName, string email, IList<string> roles)
+    {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, user.Role.ToString()),
+            new(ClaimTypes.NameIdentifier, id),
+            new(ClaimTypes.Name, userName),
+            new(ClaimTypes.Email, email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:SecretKey"] ?? "KeySuperSecretaDePruebaArtemisBankingPro2026"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

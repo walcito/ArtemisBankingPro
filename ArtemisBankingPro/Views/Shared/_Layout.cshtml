@@ -47,11 +47,27 @@
                             <span class="dot"></span>Comercios
                         </a>
                     }
-                    else if (User.IsInRole("Teller") || User.IsInRole("Cashier"))
+                    else if (User.IsInRole("Teller") || User.IsInRole("Cashier") || User.IsInRole("Cajero"))
                     {
+                        var cashierAction = ViewContext.RouteData.Values["action"]?.ToString();
                         <div class="nav-title">Cajero</div>
-                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Teller" || ViewContext.RouteData.Values["controller"]?.ToString() == "Cashier" ? "active" : "")" asp-controller="Teller" asp-action="Index">
-                            <span class="dot"></span>Operaciones de Caja
+                        <a class="nav-item @(cashierAction == "Index" ? "active" : "")" asp-controller="Cashier" asp-action="Index">
+                            <span class="dot"></span>Dashboard
+                        </a>
+                        <a class="nav-item @(cashierAction == "Deposit" || cashierAction == "ConfirmDeposit" || cashierAction == "DepositSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="Deposit">
+                            <span class="dot"></span>Depósito
+                        </a>
+                        <a class="nav-item @(cashierAction == "Withdraw" || cashierAction == "ConfirmWithdraw" || cashierAction == "WithdrawSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="Withdraw">
+                            <span class="dot"></span>Retiro
+                        </a>
+                        <a class="nav-item @(cashierAction == "ThirdPartyTransaction" || cashierAction == "ConfirmThirdPartyTransaction" || cashierAction == "ThirdPartyTransactionSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="ThirdPartyTransaction">
+                            <span class="dot"></span>Transacción a Terceros
+                        </a>
+                        <a class="nav-item @(cashierAction == "PayCreditCard" || cashierAction == "ConfirmPayCreditCard" || cashierAction == "PayCreditCardSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="PayCreditCard">
+                            <span class="dot"></span>Pago a Tarjeta
+                        </a>
+                        <a class="nav-item @(cashierAction == "PayLoan" || cashierAction == "ConfirmPayLoan" || cashierAction == "PayLoanSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="PayLoan">
+                            <span class="dot"></span>Pago a Préstamo
                         </a>
                     }
                     else if (User.IsInRole("Client") || User.IsInRole("Cliente"))

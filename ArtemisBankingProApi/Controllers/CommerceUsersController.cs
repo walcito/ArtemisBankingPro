@@ -8,7 +8,7 @@ namespace ArtemisBankingProApi.Controllers;
 
 [ApiController]
 [Route("api/commerce-users")]
-[Authorize(Roles = "Administrador")]
+[Authorize(Roles = "Admin,Administrador")]
 public class CommerceUsersController : ControllerBase
 {
     private readonly IMediator _mediator;

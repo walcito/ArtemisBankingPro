@@ -14,19 +14,22 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IJwtService _jwtService;
 
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
+            _jwtService = jwtService;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthRequest request)
@@ -42,6 +45,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                 return new AuthResponse { HasError = true, Error = "Credenciales incorrectas." };
 
             var roles = await _userManager.GetRolesAsync(user);
+            var token = _jwtService.GenerateJwtToken(user.Id, user.UserName!, user.Email!, roles);
 
             return new AuthResponse
             {
@@ -49,6 +53,7 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                 UserName = user.UserName!,
                 Email = user.Email!,
                 Role = roles.FirstOrDefault() ?? "",
+                Token = token,
                 IsActive = user.IsActive && user.EmailConfirmed
             };
         }

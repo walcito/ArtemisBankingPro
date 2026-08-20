@@ -18,7 +18,7 @@ namespace ArtemisBankingPro.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/client")]
-[Authorize(Roles = "Cliente")]
+[Authorize(Roles = "Client,Cliente")]
 public class ClientController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -8,7 +8,7 @@ namespace ArtemisBankingProApi.Controllers
 {
     [ApiController]
     [Route("pay")]
-    [Authorize(Roles = "Administrador,Comercio")]
+    [Authorize(Roles = "Admin,Administrador,Commerce,Comercio,Merchant")]
     public class PayController : ControllerBase
     {
         private readonly IMediator _mediator;
