@@ -12,9 +12,9 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index", "Admin");
         }
-        else if (User.IsInRole("Teller") || User.IsInRole("Cashier"))
+        else if (User.IsInRole("Teller") || User.IsInRole("Cashier") || User.IsInRole("Cajero"))
         {
-            return RedirectToAction("Index", "Teller");
+            return RedirectToAction("Index", "Cashier");
         }
         else if (User.IsInRole("Client") || User.IsInRole("Cliente"))
         {
