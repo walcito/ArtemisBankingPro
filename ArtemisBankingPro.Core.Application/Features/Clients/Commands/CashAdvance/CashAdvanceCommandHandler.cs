@@ -1,11 +1,13 @@
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
-using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 namespace ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance;
 
@@ -96,7 +98,7 @@ public class CashAdvanceCommandHandler : IRequestHandler<CashAdvanceCommand, Uni
                 var user = await _userRepository.GetByIdAsync(request.RequestingUserId);
         if (user != null)
         {
-            await _emailService.SendEmailAsync(user.Email, "Notificación de Transacción", "Se ha procesado una transacción exitosamente.");
+            await _emailService.SendEmailAsync(user.Email, "Notificaciï¿½n de Transacciï¿½n", "Se ha procesado una transacciï¿½n exitosamente.");
         }
 
         return Unit.Value;

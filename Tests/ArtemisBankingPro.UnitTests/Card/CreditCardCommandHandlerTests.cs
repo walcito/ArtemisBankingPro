@@ -1,10 +1,10 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Card;
+using ArtemisBankingPro.Core.Application.Dtos.Card;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCreditCard;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.CancelCreditCard;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.UpdateCredit;
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.Interfaces.Card;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Users;

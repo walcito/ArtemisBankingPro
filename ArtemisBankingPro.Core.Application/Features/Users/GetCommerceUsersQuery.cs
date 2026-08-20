@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Users;

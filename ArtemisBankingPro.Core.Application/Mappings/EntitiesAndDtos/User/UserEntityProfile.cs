@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 
