@@ -3,6 +3,7 @@ using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Cance
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 using ArtemisBankingPro.Core.Application.Common.Models;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,8 @@ public class SavingsAccountController : Controller
 
     public async Task<IActionResult> Index(
         int pageNumber = 1, int pageSize = 10, string? identificationNumber = null,
-        ArtemisBankingPro.Core.Domain.Common.Enums.AccountStatus? status = null,
-        ArtemisBankingPro.Core.Domain.Common.Enums.AccountType? type = null)
+        AccountStatus? status = null,
+        AccountType? type = null)
     {
         var query = new GetSavingsAccountsQuery
         {

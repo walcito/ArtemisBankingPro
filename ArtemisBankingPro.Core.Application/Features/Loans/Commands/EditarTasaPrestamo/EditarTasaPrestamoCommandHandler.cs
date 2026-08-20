@@ -1,5 +1,5 @@
-using ArtemisBankingPro.Core.Domain.Entities;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 

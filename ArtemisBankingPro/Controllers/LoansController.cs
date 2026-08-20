@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

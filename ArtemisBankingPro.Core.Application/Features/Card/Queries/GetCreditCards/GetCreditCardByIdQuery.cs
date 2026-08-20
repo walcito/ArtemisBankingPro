@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Card;
+using ArtemisBankingPro.Core.Application.Dtos.Card;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Card.Queries.GetCreditCards

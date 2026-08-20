@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Clients.Commands.AddBeneficiary;

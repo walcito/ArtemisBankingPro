@@ -1,6 +1,12 @@
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using ArtemisBankingPro.Core.Application.Services;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +109,7 @@ public static class PrestamoSeed
         await context.SaveChangesAsync();
 
         // Instanciar servicio de amortización
-        var amortizationService = new CalculadoraAmortizationService();
+        var amortizationService = new AmortizationService();
 
         // 3. Crear Préstamos
         // Préstamo 1: Juan Pérez (Activo, amortizado parcialmente)

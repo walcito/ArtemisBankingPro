@@ -1,4 +1,4 @@
-﻿namespace ArtemisBankingPro.Core.Application.Interfaces
+namespace ArtemisBankingPro.Core.Application.Interfaces
 {
     public interface IGenericService<T> where T : class
     {

@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Interfaces.Card;
+using ArtemisBankingPro.Core.Application.Interfaces.Card;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
 using System.Security.Cryptography;
 

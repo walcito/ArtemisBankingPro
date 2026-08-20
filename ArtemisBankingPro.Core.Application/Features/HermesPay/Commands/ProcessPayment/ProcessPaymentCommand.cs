@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment
 {

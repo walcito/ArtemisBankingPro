@@ -1,19 +1,20 @@
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 
 namespace ArtemisBankingPro.Core.Application.Services;
 
-// Genera un número de préstamo único de 9 dígitos
-public class GeneradorNumeroPrestamoService
+// Generates a unique 9-digit loan number
+public class LoanNumberGeneratorService : ILoanNumberGeneratorService
 {
     private readonly IGenericRepository<Loan> _loanRepository;
 
-    public GeneradorNumeroPrestamoService(IGenericRepository<Loan> loanRepository)
+    public LoanNumberGeneratorService(IGenericRepository<Loan> loanRepository)
     {
         _loanRepository = loanRepository;
     }
 
-    public async Task<string> GenerarNumeroUnicoAsync()
+    public async Task<string> GenerateUniqueLoanNumberAsync()
     {
         var loans = await _loanRepository.GetAllAsync();
         string loanNumber;

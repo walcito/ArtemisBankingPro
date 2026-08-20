@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.User;
+using ArtemisBankingPro.Core.Application.Dtos.User;
 
 namespace ArtemisBankingPro.Core.Application.Interfaces;
 

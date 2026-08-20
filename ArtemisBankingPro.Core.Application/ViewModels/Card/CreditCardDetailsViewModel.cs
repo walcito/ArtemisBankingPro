@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using System.ComponentModel.DataAnnotations;
 
 namespace ArtemisBankingPro.Core.Application.ViewModels.Card

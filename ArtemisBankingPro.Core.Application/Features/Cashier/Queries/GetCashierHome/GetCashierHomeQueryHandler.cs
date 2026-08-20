@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;

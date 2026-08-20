@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.CreateTrade;
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.ToggleTradeStatus;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using FluentAssertions;

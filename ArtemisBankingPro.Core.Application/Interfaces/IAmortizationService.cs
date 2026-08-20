@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 
 namespace ArtemisBankingPro.Core.Application.Interfaces;
 

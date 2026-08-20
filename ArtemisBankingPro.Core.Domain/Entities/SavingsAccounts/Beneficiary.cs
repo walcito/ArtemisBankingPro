@@ -1,5 +1,6 @@
-namespace ArtemisBankingPro.Core.Domain.Entities;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
+
+namespace ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 
 public class Beneficiary
 {

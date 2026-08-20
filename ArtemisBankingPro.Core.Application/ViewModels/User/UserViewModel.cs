@@ -1,4 +1,4 @@
-﻿namespace ArtemisBankingPro.Core.Application.ViewModels.User;
+namespace ArtemisBankingPro.Core.Application.ViewModels.User;
 
 public class UserViewModel
 {

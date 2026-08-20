@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment
 {

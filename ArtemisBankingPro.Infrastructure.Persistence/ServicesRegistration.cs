@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace ArtemisBankingPro.Infrastructure.Persistence;
 
 public static class ServicesRegistration
@@ -19,8 +21,12 @@ public static class ServicesRegistration
         #region Contexts
         if (config.GetValue<bool>("UseInMemoryDatabase"))
         {
+            var inMemoryDbName = config.GetValue<string>("InMemoryDatabaseName") ?? "ArtemisBankingDb";
             services.AddDbContext<ArtemisBankingDbContext>(opt =>
-                opt.UseInMemoryDatabase("ArtemisBankingDb"));
+            {
+                opt.UseInMemoryDatabase(inMemoryDbName);
+                opt.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+            });
         }
         else
         {

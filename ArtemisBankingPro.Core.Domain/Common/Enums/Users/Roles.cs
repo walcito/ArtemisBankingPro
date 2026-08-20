@@ -1,4 +1,4 @@
-namespace ArtemisBankingPro.Core.Domain.Common.Enums;
+namespace ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 
 public enum Roles
 {

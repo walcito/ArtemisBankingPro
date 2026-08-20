@@ -1,4 +1,4 @@
-﻿
+
 namespace ArtemisBankingPro.Core.Application.Interfaces.Card
 {
     public interface ICvcHashService
