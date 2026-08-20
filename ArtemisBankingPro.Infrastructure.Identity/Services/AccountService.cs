@@ -1,4 +1,5 @@
- /*using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using ArtemisBankingPro.Core.Application.Dtos.Account;
 using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Application.Interfaces;
@@ -11,75 +12,99 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<AuthResponseDto?> LoginAsync(AuthRequestDto request)
+        public async Task<AuthResponse> AuthenticateAsync(AuthRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email)
-                       ?? await _userManager.FindByNameAsync(request.Email);
+            var user = await _userManager.FindByNameAsync(request.UserName)
+                       ?? await _userManager.FindByEmailAsync(request.UserName);
 
-            if (user == null || !user.IsActive)
-                return null;
+            if (user == null || !user.IsActive || !user.EmailConfirmed)
+                return new AuthResponse { HasError = true, Error = "Usuario no encontrado o no activado." };
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, false);
             if (!result.Succeeded)
-                return null;
+                return new AuthResponse { HasError = true, Error = "Credenciales incorrectas." };
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            return new AuthResponseDto
+            return new AuthResponse
             {
                 Id = user.Id,
                 UserName = user.UserName!,
                 Email = user.Email!,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = roles.ToList(),
-                IsVerified = user.EmailConfirmed
+                Role = roles.FirstOrDefault() ?? "",
+                IsActive = user.IsActive && user.EmailConfirmed
             };
         }
 
-        public async Task<(bool Success, string Message)> RegisterUserAsync(RegisterUserDto request, string role)
+        public async Task SignOutAsync()
         {
-            if (await UserExistsAsync(request.UserName))
-                return (false, $"El nombre de usuario '{request.UserName}' ya está en uso.");
+            await _signInManager.SignOutAsync();
+        }
 
-            if (await EmailExistsAsync(request.Email))
-                return (false, $"El correo electrónico '{request.Email}' ya está registrado.");
-
-            if (!await _roleManager.RoleExistsAsync(role))
-                return (false, $"El rol '{role}' no existe.");
-
-            var user = new ApplicationUser
+        public async Task<bool> ConfirmAccountAsync(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return false;
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
             {
-                UserName = request.UserName,
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                IdentificationNumber = request.IdentificationNumber,
-                PhoneNumber = request.PhoneNumber,
-                EmailConfirmed = true,
-                IsActive = true
-            };
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return (false, $"Error en el registro: {errors}");
+                user.EmailConfirmed = true;
+                user.IsActive = true;
+                await _userManager.UpdateAsync(user);
+                return true;
             }
+            return false;
+        }
 
-            await _userManager.AddToRoleAsync(user, role);
-            return (true, $"Usuario registrado exitosamente con el rol '{role}'.");
+        public async Task<bool> ResendActivationEmailAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName) ?? await _userManager.FindByEmailAsync(userName);
+            if (user == null || user.EmailConfirmed) return false;
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var origin = _httpContextAccessor.HttpContext?.Request.Scheme + "://" + _httpContextAccessor.HttpContext?.Request.Host;
+            var uri = new Uri($"{origin}/Account/ConfirmAccount?userId={user.Id}&token={Uri.EscapeDataString(token)}");
+
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Activación de cuenta - Artemis Banking Pro",
+                $"<p>Hola <strong>{user.FirstName}</strong>,</p>" +
+                $"<p>Solicitaste reenviar el enlace de activación de tu cuenta. Haz clic en el siguiente enlace para activar tu acceso:</p>" +
+                $"<p style='margin-top:16px;'><a href='{uri}' style='display:inline-block;padding:10px 18px;background:#35648B;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;'>Activar mi Cuenta</a></p>");
+
+            return true;
+        }
+
+        public async Task<string> GetResetTokenAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null) return string.Empty;
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId);
+            if (user == null) return false;
+            var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+            return result.Succeeded;
         }
 
         public async Task<bool> UserExistsAsync(string username)
@@ -109,10 +134,9 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                     LastName = u.LastName,
                     Email = u.Email ?? "",
                     UserName = u.UserName ?? "",
-                    IdentificationNumber = u.IdentificationNumber,
-                    PhoneNumber = u.PhoneNumber ?? "",
-                    IsActive = u.IsActive,
-                    Roles = roles.ToList()
+                    Identification = u.IdentificationNumber,
+                    IsActive = u.IsActive && u.EmailConfirmed,
+                    Role = roles.FirstOrDefault() ?? ""
                 });
             }
 
@@ -133,73 +157,30 @@ namespace ArtemisBankingPro.Infrastructure.Identity.Services
                 LastName = u.LastName,
                 Email = u.Email ?? "",
                 UserName = u.UserName ?? "",
-                IdentificationNumber = u.IdentificationNumber,
-                PhoneNumber = u.PhoneNumber ?? "",
-                IsActive = u.IsActive,
-                Roles = roles.ToList()
+                Identification = u.IdentificationNumber,
+                IsActive = u.IsActive && u.EmailConfirmed,
+                Role = roles.FirstOrDefault() ?? ""
             };
         }
 
-        public async Task<(bool Success, string Message)> ChangeUserStatusAsync(string id, bool status)
+        public async Task<bool> ChangeUserStatusAsync(string id, bool status)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return (false, "Usuario no encontrado.");
-
-            if (await _userManager.IsInRoleAsync(user, "Admin") && !status)
-            {
-                var admins = await _userManager.GetUsersInRoleAsync("Admin");
-                var activeAdmins = admins.Count(a => a.IsActive);
-                if (activeAdmins <= 1)
-                    return (false, "Debe existir al menos un administrador activo en el sistema.");
-            }
+            if (user == null) return false;
 
             user.IsActive = status;
+            user.EmailConfirmed = status;
             await _userManager.UpdateAsync(user);
-
-            return (true, $"El estado del usuario se actualizó a {(status ? "Activo" : "Inactivo")}.");
+            return true;
         }
 
-        public async Task<(bool Success, string Message)> UpdateUserAsync(string id, UpdateUserDto dto)
+        public async Task<bool> DeleteUserCascadeAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return (false, "Usuario no encontrado.");
-
-            user.FirstName = dto.FirstName;
-            user.LastName = dto.LastName;
-            user.Email = dto.Email;
-            user.UserName = dto.UserName;
-            user.PhoneNumber = dto.PhoneNumber;
-
-            if (!string.IsNullOrEmpty(dto.Password))
-            {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetResult = await _userManager.ResetPasswordAsync(user, token, dto.Password);
-                if (!resetResult.Succeeded)
-                {
-                    return (false, "Error al actualizar la contraseña del usuario.");
-                }
-            }
-
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-                return (false, "Error al actualizar los datos del usuario.");
-
-            return (true, "Usuario actualizado correctamente.");
-        }
-
-        public async Task<(bool Success, string Message)> DeleteUserCascadeAsync(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return (false, "Usuario no encontrado.");
+            if (user == null) return false;
 
             var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-                return (false, "Error al eliminar el usuario de la base de datos.");
-
-            return (true, "Usuario eliminado correctamente.");
+            return result.Succeeded;
         }
     }
-}*/
+}

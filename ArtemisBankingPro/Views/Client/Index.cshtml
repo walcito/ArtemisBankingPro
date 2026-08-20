@@ -1,0 +1,176 @@
+@model ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome.ClientHomeDto
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Mis Productos";
+    var totalSavings = Model.SavingsAccounts?.Sum(a => a.RelevantAmount) ?? 0;
+    var totalLoans = Model.Loans?.Sum(l => l.RelevantAmount) ?? 0;
+    var totalCards = Model.CreditCards?.Sum(c => c.RelevantAmount) ?? 0;
+}
+
+<div class="stage" style="padding:20px 0;max-width:1200px;margin:0 auto;">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" style="margin-bottom:20px;">@TempData["SuccessMessage"]</div>
+    }
+
+    <!-- ============ RESUMEN DE SALDOS (STAT GRID) ============ -->
+    <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px;">
+        <div class="card stat panel">
+            <div class="lbl" style="font-size:11.5px;color:var(--text-dim);font-weight:700;text-transform:uppercase;">Saldo Total Disponible</div>
+            <div class="num" style="font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--c5);margin-top:6px;">@totalSavings.ToString("C2")</div>
+            <div class="spark"><i style="width: 100%; background: var(--c5);"></i></div>
+        </div>
+        <div class="card stat panel">
+            <div class="lbl" style="font-size:11.5px;color:var(--text-dim);font-weight:700;text-transform:uppercase;">Deuda en Préstamos</div>
+            <div class="num" style="font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--danger);margin-top:6px;">@totalLoans.ToString("C2")</div>
+            <div class="spark"><i style="width: 100%; background: var(--danger);"></i></div>
+        </div>
+        <div class="card stat panel">
+            <div class="lbl" style="font-size:11.5px;color:var(--text-dim);font-weight:700;text-transform:uppercase;">Deuda en Tarjetas</div>
+            <div class="num" style="font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--text);margin-top:6px;">@totalCards.ToString("C2")</div>
+            <div class="spark"><i style="width: 100%; background: var(--c3);"></i></div>
+        </div>
+    </div>
+
+    <!-- ============ ACCIONES RÁPIDAS ============ -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;">
+        <a asp-controller="Client" asp-action="ExpressTransaction" class="btn btn-primary btn-sm">⚡ Pago Expreso</a>
+        <a asp-controller="Client" asp-action="PayCreditCard" class="btn btn-ghost btn-sm">💳 Pagar Tarjeta</a>
+        <a asp-controller="Client" asp-action="PayLoan" class="btn btn-ghost btn-sm">📄 Pagar Préstamo</a>
+        <a asp-controller="Client" asp-action="TransferOwnAccounts" class="btn btn-ghost btn-sm">🔁 Transferir Propias</a>
+        <a asp-controller="Client" asp-action="TransferToBeneficiary" class="btn btn-ghost btn-sm">↗️ Transferir Beneficiario</a>
+        <a asp-controller="Client" asp-action="CashAdvance" class="btn btn-ghost btn-sm">💵 Avance Efectivo</a>
+    </div>
+
+    <!-- ============ DATAGRID 1: CUENTAS DE AHORRO ============ -->
+    <div style="margin-bottom:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h2 style="font-family:'Space Grotesk';font-size:18px;font-weight:700;margin:0;">Cuentas de Ahorro</h2>
+            <a asp-controller="Client" asp-action="TransferOwnAccounts" class="btn btn-ghost btn-sm">Transferir</a>
+        </div>
+        <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                    <tr style="background:var(--surface-2);border-bottom:1px solid var(--border);">
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Número de Cuenta</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Balance Disponible</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Estado</th>
+                        <th style="padding:12px 16px;text-align:center;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.SavingsAccounts != null && Model.SavingsAccounts.Any())
+                    {
+                        @foreach (var a in Model.SavingsAccounts)
+                        {
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-weight:700;letter-spacing:.05em;">@a.Identifier</td>
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--c5);">@a.RelevantAmount.ToString("C2")</td>
+                                <td style="padding:14px 16px;">
+                                    <span class="badge ok" style="background:rgba(181,209,217,.5);color:#274b69;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@a.Status</span>
+                                </td>
+                                <td style="padding:14px 16px;text-align:center;">
+                                    <a asp-controller="Client" asp-action="TransferOwnAccounts" class="btn btn-ghost btn-sm" style="padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;">Transferir</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:center;padding:24px;color:var(--text-faint);">No tienes cuentas de ahorro registradas.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ DATAGRID 2: TARJETAS DE CRÉDITO ============ -->
+    <div style="margin-bottom:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h2 style="font-family:'Space Grotesk';font-size:18px;font-weight:700;margin:0;">Tarjetas de Crédito</h2>
+            <a asp-controller="Client" asp-action="PayCreditCard" class="btn btn-ghost btn-sm">Pagar Tarjeta</a>
+        </div>
+        <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                    <tr style="background:var(--surface-2);border-bottom:1px solid var(--border);">
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Número de Tarjeta</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Monto Adeudado</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Estado</th>
+                        <th style="padding:12px 16px;text-align:center;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.CreditCards != null && Model.CreditCards.Any())
+                    {
+                        @foreach (var c in Model.CreditCards)
+                        {
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-weight:700;letter-spacing:.05em;">@c.Identifier</td>
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--danger);">@c.RelevantAmount.ToString("C2")</td>
+                                <td style="padding:14px 16px;">
+                                    <span class="badge info" style="background:rgba(143,163,202,.18);color:#35648B;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@c.Status</span>
+                                </td>
+                                <td style="padding:14px 16px;text-align:center;">
+                                    <a asp-controller="Client" asp-action="PayCreditCard" class="btn btn-primary btn-sm" style="padding:5px 12px;border-radius:6px;font-size:12px;">Pagar Tarjeta</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:center;padding:24px;color:var(--text-faint);">No tienes tarjetas de crédito activas.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ DATAGRID 3: PRÉSTAMOS VIGENTES ============ -->
+    <div style="margin-bottom:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h2 style="font-family:'Space Grotesk';font-size:18px;font-weight:700;margin:0;">Préstamos Vigentes</h2>
+            <a asp-controller="Client" asp-action="PayLoan" class="btn btn-ghost btn-sm">Pagar Préstamo</a>
+        </div>
+        <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                    <tr style="background:var(--surface-2);border-bottom:1px solid var(--border);">
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Número de Préstamo</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Deuda Pendiente</th>
+                        <th style="padding:12px 16px;text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Estado</th>
+                        <th style="padding:12px 16px;text-align:center;font-size:10.5px;text-transform:uppercase;color:var(--text-faint);">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Loans != null && Model.Loans.Any())
+                    {
+                        @foreach (var l in Model.Loans)
+                        {
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-weight:700;letter-spacing:.05em;">@l.Identifier</td>
+                                <td style="padding:14px 16px;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--danger);">@l.RelevantAmount.ToString("C2")</td>
+                                <td style="padding:14px 16px;">
+                                    <span class="badge warn" style="background:rgba(109,138,153,.18);color:#516c78;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@l.Status</span>
+                                </td>
+                                <td style="padding:14px 16px;text-align:center;">
+                                    <a asp-controller="Client" asp-action="PayLoan" class="btn btn-primary btn-sm" style="padding:5px 12px;border-radius:6px;font-size:12px;">Pagar Préstamo</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:center;padding:24px;color:var(--text-faint);">No tienes préstamos vigentes registrados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

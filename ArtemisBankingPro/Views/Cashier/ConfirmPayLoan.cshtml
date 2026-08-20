@@ -1,0 +1,33 @@
+@model ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan.PayLoanCommand
+
+@{ ViewData["Title"] = "Confirmar pago a préstamo"; }
+
+<div class="card panel" style="max-width:480px; margin: 0 auto;">
+    <div class="section-title">Confirmar operación</div>
+    
+    <div class="confirm-box">
+        <div class="confirm-row">
+            <span>Cuenta origen</span>
+            <b>@Model.SourceAccountNumber</b>
+        </div>
+        <div class="confirm-row">
+            <span>Préstamo (ID)</span>
+            <b>@Model.LoanId</b>
+        </div>
+        <div class="confirm-row">
+            <span>Monto a pagar</span>
+            <b>@Model.Amount.ToString("C2")</b>
+        </div>
+    </div>
+    
+    <div style="font-size:13px;margin:16px 0;">¿Está seguro que desea realizar esta operación?</div>
+    
+    <form asp-action="ConfirmPayLoan" method="post" style="margin:0;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="confirmed" value="true" />
+        <div style="display:flex;gap:10px;">
+            <a asp-action="PayLoan" class="btn btn-ghost btn-block">Cancelar</a>
+            <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
+        </div>
+    </form>
+</div>

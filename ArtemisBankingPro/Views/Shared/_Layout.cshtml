@@ -25,25 +25,76 @@
                 <div class="brand-name">Artemis Banking<span>Digital Banking</span></div>
             </div>
 
-            <div class="nav-group">
-                <div class="nav-title">Administrador</div>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
-                    <span class="dot"></span>Gestión de Préstamos
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
-                    <span class="dot"></span>Cuentas de Ahorro
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
-                    <span class="dot"></span>Tarjetas de Crédito
-                </a>
-                <a class="nav-item-abp @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
-                    <span class="dot"></span>Comercios
-                </a>
-            </div>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="nav-group">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="nav-title">Administrador</div>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">
+                            <span class="dot"></span>Gestión de Usuarios
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
+                            <span class="dot"></span>Gestión de Préstamos
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
+                            <span class="dot"></span>Cuentas de Ahorro
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
+                            <span class="dot"></span>Tarjetas de Crédito
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
+                            <span class="dot"></span>Comercios
+                        </a>
+                    }
+                    else if (User.IsInRole("Teller") || User.IsInRole("Cashier"))
+                    {
+                        <div class="nav-title">Cajero</div>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Teller" || ViewContext.RouteData.Values["controller"]?.ToString() == "Cashier" ? "active" : "")" asp-controller="Teller" asp-action="Index">
+                            <span class="dot"></span>Operaciones de Caja
+                        </a>
+                    }
+                    else if (User.IsInRole("Client") || User.IsInRole("Cliente"))
+                    {
+                        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+                        <div class="nav-title">Cliente</div>
+                        <a class="nav-item @(currentAction == "Index" ? "active" : "")" asp-controller="Client" asp-action="Index">
+                            <span class="dot"></span>Mis Productos
+                        </a>
+                        <a class="nav-item @(currentAction == "ExpressTransaction" ? "active" : "")" asp-controller="Client" asp-action="ExpressTransaction">
+                            <span class="dot"></span>Pago Expreso
+                        </a>
+                        <a class="nav-item @(currentAction == "PayCreditCard" ? "active" : "")" asp-controller="Client" asp-action="PayCreditCard">
+                            <span class="dot"></span>Pago de Tarjeta
+                        </a>
+                        <a class="nav-item @(currentAction == "PayLoan" ? "active" : "")" asp-controller="Client" asp-action="PayLoan">
+                            <span class="dot"></span>Pago de Préstamo
+                        </a>
+                        <a class="nav-item @(currentAction == "TransferOwnAccounts" ? "active" : "")" asp-controller="Client" asp-action="TransferOwnAccounts">
+                            <span class="dot"></span>Transferir Cuentas Propias
+                        </a>
+                        <a class="nav-item @(currentAction == "TransferToBeneficiary" ? "active" : "")" asp-controller="Client" asp-action="TransferToBeneficiary">
+                            <span class="dot"></span>Transferir a Beneficiario
+                        </a>
+                        <a class="nav-item @(currentAction == "CashAdvance" ? "active" : "")" asp-controller="Client" asp-action="CashAdvance">
+                            <span class="dot"></span>Avance de Efectivo
+                        </a>
+                        <a class="nav-item @(currentAction == "Beneficiaries" ? "active" : "")" asp-controller="Client" asp-action="Beneficiaries">
+                            <span class="dot"></span>Mis Beneficiarios
+                        </a>
+                    }
+                    
+                    <div style="margin-top:20px;padding:0 8px;">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm w-100" style="font-weight:700;">Cerrar Sesión</button>
+                        </form>
+                    </div>
+                </div>
+            }
         </aside>
 
         <!-- ============ MAIN ============ -->
-        <div class="main-abp">
+        <div class="main">
             <div class="topbar">
                 <div class="topbar-left">
                     <div class="crumb">Artemis Banking Pro</div>

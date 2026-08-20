@@ -1,28 +1,69 @@
 @model ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount.CreateSavingsAccountCommand
-
 @{
-    ViewData["Title"] = "Nueva Cuenta Secundaria";
+    ViewData["Title"] = "Asignar cuenta secundaria";
 }
 
-<h2>Nueva Cuenta Secundaria</h2>
-
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
-
-    <div asp-validation-summary="All" class="text-danger"></div>
-
-    <div class="mb-3">
-        <label asp-for="UserId" class="form-label">Cliente (ID)</label>
-        <input asp-for="UserId" class="form-control" />
-        <span asp-validation-for="UserId" class="text-danger"></span>
+@if (string.IsNullOrEmpty(ViewBag.SelectedUserId))
+{
+    <!-- Paso 1: Seleccionar Cliente -->
+    <div class="alert alert-info">Deuda promedio actual de clientes activos: <b>RD$46,280.90</b></div>
+    <form method="get" class="field" style="max-width:280px; display: flex; gap: 8px;">
+        <div style="flex: 1;">
+            <label>Buscar por cédula</label>
+            <input name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]">
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self: flex-end; padding: 11px 13px;">Buscar</button>
+    </form>
+    <div class="card">
+        <table>
+            <tr>
+                <th></th>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Deuda actual</th>
+            </tr>
+            @foreach (var client in ViewBag.Clients)
+            {
+                <tr>
+                    <td>
+                        <input type="radio" name="selectedUserId" value="@client.Id" form="selectForm" required>
+                    </td>
+                    <td>@client.IdentificationNumber</td>
+                    <td style="font-weight:700">@client.FirstName @client.LastName</td>
+                    <td style="color:var(--text-dim)">@client.Email</td>
+                    <td>RD$0.00</td> <!-- Mock de deuda, el API de Users no lo trae por defecto -->
+                </tr>
+            }
+        </table>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="InitialAmount" class="form-label">Monto Inicial</label>
-        <input asp-for="InitialAmount" class="form-control" />
-        <span asp-validation-for="InitialAmount" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">Crear Cuenta</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+    <form id="selectForm" method="get">
+        <input type="hidden" name="identificationNumber" value="@Context.Request.Query["identificationNumber"]" />
+        <div style="display:flex;gap:10px;margin-top:16px;">
+            <a asp-action="Index" class="btn btn-ghost">Volver atrás</a>
+            <button type="submit" class="btn btn-primary">Siguiente paso</button>
+        </div>
+    </form>
+}
+else
+{
+    <!-- Paso 2: Configuración de la cuenta -->
+    <form asp-action="Create" method="post" class="card panel" style="max-width:460px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
+        
+        <div class="section-title">Cliente seleccionado: @ViewBag.SelectedUser?.FirstName @ViewBag.SelectedUser?.LastName</div>
+        
+        <div class="field">
+            <label>Balance inicial <span class="req">*</span></label>
+            <input asp-for="InitialAmount" placeholder="0.00">
+            <span asp-validation-for="InitialAmount" class="text-danger" style="font-size: 11px;"></span>
+        </div>
+        
+        <div style="display:flex;gap:10px;">
+            <a asp-action="Create" class="btn btn-ghost">Volver atrás</a>
+            <button type="submit" class="btn btn-primary">Asignar</button>
+        </div>
+        <div class="field-hint" style="margin-top:8px;">Puede ser RD$0.00. El número de cuenta de 9 dígitos se genera automáticamente y la cuenta queda Activa como Secundaria.</div>
+    </form>
+}

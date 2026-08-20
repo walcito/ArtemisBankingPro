@@ -1,0 +1,61 @@
+@model ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBeneficiary.TransferToBeneficiaryCommand
+@{
+    ViewData["Title"] = "Transacción a terceros";
+    var beneficiaries = ViewBag.Beneficiaries as List<ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries.BeneficiaryDto>;
+}
+
+<div class="two-col">
+    <div class="card panel">
+        <form asp-action="TransferToBeneficiary" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="alert alert-info" style="@(!ViewData.ModelState.IsValid ? "" : "display:none;")"></div>
+            
+            <div class="field">
+                <label asp-for="SourceAccountNumber">Cuenta de origen <span class="req">*</span></label>
+                <select asp-for="SourceAccountNumber">
+                    <option value="">-- Seleccionar --</option>
+                    @if(ViewBag.Accounts != null)
+                    {
+                        foreach(var acc in ViewBag.Accounts)
+                        {
+                            <option value="@acc.Identifier">@acc.Identifier (@acc.Status) — @acc.RelevantAmount.ToString("C2")</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="SourceAccountNumber" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="BeneficiaryId">Beneficiario <span class="req">*</span></label>
+                <select asp-for="BeneficiaryId">
+                    <option value="">-- Selecciona un beneficiario --</option>
+                    @if (beneficiaries != null)
+                    {
+                        foreach (var b in beneficiaries)
+                        {
+                            <option value="@b.Id">@b.Alias — @b.BeneficiaryAccountNumber</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="BeneficiaryId" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <div class="field">
+                <label asp-for="Amount">Monto a transferir <span class="req">*</span></label>
+                <input asp-for="Amount" type="number" step="0.01" placeholder="0.00" />
+                <span asp-validation-for="Amount" class="text-danger" style="font-size:11px;"></span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Realizar transferencia</button>
+        </form>
+    </div>
+    
+    <div class="card panel">
+        <div class="section-title">Reglas clave</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.3px;color:var(--text-dim);line-height:1.7;">
+            <li>Solo puedes transferir a beneficiarios ya guardados.</li>
+            <li>Si no tienes beneficiarios, agrégalos primero desde la sección Beneficiarios.</li>
+            <li>La cuenta de origen debe tener fondos suficientes.</li>
+        </ul>
+    </div>
+</div>

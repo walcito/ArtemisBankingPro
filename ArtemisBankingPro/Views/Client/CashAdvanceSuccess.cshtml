@@ -1,0 +1,8 @@
+@{ ViewData["Title"] = "Avance realizado"; }
+
+<div class="card panel" style="max-width:480px;text-align:center;padding:40px 30px; margin:0 auto;">
+    <div style="width:52px;height:52px;border-radius:50%;background:var(--c2);color:var(--c5-ink);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;">✓</div>
+    <h3 style="font-size:18px;margin-bottom:8px;">Operación exitosa</h3>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;">@TempData["SuccessMessage"]</p>
+    <a asp-action="Index" class="btn btn-primary">Volver al inicio</a>
+</div>
