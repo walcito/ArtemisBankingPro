@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment;
+using ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment;
 using ArtemisBankingPro.Core.Application.Features.HermesPay.Queries.GetCommerceTransactions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -15,8 +15,8 @@ public static class ServicesRegistration
     public static void AddApplicationLayerIoc(this IServiceCollection services)
     {
         #region Services IOC
-        services.AddScoped<IAmortizationService, CalculadoraAmortizationService>();
-        services.AddScoped<GeneradorNumeroPrestamoService>();
+        services.AddScoped<IAmortizationService, AmortizationService>();
+        services.AddScoped<ILoanNumberGeneratorService, LoanNumberGeneratorService>();
         services.AddScoped<ICvcHashService, CvcHashService>();
         services.AddScoped<ICardNumberGeneratorService, CardNumberGeneratorService>();
         services.AddScoped<ICreditCardService, CreditCardService>();

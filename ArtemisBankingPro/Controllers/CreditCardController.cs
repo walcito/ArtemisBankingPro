@@ -1,7 +1,7 @@
 using ArtemisBankingPro.Core.Application.Dtos.Card;
-using ArtemisBankingPro.Core.Application.Features.Users;
 using ArtemisBankingPro.Core.Application.Interfaces.Card;
 using ArtemisBankingPro.Core.Application.ViewModels.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using AutoMapper;
 using MediatR;

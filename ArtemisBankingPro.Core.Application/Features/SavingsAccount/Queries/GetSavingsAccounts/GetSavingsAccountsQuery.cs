@@ -1,5 +1,5 @@
 using ArtemisBankingPro.Core.Application.Common.Models;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;

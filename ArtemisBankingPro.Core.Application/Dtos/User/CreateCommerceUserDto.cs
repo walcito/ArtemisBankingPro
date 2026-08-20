@@ -1,4 +1,4 @@
-﻿namespace ArtemisBankingPro.Core.Application.Dtos.User;
+namespace ArtemisBankingPro.Core.Application.Dtos.User;
 
 public class CreateCommerceUserDto
 {

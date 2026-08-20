@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
 
 namespace ArtemisBankingPro.Core.Domain.Interfaces.Card
 {

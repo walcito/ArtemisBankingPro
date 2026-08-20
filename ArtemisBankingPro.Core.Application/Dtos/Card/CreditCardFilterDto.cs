@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 
 namespace ArtemisBankingPro.Core.Application.Dtos.Card
 {

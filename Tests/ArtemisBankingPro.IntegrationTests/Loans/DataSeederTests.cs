@@ -1,5 +1,10 @@
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
+using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using ArtemisBankingPro.Infrastructure.Persistence.Seed;

@@ -1,5 +1,6 @@
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories;

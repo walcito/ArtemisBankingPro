@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Entities.Users;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
 namespace ArtemisBankingPro.Core.Domain.Interfaces.Users;
 

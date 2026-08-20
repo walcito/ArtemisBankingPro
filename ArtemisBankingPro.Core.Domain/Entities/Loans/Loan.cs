@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 
-namespace ArtemisBankingPro.Core.Domain.Entities;
+namespace ArtemisBankingPro.Core.Domain.Entities.Loans;
 
 public class Loan
 {

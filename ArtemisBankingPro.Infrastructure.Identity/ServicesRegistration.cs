@@ -14,9 +14,18 @@ public static class ServicesRegistration
 {
     public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        services.AddDbContext<IdentityContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("IdentityConnection"),
-            b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
+        if (config.GetValue<bool>("UseInMemoryDatabase"))
+        {
+            var identityDbName = config.GetValue<string>("IdentityInMemoryDatabaseName") ?? "IdentityDb";
+            services.AddDbContext<IdentityContext>(options =>
+                options.UseInMemoryDatabase(identityDbName));
+        }
+        else
+        {
+            services.AddDbContext<IdentityContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("IdentityConnection"),
+                b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
+        }
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<IdentityContext>()

@@ -1,6 +1,6 @@
-﻿using ArtemisBankingPro.Core.Domain.Entities.Users;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 
-namespace ArtemisBankingPro.Core.Domain.Entities;
+namespace ArtemisBankingPro.Core.Domain.Entities.Trades;
 
 public class Trade
 {

@@ -1,4 +1,4 @@
-﻿
+
 namespace ArtemisBankingPro.Core.Domain.Common
 {
     public class BaseEntity
