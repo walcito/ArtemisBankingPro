@@ -22,6 +22,7 @@ namespace ArtemisBankingPro.UnitTests.Card
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ICreditCardRepository> _cardRepoMock;
         private readonly Mock<IUserRepository> _userRepoMock;
+        private readonly Mock<IAccountService> _accountServiceMock;
         private readonly Mock<ICardNumberGeneratorService> _cardGenMock;
         private readonly Mock<ICvcHashService> _cvcHashMock;
         private readonly Mock<IEmailService> _emailMock;
@@ -33,6 +34,7 @@ namespace ArtemisBankingPro.UnitTests.Card
             _mapperMock = new Mock<IMapper>();
             _cardRepoMock = new Mock<ICreditCardRepository>();
             _userRepoMock = new Mock<IUserRepository>();
+            _accountServiceMock = new Mock<IAccountService>();
             _cardGenMock = new Mock<ICardNumberGeneratorService>();
             _cvcHashMock = new Mock<ICvcHashService>();
             _emailMock = new Mock<IEmailService>();
@@ -91,10 +93,10 @@ namespace ArtemisBankingPro.UnitTests.Card
             _mapperMock.Setup(m => m.Map<CreateCreditCardResponseDto>(It.IsAny<CreditCard>())).Returns(expectedResponse);
 
             var handler = new AssignCreditCardCommandHandler(
-                _cardRepoMock.Object, _userRepoMock.Object, _cardGenMock.Object, _cvcHashMock.Object,
+                _cardRepoMock.Object, _userRepoMock.Object, _accountServiceMock.Object, _cardGenMock.Object, _cvcHashMock.Object,
                 _emailMock.Object, _mapperMock.Object, _assignLoggerMock.Object);
 
-            var command = new AssignCreditCardCommand { ClientId = 1, CreditLimit = 50000m };
+            var command = new AssignCreditCardCommand { ClientId = "1", CreditLimit = 50000m };
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -122,10 +124,10 @@ namespace ArtemisBankingPro.UnitTests.Card
             _userRepoMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(inactiveUser);
 
             var handler = new AssignCreditCardCommandHandler(
-                _cardRepoMock.Object, _userRepoMock.Object, _cardGenMock.Object, _cvcHashMock.Object,
+                _cardRepoMock.Object, _userRepoMock.Object, _accountServiceMock.Object, _cardGenMock.Object, _cvcHashMock.Object,
                 _emailMock.Object, _mapperMock.Object, _assignLoggerMock.Object);
 
-            var command = new AssignCreditCardCommand { ClientId = 2, CreditLimit = 30000m };
+            var command = new AssignCreditCardCommand { ClientId = "2", CreditLimit = 30000m };
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));

@@ -1,8 +1,10 @@
 using ArtemisBankingPro.Core.Application.Dtos.Card;
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.Interfaces.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
 using ArtemisBankingPro.Core.Domain.Interfaces.Users;
 using AutoMapper;
@@ -15,6 +17,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
     {
         private readonly ICreditCardRepository _creditCardRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAccountService _accountService;
         private readonly ICardNumberGeneratorService _cardNumberGenerator;
         private readonly ICvcHashService _cvcHashService;
         private readonly IEmailService _emailService;
@@ -24,6 +27,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
         public AssignCreditCardCommandHandler(
             ICreditCardRepository creditCardRepository,
             IUserRepository userRepository,
+            IAccountService accountService,
             ICardNumberGeneratorService cardNumberGenerator,
             ICvcHashService cvcHashService,
             IEmailService emailService,
@@ -32,6 +36,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
         {
             _creditCardRepository = creditCardRepository;
             _userRepository = userRepository;
+            _accountService = accountService;
             _cardNumberGenerator = cardNumberGenerator;
             _cvcHashService = cvcHashService;
             _emailService = emailService;
@@ -41,11 +46,41 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
 
         public async Task<CreateCreditCardResponseDto> Handle(AssignCreditCardCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.ClientId);
-            if (user is null)
-                throw new KeyNotFoundException("El cliente seleccionado no existe.");
+            User? domainUser = null;
+            if (int.TryParse(request.ClientId, out int numericId))
+            {
+                domainUser = await _userRepository.GetByIdAsync(numericId);
+            }
 
-            if (!user.IsActive)
+            if (domainUser == null)
+            {
+                var identityUser = await _accountService.GetUserByIdAsync(request.ClientId);
+                if (identityUser == null)
+                    throw new KeyNotFoundException("El cliente seleccionado no existe.");
+
+                if (!identityUser.IsActive)
+                    throw new Exception("Solo se puede asignar tarjetas de crédito a clientes activos.");
+
+                var allDomainUsers = await _userRepository.GetAllAsync();
+                domainUser = allDomainUsers.FirstOrDefault(u => u.Email == identityUser.Email);
+
+                if (domainUser == null)
+                {
+                    domainUser = new User
+                    {
+                        FirstName = identityUser.FirstName,
+                        LastName = identityUser.LastName,
+                        IdentificationNumber = identityUser.Identification ?? string.Empty,
+                        Email = identityUser.Email,
+                        Username = identityUser.UserName,
+                        Role = Roles.Client,
+                        IsActive = true
+                    };
+                    await _userRepository.AddAsync(domainUser);
+                }
+            }
+
+            if (!domainUser.IsActive)
                 throw new Exception("Solo se puede asignar tarjetas de crédito a clientes activos.");
 
             var cardNumber = await _cardNumberGenerator.GenerateUniqueCardNumberAsync();
@@ -55,7 +90,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
 
             var creditCard = new CreditCard
             {
-                UserId = request.ClientId,
+                UserId = domainUser.Id,
                 CardNumber = cardNumber,
                 ExpirationDate = expirationDate,
                 CvcHash = hashedCvc,
@@ -73,7 +108,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
 
             try
             {
-                var body = $@"Hola {user.FirstName} {user.LastName},<br><br>
+                var body = $@"Hola {domainUser.FirstName} {domainUser.LastName},<br><br>
                             Se ha asignado una nueva tarjeta de crédito a su cuenta.<br><br>
                             <b>Tarjeta terminada en:</b> {response.LastFourDigits}<br>
                             <b>Límite aprobado:</b> RD${response.CreditLimit:N2}<br>
@@ -81,11 +116,11 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
                             <b>Fecha de asignación:</b> {now:dd/MM/yyyy}<br><br>
                             Por seguridad, no comparta la información de su tarjeta con terceros.";
 
-                await _emailService.SendEmailAsync(user.Email, "Nueva tarjeta de crédito asignada", body);
+                await _emailService.SendEmailAsync(domainUser.Email, "Nueva tarjeta de crédito asignada", body);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al enviar correo de notificación al cliente {UserId}", user.Id);
+                _logger.LogError(ex, "Error al enviar correo de notificación al cliente {UserId}", domainUser.Id);
             }
 
             return response;

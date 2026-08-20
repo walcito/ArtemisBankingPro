@@ -8,7 +8,7 @@ namespace ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCredit
         public AssignCreditCardCommandValidator()
         {
             RuleFor(x => x.ClientId)
-                .GreaterThan(0)
+                .NotEmpty()
                 .WithMessage("Debe especificar un cliente válido.");
             RuleFor(x => x.CreditLimit)
                 .GreaterThan(0)

@@ -3,27 +3,27 @@ using ArtemisBankingPro.Core.Application.Interfaces.Card;
 using ArtemisBankingPro.Core.Application.ViewModels.Card;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
-using ArtemisBankingPro.Core.Domain.Interfaces.Users;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin,Administrador")]
     public class CreditCardController : Controller
     {
         private readonly ICreditCardService _creditCardService;
-        private readonly IUserRepository _userRepository;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public CreditCardController(
             ICreditCardService creditCardService,
-            IUserRepository userRepository,
+            IMediator mediator,
             IMapper mapper)
         {
             _creditCardService = creditCardService;
-            _userRepository = userRepository;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
@@ -53,8 +53,10 @@ namespace ArtemisBankingPro.Controllers
 
         public async Task<IActionResult> Assign()
         {
-            var allUsers = await _userRepository.GetAllAsync();
-            ViewBag.ActiveClients = allUsers.Where(u => u.IsActive && u.Role == Roles.Client).ToList();
+            var allUsers = await _mediator.Send(new GetUsersQuery());
+            ViewBag.ActiveClients = allUsers
+                .Where(u => u.IsActive && (u.Role == "Client" || u.Role == "Cliente"))
+                .ToList();
             return View(new AssignCreditCardViewModel());
         }
 
@@ -64,8 +66,10 @@ namespace ArtemisBankingPro.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var allUsers = await _userRepository.GetAllAsync();
-                ViewBag.ActiveClients = allUsers.Where(u => u.IsActive && u.Role == Roles.Client).ToList();
+                var allUsers = await _mediator.Send(new GetUsersQuery());
+                ViewBag.ActiveClients = allUsers
+                    .Where(u => u.IsActive && (u.Role == "Client" || u.Role == "Cliente"))
+                    .ToList();
                 return View(model);
             }
 
@@ -75,8 +79,10 @@ namespace ArtemisBankingPro.Controllers
             if (!result.Success)
             {
                 ModelState.AddModelError(string.Empty, result.Message);
-                var allUsers = await _userRepository.GetAllAsync();
-                ViewBag.ActiveClients = allUsers.Where(u => u.IsActive && u.Role == Roles.Client).ToList();
+                var allUsers = await _mediator.Send(new GetUsersQuery());
+                ViewBag.ActiveClients = allUsers
+                    .Where(u => u.IsActive && (u.Role == "Client" || u.Role == "Cliente"))
+                    .ToList();
                 return View(model);
             }
 
