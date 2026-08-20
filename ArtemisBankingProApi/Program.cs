@@ -2,6 +2,7 @@ using ArtemisBankingPro.Core.Application;
 using ArtemisBankingPro.Infrastructure.Identity;
 using ArtemisBankingPro.Infrastructure.Persistence;
 using ArtemisBankingPro.Infrastructure.Shared;
+using ArtemisBankingProApi.Extensions;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHealthChecks();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddAppiVersioningExtension();
+builder.Services.AddSwaggerExtension();
+builder.Services.AddSession();
 
 var app = builder.Build();
 await app.Services.RunIdentitySeedAsync();
