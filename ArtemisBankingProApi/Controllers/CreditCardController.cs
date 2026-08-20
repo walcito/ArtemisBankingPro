@@ -12,7 +12,7 @@ namespace ArtemisBankingProApi.Controllers
 {
     [ApiController]
     [Route("api/credit-card")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin,Administrador")]
     public class CreditCardController : ControllerBase
     {
         private readonly IMediator _mediator;

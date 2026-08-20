@@ -27,11 +27,18 @@
                 {
                     @foreach (var user in Model)
                     {
+                        bool isAdmin = user.Role == "Admin" || user.Role == "Administrador";
+
                         <tr style="border-bottom:1px solid var(--border);">
                             <td style="padding:12px;font-weight:700;">@user.UserName</td>
-                            <td style="padding:12px;">@user.FirstName @user.LastName<div style="font-size:11px;color:var(--text-faint);">@user.Email</div></td>
+                            <td style="padding:12px;">
+                                @user.FirstName @user.LastName
+                                <div style="font-size:11px;color:var(--text-faint);">@user.Email</div>
+                            </td>
                             <td style="padding:12px;">@user.Identification</td>
-                            <td style="padding:12px;"><span class="badge info" style="background:rgba(143,163,202,.18);color:#35648B;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@user.Role</span></td>
+                            <td style="padding:12px;">
+                                <span class="badge info" style="background:rgba(143,163,202,.18);color:#35648B;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;">@user.Role</span>
+                            </td>
                             <td style="padding:12px;">
                                 @if (user.IsActive)
                                 {
@@ -43,14 +50,28 @@
                                 }
                             </td>
                             <td style="padding:12px;text-align:center;">
-                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-ghost btn-sm" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-right:6px;">Editar</a>
-                                <form asp-controller="Admin" asp-action="ChangeStatus" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@user.Id" />
-                                    <input type="hidden" name="status" value="@(!user.IsActive)" />
-                                    <button type="submit" class="btn btn-ghost btn-sm" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
-                                        @(user.IsActive ? "Inactivar" : "Activar")
-                                    </button>
-                                </form>
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@user.Id"
+                                   class="btn btn-ghost btn-sm"
+                                   style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-right:6px;">
+                                    Editar
+                                </a>
+
+                                @if (!isAdmin)
+                                {
+                                    <form asp-controller="Admin" asp-action="ChangeStatus" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.Id" />
+                                        <input type="hidden" name="status" value="@(user.IsActive ? "false" : "true")" />
+                                        <button type="submit" class="btn btn-ghost btn-sm"
+                                                style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+                                            @(user.IsActive ? "Inactivar" : "Activar")
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span style="font-size:11px;color:var(--text-faint);font-style:italic;">Protegido</span>
+                                }
                             </td>
                         </tr>
                     }
