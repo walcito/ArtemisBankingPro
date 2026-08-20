@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
-[Authorize(Roles = "Cajero")]
+[Authorize(Roles = "Cashier,Cajero,Teller")]
 public class CashierController : Controller
 {
     private readonly IMediator _mediator;
