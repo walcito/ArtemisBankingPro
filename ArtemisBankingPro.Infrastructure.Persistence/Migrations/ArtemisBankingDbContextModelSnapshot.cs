@@ -68,6 +68,35 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.ToTable("AmortizationInstallments", (string)null);
                 });
 
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Beneficiary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("BeneficiaryAccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("OwnerUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerUserId", "BeneficiaryAccountNumber")
+                        .IsUnique();
+
+                    b.ToTable("Beneficiaries", (string)null);
+                });
+
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Card.CardConsumption", b =>
                 {
                     b.Property<int>("Id")
@@ -305,7 +334,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavingsAccounts", (string)null);
+                    b.ToTable("SavingsAccounts");
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Trade", b =>
@@ -344,10 +373,6 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssociatedUserId")
-                        .IsUnique()
-                        .HasFilter("[AssociatedUserId] IS NOT NULL");
-
                     b.ToTable("Trades", (string)null);
                 });
 
@@ -383,7 +408,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SavingsAccountId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.ActivationToken", b =>
@@ -528,23 +553,14 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
+                    b.HasIndex("TradeId")
+                        .IsUnique()
+                        .HasFilter("[TradeId] IS NOT NULL");
+
                     b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("Beneficiary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Beneficiaries", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.AmortizationInstallment", b =>
@@ -556,6 +572,17 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Loan");
+                });
+
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Beneficiary", b =>
+                {
+                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", "OwnerUser")
+                        .WithMany()
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OwnerUser");
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Card.CardConsumption", b =>
@@ -620,16 +647,6 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Trade", b =>
-                {
-                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", "AssociatedUser")
-                        .WithOne("Trade")
-                        .HasForeignKey("ArtemisBankingPro.Core.Domain.Entities.Trade", "AssociatedUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AssociatedUser");
-                });
-
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", "PerformedByCashier")
@@ -670,6 +687,13 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.Role", null)
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
+
+                    b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Trade", "Trade")
+                        .WithOne("AssociatedUser")
+                        .HasForeignKey("ArtemisBankingPro.Core.Domain.Entities.Users.User", "TradeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Trade");
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Card.CardConsumption", b =>
@@ -689,6 +713,11 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.Navigation("Installments");
                 });
 
+            modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Trade", b =>
+                {
+                    b.Navigation("AssociatedUser");
+                });
+
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Users.Role", b =>
                 {
                     b.Navigation("Users");
@@ -699,8 +728,6 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.Navigation("CreditCards");
 
                     b.Navigation("SavingsAccounts");
-
-                    b.Navigation("Trade");
                 });
 #pragma warning restore 612, 618
         }

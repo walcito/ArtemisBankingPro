@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace ArtemisBankingPro.Core.Application.ViewModels.Card
@@ -7,7 +7,7 @@ namespace ArtemisBankingPro.Core.Application.ViewModels.Card
     {
         [Required(ErrorMessage = "Debe seleccionar un cliente.")]
         [Display(Name = "Cliente")]
-        public int ClientId { get; set; }
+        public string ClientId { get; set; } = string.Empty;
 
         [Display(Name = "Nombre del Cliente")]
         public string ClientFullName { get; set; } = string.Empty;
