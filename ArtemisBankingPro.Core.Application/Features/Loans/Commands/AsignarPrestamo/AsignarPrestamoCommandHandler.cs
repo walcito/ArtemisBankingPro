@@ -1,9 +1,9 @@
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.DesembolsarPrestamo;
 using ArtemisBankingPro.Core.Application.Services;
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 
@@ -14,20 +14,20 @@ public class AsignarPrestamoCommandHandler : IRequestHandler<AsignarPrestamoComm
     private readonly IGenericRepository<User> _userRepository;
     private readonly IGenericRepository<Loan> _loanRepository;
     private readonly IAmortizationService _amortizationService;
-    private readonly GeneradorNumeroPrestamoService _generadorNumeroPrestamo;
+    private readonly ILoanNumberGeneratorService _loanNumberGenerator;
     private readonly IMediator _mediator;
 
     public AsignarPrestamoCommandHandler(
         IGenericRepository<User> userRepository,
         IGenericRepository<Loan> loanRepository,
         IAmortizationService amortizationService,
-        GeneradorNumeroPrestamoService generadorNumeroPrestamo,
+        ILoanNumberGeneratorService loanNumberGenerator,
         IMediator mediator)
     {
         _userRepository = userRepository;
         _loanRepository = loanRepository;
         _amortizationService = amortizationService;
-        _generadorNumeroPrestamo = generadorNumeroPrestamo;
+        _loanNumberGenerator = loanNumberGenerator;
         _mediator = mediator;
     }
 
@@ -43,7 +43,7 @@ public class AsignarPrestamoCommandHandler : IRequestHandler<AsignarPrestamoComm
         if (hasActiveLoan)
             throw new Exception("El cliente ya tiene un préstamo activo.");
 
-        var loanNumber = await _generadorNumeroPrestamo.GenerarNumeroUnicoAsync();
+        var loanNumber = await _loanNumberGenerator.GenerateUniqueLoanNumberAsync();
 
         var installments = _amortizationService.GenerateAmortizationTable(
             request.DisbursedAmount,

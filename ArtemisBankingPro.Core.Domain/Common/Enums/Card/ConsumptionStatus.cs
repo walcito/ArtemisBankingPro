@@ -1,4 +1,4 @@
-﻿
+
 namespace ArtemisBankingPro.Core.Domain.Common.Enums.Card
 {
     public enum ConsumptionStatus

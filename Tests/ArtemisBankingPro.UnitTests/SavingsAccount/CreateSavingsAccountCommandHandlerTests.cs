@@ -1,7 +1,9 @@
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using Moq;
 using Xunit;

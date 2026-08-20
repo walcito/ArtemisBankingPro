@@ -1,5 +1,7 @@
-using ArtemisBankingPro.Core.Domain.Common.Enums;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Trades;
 
 namespace ArtemisBankingPro.Core.Domain.Entities.Users;
 

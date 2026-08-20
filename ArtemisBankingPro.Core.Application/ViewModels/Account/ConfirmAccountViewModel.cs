@@ -1,4 +1,4 @@
-﻿namespace ArtemisBankingPro.Core.Application.ViewModels.Account;
+namespace ArtemisBankingPro.Core.Application.ViewModels.Account;
 
 public class ConfirmAccountViewModel
 {

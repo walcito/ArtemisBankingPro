@@ -3,6 +3,7 @@ using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.Services;
 using ArtemisBankingPro.Core.Application.Services.Card;
 using ArtemisBankingPro.Core.Domain.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -14,8 +15,8 @@ public static class ServicesRegistration
     public static void AddApplicationLayerIoc(this IServiceCollection services)
     {
         #region Services IOC
-        services.AddScoped<IAmortizationService, CalculadoraAmortizationService>();
-        services.AddScoped<GeneradorNumeroPrestamoService>();
+        services.AddScoped<IAmortizationService, AmortizationService>();
+        services.AddScoped<ILoanNumberGeneratorService, LoanNumberGeneratorService>();
         services.AddScoped<ICvcHashService, CvcHashService>();
         services.AddScoped<ICardNumberGeneratorService, CardNumberGeneratorService>();
         services.AddScoped<ICreditCardService, CreditCardService>();
@@ -25,8 +26,8 @@ public static class ServicesRegistration
         #region Configurations
         services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
         services.AddMediatR(opt => opt.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-        //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));//hay que descomentar esto cuando waldin configure
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
         #endregion
 
     }

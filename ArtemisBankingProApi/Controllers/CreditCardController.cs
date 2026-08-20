@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Card;
+using ArtemisBankingPro.Core.Application.Dtos.Card;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.AssignCreditCard;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.CancelCreditCard;
 using ArtemisBankingPro.Core.Application.Features.Card.Commands.UpdateCredit;
@@ -12,7 +12,7 @@ namespace ArtemisBankingProApi.Controllers
 {
     [ApiController]
     [Route("api/credit-card")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin,Administrador")]
     public class CreditCardController : ControllerBase
     {
         private readonly IMediator _mediator;

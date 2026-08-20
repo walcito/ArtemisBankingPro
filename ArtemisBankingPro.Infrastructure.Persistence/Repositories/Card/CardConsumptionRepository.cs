@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Card;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;

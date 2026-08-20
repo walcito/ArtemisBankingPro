@@ -11,12 +11,12 @@ using Xunit;
 
 namespace ArtemisBankingPro.IntegrationTests;
 
-public class CommerceApiIntegrationTests : IClassFixture<CustomWebApplicationFactory>
+public class CommerceApiIntegrationTests : IClassFixture<CustomApiWebApplicationFactory>
 {
     private readonly HttpClient _client;
-    private readonly CustomWebApplicationFactory _factory;
+    private readonly CustomApiWebApplicationFactory _factory;
 
-    public CommerceApiIntegrationTests(CustomWebApplicationFactory factory)
+    public CommerceApiIntegrationTests(CustomApiWebApplicationFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();

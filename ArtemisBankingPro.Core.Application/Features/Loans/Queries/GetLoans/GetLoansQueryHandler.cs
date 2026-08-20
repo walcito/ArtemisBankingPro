@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Common.Models;
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using MediatR;
 using System.Linq;
 

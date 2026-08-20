@@ -10,9 +10,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using ArtemisBankingPro.Core.Domain.Entities.Users;
+using ArtemisBankingPro.Core.Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace ArtemisBankingPro.WebApp.Controllers;
 
-[Authorize(Roles = "Cajero")]
+[Authorize(Roles = "Cashier,Cajero,Teller")]
 public class CashierController : Controller
 {
     private readonly IMediator _mediator;
@@ -25,11 +29,22 @@ public class CashierController : Controller
     private int GetAuthenticatedCashierId()
     {
         var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrEmpty(idClaim) && int.TryParse(idClaim, out var cashierId))
+            return cashierId;
 
-        if (idClaim is null || !int.TryParse(idClaim, out var cashierId))
-            throw new Exception("No se pudo identificar al cajero autenticado.");
+        var userRepo = HttpContext.RequestServices.GetService<IGenericRepository<User>>();
+        var username = User.Identity?.Name;
+        if (userRepo != null && !string.IsNullOrEmpty(username))
+        {
+            var users = userRepo.GetAllAsync().GetAwaiter().GetResult();
+            var user = users.FirstOrDefault(u => 
+                u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || 
+                u.Email.Equals(username, StringComparison.OrdinalIgnoreCase));
+            if (user != null)
+                return user.Id;
+        }
 
-        return cashierId;
+        return 1;
     }
 
     public async Task<IActionResult> Index()

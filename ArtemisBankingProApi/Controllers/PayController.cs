@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment;
+using ArtemisBankingPro.Core.Application.Features.HermesPay.Commands.ProcessPayment;
 using ArtemisBankingPro.Core.Application.Features.HermesPay.Queries.GetCommerceTransactions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ namespace ArtemisBankingProApi.Controllers
 {
     [ApiController]
     [Route("pay")]
-    [Authorize(Roles = "Administrador,Comercio")]
+    [Authorize(Roles = "Admin,Administrador,Commerce,Comercio,Merchant")]
     public class PayController : ControllerBase
     {
         private readonly IMediator _mediator;

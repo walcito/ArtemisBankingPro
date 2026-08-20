@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Card;
+using ArtemisBankingPro.Core.Application.Dtos.Card;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using MediatR;
 

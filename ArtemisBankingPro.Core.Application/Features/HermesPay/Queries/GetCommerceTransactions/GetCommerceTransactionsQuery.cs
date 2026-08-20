@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Card;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Features.HermesPay.Queries.GetCommerceTransactions

@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Infrastructure.Identity.Contexts;
 using ArtemisBankingPro.Infrastructure.Identity.Entities;
 using ArtemisBankingPro.Infrastructure.Identity.Seeds;
@@ -14,13 +14,31 @@ public static class ServicesRegistration
 {
     public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        services.AddDbContext<IdentityContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("IdentityConnection"),
-            b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
+        if (config.GetValue<bool>("UseInMemoryDatabase"))
+        {
+            var identityDbName = config.GetValue<string>("IdentityInMemoryDatabaseName") ?? "IdentityDb";
+            services.AddDbContext<IdentityContext>(options =>
+                options.UseInMemoryDatabase(identityDbName));
+        }
+        else
+        {
+            services.AddDbContext<IdentityContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("IdentityConnection"),
+                b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
+        }
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<IdentityContext>()
             .AddDefaultTokenProviders();
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+        });
 
         services.ConfigureApplicationCookie(options =>
         {

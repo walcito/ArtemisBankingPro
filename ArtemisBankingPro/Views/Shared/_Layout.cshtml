@@ -25,76 +25,86 @@
                 <div class="brand-name">Artemis Banking<span>Digital Banking</span></div>
             </div>
 
-            @if (User.IsInRole("Administrador"))
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <div class="nav-group">
-                    <div class="nav-title">Administrador</div>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
-                        <span class="dot"></span>Gestión de Préstamos
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
-                        <span class="dot"></span>Cuentas de Ahorro
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
-                        <span class="dot"></span>Tarjetas de Crédito
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
-                        <span class="dot"></span>Comercios
-                    </a>
-                </div>
-            }
-            @if (User.IsInRole("Cliente"))
-            {
-                <div class="nav-group">
-                    <div class="nav-title">Cliente</div>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Client" asp-action="Index">
-                        <span class="dot"></span>Home · productos
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Beneficiaries" ? "active" : "")" asp-controller="Client" asp-action="Beneficiaries">
-                        <span class="dot"></span>Beneficiarios
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ExpressTransaction" ? "active" : "")" asp-controller="Client" asp-action="ExpressTransaction">
-                        <span class="dot"></span>Transacción Express
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "TransferOwnAccounts" ? "active" : "")" asp-controller="Client" asp-action="TransferOwnAccounts">
-                        <span class="dot"></span>Entre cuentas propias
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "TransferToBeneficiary" ? "active" : "")" asp-controller="Client" asp-action="TransferToBeneficiary">
-                        <span class="dot"></span>Transacción a terceros
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "PayCreditCard" ? "active" : "")" asp-controller="Client" asp-action="PayCreditCard">
-                        <span class="dot"></span>Pago a tarjeta
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "PayLoan" ? "active" : "")" asp-controller="Client" asp-action="PayLoan">
-                        <span class="dot"></span>Pago a préstamo
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "CashAdvance" ? "active" : "")" asp-controller="Client" asp-action="CashAdvance">
-                        <span class="dot"></span>Avance de efectivo
-                    </a>
-                </div>
-            }
-            @if (User.IsInRole("Cajero"))
-            {
-                <div class="nav-group">
-                    <div class="nav-title">Cajero</div>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Cashier" asp-action="Index">
-                        <span class="dot"></span>Dashboard
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Deposit" ? "active" : "")" asp-controller="Cashier" asp-action="Deposit">
-                        <span class="dot"></span>Depósito
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Withdraw" ? "active" : "")" asp-controller="Cashier" asp-action="Withdraw">
-                        <span class="dot"></span>Retiro
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ThirdPartyTransaction" ? "active" : "")" asp-controller="Cashier" asp-action="ThirdPartyTransaction">
-                        <span class="dot"></span>Transferencia a terceros
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "PayCreditCard" ? "active" : "")" asp-controller="Cashier" asp-action="PayCreditCard">
-                        <span class="dot"></span>Pago a tarjeta
-                    </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "PayLoan" ? "active" : "")" asp-controller="Cashier" asp-action="PayLoan">
-                        <span class="dot"></span>Pago a préstamo
-                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="nav-title">Administrador</div>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">
+                            <span class="dot"></span>Gestión de Usuarios
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "active" : "")" asp-controller="Loans" asp-action="Index">
+                            <span class="dot"></span>Gestión de Préstamos
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsAccount" ? "active" : "")" asp-controller="SavingsAccount" asp-action="Index">
+                            <span class="dot"></span>Cuentas de Ahorro
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
+                            <span class="dot"></span>Tarjetas de Crédito
+                        </a>
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
+                            <span class="dot"></span>Comercios
+                        </a>
+                    }
+                    else if (User.IsInRole("Teller") || User.IsInRole("Cashier") || User.IsInRole("Cajero"))
+                    {
+                        var cashierAction = ViewContext.RouteData.Values["action"]?.ToString();
+                        <div class="nav-title">Cajero</div>
+                        <a class="nav-item @(cashierAction == "Index" ? "active" : "")" asp-controller="Cashier" asp-action="Index">
+                            <span class="dot"></span>Dashboard
+                        </a>
+                        <a class="nav-item @(cashierAction == "Deposit" || cashierAction == "ConfirmDeposit" || cashierAction == "DepositSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="Deposit">
+                            <span class="dot"></span>Depósito
+                        </a>
+                        <a class="nav-item @(cashierAction == "Withdraw" || cashierAction == "ConfirmWithdraw" || cashierAction == "WithdrawSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="Withdraw">
+                            <span class="dot"></span>Retiro
+                        </a>
+                        <a class="nav-item @(cashierAction == "ThirdPartyTransaction" || cashierAction == "ConfirmThirdPartyTransaction" || cashierAction == "ThirdPartyTransactionSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="ThirdPartyTransaction">
+                            <span class="dot"></span>Transacción a Terceros
+                        </a>
+                        <a class="nav-item @(cashierAction == "PayCreditCard" || cashierAction == "ConfirmPayCreditCard" || cashierAction == "PayCreditCardSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="PayCreditCard">
+                            <span class="dot"></span>Pago a Tarjeta
+                        </a>
+                        <a class="nav-item @(cashierAction == "PayLoan" || cashierAction == "ConfirmPayLoan" || cashierAction == "PayLoanSuccess" ? "active" : "")" asp-controller="Cashier" asp-action="PayLoan">
+                            <span class="dot"></span>Pago a Préstamo
+                        </a>
+                    }
+                    else if (User.IsInRole("Client") || User.IsInRole("Cliente"))
+                    {
+                        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+                        <div class="nav-title">Cliente</div>
+                        <a class="nav-item @(currentAction == "Index" ? "active" : "")" asp-controller="Client" asp-action="Index">
+                            <span class="dot"></span>Mis Productos
+                        </a>
+                        <a class="nav-item @(currentAction == "ExpressTransaction" ? "active" : "")" asp-controller="Client" asp-action="ExpressTransaction">
+                            <span class="dot"></span>Pago Expreso
+                        </a>
+                        <a class="nav-item @(currentAction == "PayCreditCard" ? "active" : "")" asp-controller="Client" asp-action="PayCreditCard">
+                            <span class="dot"></span>Pago de Tarjeta
+                        </a>
+                        <a class="nav-item @(currentAction == "PayLoan" ? "active" : "")" asp-controller="Client" asp-action="PayLoan">
+                            <span class="dot"></span>Pago de Préstamo
+                        </a>
+                        <a class="nav-item @(currentAction == "TransferOwnAccounts" ? "active" : "")" asp-controller="Client" asp-action="TransferOwnAccounts">
+                            <span class="dot"></span>Transferir Cuentas Propias
+                        </a>
+                        <a class="nav-item @(currentAction == "TransferToBeneficiary" ? "active" : "")" asp-controller="Client" asp-action="TransferToBeneficiary">
+                            <span class="dot"></span>Transferir a Beneficiario
+                        </a>
+                        <a class="nav-item @(currentAction == "CashAdvance" ? "active" : "")" asp-controller="Client" asp-action="CashAdvance">
+                            <span class="dot"></span>Avance de Efectivo
+                        </a>
+                        <a class="nav-item @(currentAction == "Beneficiaries" ? "active" : "")" asp-controller="Client" asp-action="Beneficiaries">
+                            <span class="dot"></span>Mis Beneficiarios
+                        </a>
+                    }
+                    
+                    <div style="margin-top:20px;padding:0 8px;">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm w-100" style="font-weight:700;">Cerrar Sesión</button>
+                        </form>
+                    </div>
                 </div>
             }
         </aside>

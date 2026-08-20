@@ -20,6 +20,6 @@ public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountComman
 
     public async Task<bool> Handle(ConfirmAccountCommand request, CancellationToken cancellationToken)
     {
-        return await _accountService.ConfirmAccountAsync(request.Request.Token);
+        return await _accountService.ConfirmAccountAsync(request.Request.UserId, request.Request.Token);
     }
 }

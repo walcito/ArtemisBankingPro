@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Domain.Common.Enums;
-using ArtemisBankingPro.Core.Domain.Entities;
+using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
+using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using FluentAssertions;
 using Moq;
@@ -80,6 +82,6 @@ public class CashierBusinessRulesTests
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<Exception>().WithMessage("Fondos insuficientes.");
+        await act.Should().ThrowAsync<Exception>().WithMessage("*Fondos insuficientes*");
     }
 }
