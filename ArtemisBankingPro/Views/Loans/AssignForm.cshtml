@@ -1,0 +1,67 @@
+@model ArtemisBankingPro.Core.Application.ViewModels.Loan.AssignLoanFormViewModel
+
+@{
+    ViewData["Title"] = "Configurar Préstamo";
+}
+
+<div style="max-width:600px; margin:0 auto;">
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:8px;">Asignar Préstamo</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">Complete los datos del préstamo para el cliente seleccionado.</p>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" style="border-radius:var(--radius); margin-bottom:20px;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card-abp" style="padding:24px;">
+        <div style="margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+            <div style="font-size:14px; color:var(--text-faint);">Cliente seleccionado</div>
+            <div style="font-size:18px; font-weight:700;">@Model.ClientFullName</div>
+            <div style="font-size:14px; color:var(--text-dim);">Cédula: @Model.ClientIdentification</div>
+        </div>
+
+        <form asp-action="Assign" method="post">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="ClientFullName" />
+            <input type="hidden" asp-for="ClientIdentification" />
+
+            <div class="field-abp">
+                <label>Monto a prestar (Capital)</label>
+                <div style="position:relative;">
+                    <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:600; color:var(--text-dim);">RD$</span>
+                    <input asp-for="DisbursedAmount" type="number" step="0.01" style="padding-left:45px;" placeholder="0.00" />
+                </div>
+                <span asp-validation-for="DisbursedAmount" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:4px; display:block;"></span>
+            </div>
+
+            <div class="field-abp">
+                <label>Plazo del préstamo</label>
+                <select asp-for="TermInMonths" class="form-select">
+                    <option value="">Seleccione un plazo...</option>
+                    @for (int i = 6; i <= 60; i += 6)
+                    {
+                        <option value="@i">@i meses</option>
+                    }
+                </select>
+                <span asp-validation-for="TermInMonths" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:4px; display:block;"></span>
+            </div>
+
+            <div class="field-abp">
+                <label>Tasa de interés anual (%)</label>
+                <input asp-for="AnnualInterestRate" type="number" step="0.01" placeholder="Ej: 18.50" />
+                <span asp-validation-for="AnnualInterestRate" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:4px; display:block;"></span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:32px;">
+                <a asp-action="SelectClient" class="btn-abp btn-abp-ghost">← Volver atrás</a>
+                <button type="submit" class="btn-abp btn-abp-primary">Asignar préstamo</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

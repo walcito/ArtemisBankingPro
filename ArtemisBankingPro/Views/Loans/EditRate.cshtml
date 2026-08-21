@@ -1,0 +1,47 @@
+@model ArtemisBankingPro.Core.Application.ViewModels.Loan.EditLoanRateViewModel
+
+@{
+    ViewData["Title"] = "Editar Tasa de Interés";
+}
+
+<div style="max-width:500px; margin:0 auto;">
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:24px;">Editar Tasa de Interés</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" style="border-radius:var(--radius); margin-bottom:20px;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card-abp" style="padding:24px;">
+        <form asp-action="EditRate" method="post">
+            <input type="hidden" asp-for="LoanId" />
+            <input type="hidden" asp-for="LoanNumber" />
+            <input type="hidden" asp-for="CurrentRate" />
+
+            <div style="margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+                <div style="font-size:14px; color:var(--text-faint);">Préstamo N°</div>
+                <div style="font-size:18px; font-weight:700; font-family:monospace;">@Model.LoanNumber</div>
+                <div style="font-size:14px; color:var(--text-dim); margin-top:4px;">
+                    Tasa anual actual: <span style="font-weight:700;">@Model.CurrentRate.ToString("0.00")%</span>
+                </div>
+            </div>
+
+            <div class="field-abp">
+                <label>Nueva tasa de interés anual (%)</label>
+                <input asp-for="NewAnnualInterestRate" type="number" step="0.01" placeholder="Ej: 16.00" autofocus />
+                <span asp-validation-for="NewAnnualInterestRate" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:4px; display:block;"></span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:32px;">
+                <a asp-action="Index" class="btn-abp btn-abp-ghost">Cancelar</a>
+                <button type="submit" class="btn-abp btn-abp-primary">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
