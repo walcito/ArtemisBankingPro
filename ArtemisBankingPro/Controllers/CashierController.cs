@@ -1,31 +1,24 @@
-﻿using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;
-using ArtemisBankingPro.Core.Application.Dtos.Cashier;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayCreditCard;
+using System.Security.Claims;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Cashier;
 using System.Text.Json;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
 [Authorize(Roles = "Cashier,Cajero,Teller")]
 public class CashierController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly ICashierService _cashierService;
 
-    public CashierController(IMediator mediator)
+    public CashierController(ICashierService cashierService)
     {
-        _mediator = mediator;
+        _cashierService = cashierService;
     }
 
     private int GetAuthenticatedCashierId()
@@ -51,8 +44,7 @@ public class CashierController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var query = new GetCashierHomeQuery { CashierUserId = GetAuthenticatedCashierId() };
-        var result = await _mediator.Send(query);
+        var result = await _cashierService.GetCashierHomeAsync(GetAuthenticatedCashierId());
         var vm = new CashierHomeViewModel
         {
             TotalTransactionsToday = result.TotalTransactionsToday,
@@ -71,7 +63,6 @@ public class CashierController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        // Guardamos el ViewModel temporalmente, para reutilizarlo en la pantalla de confirmación
         TempData["PendingDeposit"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmDeposit));
     }
@@ -97,12 +88,7 @@ public class CashierController : Controller
         if (!confirmed || vm is null)
             return RedirectToAction(nameof(Deposit));
 
-        var command = new DepositCommand
-        {
-            AccountNumber = vm.AccountNumber,
-            Amount = vm.Amount
-        };
-        await _mediator.Send(command);
+        await _cashierService.DepositAsync(vm.AccountNumber, vm.Amount);
         TempData["SuccessMessage"] = $"Se acreditaron {vm.Amount:C2} a la cuenta {vm.AccountNumber}.";
         return RedirectToAction(nameof(DepositSuccess));
     }
@@ -143,12 +129,7 @@ public class CashierController : Controller
         if (!confirmed || vm is null)
             return RedirectToAction(nameof(Withdraw));
 
-        var command = new WithdrawCommand
-        {
-            AccountNumber = vm.AccountNumber,
-            Amount = vm.Amount
-        };
-        await _mediator.Send(command);
+        await _cashierService.WithdrawAsync(vm.AccountNumber, vm.Amount);
         TempData["SuccessMessage"] = $"Se descontaron {vm.Amount:C2} de la cuenta {vm.AccountNumber}.";
         return RedirectToAction(nameof(WithdrawSuccess));
     }
@@ -189,14 +170,7 @@ public class CashierController : Controller
         if (!confirmed || vm is null)
             return RedirectToAction(nameof(ThirdPartyTransaction));
 
-        var command = new ThirdPartyTransactionCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            DestinationAccountNumber = vm.DestinationAccountNumber,
-            Amount = vm.Amount,
-            CashierUserId = GetAuthenticatedCashierId()
-        };
-        await _mediator.Send(command);
+        await _cashierService.ThirdPartyTransactionAsync(vm.SourceAccountNumber, vm.DestinationAccountNumber, vm.Amount, GetAuthenticatedCashierId());
         TempData["SuccessMessage"] = $"Se transfirieron {vm.Amount:C2} desde la cuenta {vm.SourceAccountNumber} hacia la cuenta {vm.DestinationAccountNumber}.";
         return RedirectToAction(nameof(ThirdPartyTransactionSuccess));
     }
@@ -236,14 +210,7 @@ public class CashierController : Controller
         if (!confirmed || vm is null)
             return RedirectToAction(nameof(PayLoan));
 
-        var command = new PayLoanCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            LoanId = vm.LoanId,
-            Amount = vm.Amount,
-            CashierUserId = GetAuthenticatedCashierId()
-        };
-        await _mediator.Send(command);
+        await _cashierService.PayLoanAsync(vm.SourceAccountNumber, vm.LoanId, vm.Amount, GetAuthenticatedCashierId());
         TempData["SuccessMessage"] = $"Se aplicó un abono de {vm.Amount:C2} al préstamo #{vm.LoanId}.";
         return RedirectToAction(nameof(PayLoanSuccess));
     }
@@ -284,14 +251,7 @@ public class CashierController : Controller
         if (!confirmed || vm is null)
             return RedirectToAction(nameof(PayCreditCard));
 
-        var command = new PayCreditCardCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            CreditCardId = vm.CreditCardId,
-            Amount = vm.Amount,
-            CashierUserId = GetAuthenticatedCashierId()
-        };
-        await _mediator.Send(command);
+        await _cashierService.PayCreditCardAsync(vm.SourceAccountNumber, vm.CreditCardId, vm.Amount, GetAuthenticatedCashierId());
         TempData["SuccessMessage"] = $"Se aplicó un pago de {vm.Amount:C2} a la tarjeta #{vm.CreditCardId}.";
         return RedirectToAction(nameof(PayCreditCardSuccess));
     }

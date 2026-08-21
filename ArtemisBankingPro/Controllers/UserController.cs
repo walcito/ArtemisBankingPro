@@ -1,24 +1,23 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
-using ArtemisBankingPro.Core.Application.Features.Users;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.User;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.Controllers;
 
 public class UserController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly IAdminService _adminService;
 
-    public UserController(IMediator mediator)
+    public UserController(IAdminService adminService)
     {
-        _mediator = mediator;
+        _adminService = adminService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var users = await _mediator.Send(new GetUsersQuery());
+        var users = await _adminService.GetAllUsersAsync();
         var vms = users.Select(u => new UserViewModel
         {
             Id = u.Id,
@@ -59,15 +58,14 @@ public class UserController : Controller
             InitialAmount = vm.InitialAmount
         };
 
-        await _mediator.Send(new CreateUserCommand { User = dto });
+        await _adminService.CreateUserAsync(dto);
         return RedirectToAction("Index");
     }
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
-        var users = await _mediator.Send(new GetUsersQuery());
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = await _adminService.GetUserByIdAsync(id);
         if (user is null) return RedirectToAction("Index");
 
         var vm = new SaveUserViewModel
@@ -101,14 +99,14 @@ public class UserController : Controller
             Role = vm.Role
         };
 
-        await _mediator.Send(new EditUserCommand { Id = vm.Id ?? string.Empty, User = dto });
+        await _adminService.EditUserAsync(vm.Id ?? string.Empty, dto);
         return RedirectToAction("Index");
     }
 
     [HttpPost]
     public async Task<IActionResult> ChangeStatus(string id, bool status)
     {
-        await _mediator.Send(new ChangeUserStatusCommand { Id = id, Status = status });
+        await _adminService.ChangeUserStatusAsync(id, status);
         return RedirectToAction("Index");
     }
 }

@@ -1,36 +1,25 @@
-﻿using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.AddBeneficiary;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferBetweenOwnAccounts;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.ExpressTransaction;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBeneficiary;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayLoanFromClient;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayCreditCardFromClient;
+using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
-using ArtemisBankingPro.Core.Application.Dtos.Client;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Client;
 using System.Text.Json;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries;
-using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
 [Authorize(Roles = "Client,Cliente")]
 public class ClientController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly IClientProductService _clientService;
 
-    public ClientController(IMediator mediator)
+    public ClientController(IClientProductService clientService)
     {
-        _mediator = mediator;
+        _clientService = clientService;
     }
 
     private int GetAuthenticatedUserId()
@@ -84,13 +73,13 @@ public class ClientController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var result = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var result = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         return View(MapToViewModel(result));
     }
 
     public async Task<IActionResult> Beneficiaries()
     {
-        var result = await _mediator.Send(new GetBeneficiariesQuery { OwnerUserId = GetAuthenticatedUserId() });
+        var result = await _clientService.GetBeneficiariesAsync(GetAuthenticatedUserId());
         var vms = result.Select(b => new BeneficiaryViewModel
         {
             Id = b.Id,
@@ -102,10 +91,9 @@ public class ClientController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddBeneficiary(AddBeneficiaryCommand command)
+    public async Task<IActionResult> AddBeneficiary(AddBeneficiaryViewModel command)
     {
-        command.OwnerUserId = GetAuthenticatedUserId();
-        await _mediator.Send(command);
+        await _clientService.AddBeneficiaryAsync(GetAuthenticatedUserId(), command.BeneficiaryAccountNumber, command.Alias);
         return RedirectToAction(nameof(Beneficiaries));
     }
 
@@ -113,13 +101,13 @@ public class ClientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveBeneficiary(int id)
     {
-        await _mediator.Send(new RemoveBeneficiaryCommand { Id = id, OwnerUserId = GetAuthenticatedUserId() });
+        await _clientService.RemoveBeneficiaryAsync(id, GetAuthenticatedUserId());
         return RedirectToAction(nameof(Beneficiaries));
     }
 
     public async Task<IActionResult> TransferOwnAccounts()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
         return View(new TransferOwnAccountsViewModel());
     }
@@ -130,7 +118,7 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
             return View(vm);
         }
@@ -157,14 +145,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<TransferOwnAccountsViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(TransferOwnAccounts));
 
-        var command = new TransferBetweenOwnAccountsCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            DestinationAccountNumber = vm.DestinationAccountNumber,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.TransferBetweenOwnAccountsAsync(vm.SourceAccountNumber, vm.DestinationAccountNumber, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se transfirieron {vm.Amount:C2} entre tus cuentas propias.";
         return RedirectToAction(nameof(TransferOwnAccountsSuccess));
     }
@@ -173,7 +154,7 @@ public class ClientController : Controller
 
     public async Task<IActionResult> ExpressTransaction()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
         return View(new ExpressTransactionViewModel());
     }
@@ -184,7 +165,7 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
             return View(vm);
         }
@@ -211,14 +192,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<ExpressTransactionViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(ExpressTransaction));
 
-        var command = new ExpressTransactionCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            DestinationAccountNumber = vm.DestinationAccountNumber,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.ExpressTransactionAsync(vm.SourceAccountNumber, vm.DestinationAccountNumber, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se transfirieron {vm.Amount:C2} a la cuenta {vm.DestinationAccountNumber}.";
         return RedirectToAction(nameof(ExpressTransactionSuccess));
     }
@@ -227,9 +201,9 @@ public class ClientController : Controller
 
     public async Task<IActionResult> TransferToBeneficiary()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
-        var beneficiaries = await _mediator.Send(new GetBeneficiariesQuery { OwnerUserId = GetAuthenticatedUserId() });
+        var beneficiaries = await _clientService.GetBeneficiariesAsync(GetAuthenticatedUserId());
         ViewBag.Beneficiaries = beneficiaries;
         return View(new TransferToBeneficiaryViewModel());
     }
@@ -240,9 +214,9 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
-            var beneficiaries = await _mediator.Send(new GetBeneficiariesQuery { OwnerUserId = GetAuthenticatedUserId() });
+            var beneficiaries = await _clientService.GetBeneficiariesAsync(GetAuthenticatedUserId());
             ViewBag.Beneficiaries = beneficiaries;
             return View(vm);
         }
@@ -269,14 +243,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<TransferToBeneficiaryViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(TransferToBeneficiary));
 
-        var command = new TransferToBeneficiaryCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            BeneficiaryId = vm.BeneficiaryId,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.TransferToBeneficiaryAsync(vm.SourceAccountNumber, vm.BeneficiaryId, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se transfirieron {vm.Amount:C2} a tu beneficiario.";
         return RedirectToAction(nameof(TransferToBeneficiarySuccess));
     }
@@ -285,7 +252,7 @@ public class ClientController : Controller
 
     public async Task<IActionResult> CashAdvance()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
         ViewBag.Cards = homeData.CreditCards;
         return View(new CashAdvanceViewModel());
@@ -297,7 +264,7 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
             ViewBag.Cards = homeData.CreditCards;
             return View(vm);
@@ -325,14 +292,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<CashAdvanceViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(CashAdvance));
 
-        var command = new CashAdvanceCommand
-        {
-            CreditCardId = vm.CreditCardId,
-            DestinationAccountNumber = vm.DestinationAccountNumber,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.CashAdvanceAsync(vm.CreditCardId, vm.DestinationAccountNumber, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se depositaron {vm.Amount:C2} en tu cuenta.";
         return RedirectToAction(nameof(CashAdvanceSuccess));
     }
@@ -341,7 +301,7 @@ public class ClientController : Controller
 
     public async Task<IActionResult> PayLoan()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
         ViewBag.Loans = homeData.Loans;
         return View(new PayLoanViewModel());
@@ -353,7 +313,7 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
             ViewBag.Loans = homeData.Loans;
             return View(vm);
@@ -381,14 +341,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<PayLoanViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(PayLoan));
 
-        var command = new PayLoanFromClientCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            LoanId = vm.LoanId,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.PayLoanAsync(vm.SourceAccountNumber, vm.LoanId, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se aplicó un abono de {vm.Amount:C2} a tu préstamo.";
         return RedirectToAction(nameof(PayLoanSuccess));
     }
@@ -397,7 +350,7 @@ public class ClientController : Controller
 
     public async Task<IActionResult> PayCreditCard()
     {
-        var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+        var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
         ViewBag.Accounts = homeData.SavingsAccounts;
         ViewBag.Cards = homeData.CreditCards;
         return View(new PayCreditCardViewModel());
@@ -409,7 +362,7 @@ public class ClientController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var homeData = await _mediator.Send(new GetClientHomeQuery { UserId = GetAuthenticatedUserId() });
+            var homeData = await _clientService.GetClientHomeAsync(GetAuthenticatedUserId());
             ViewBag.Accounts = homeData.SavingsAccounts;
             ViewBag.Cards = homeData.CreditCards;
             return View(vm);
@@ -437,14 +390,7 @@ public class ClientController : Controller
         var vm = JsonSerializer.Deserialize<PayCreditCardViewModel>(json);
         if (!confirmed || vm is null) return RedirectToAction(nameof(PayCreditCard));
 
-        var command = new PayCreditCardFromClientCommand
-        {
-            SourceAccountNumber = vm.SourceAccountNumber,
-            CreditCardId = vm.CreditCardId,
-            Amount = vm.Amount,
-            RequestingUserId = GetAuthenticatedUserId()
-        };
-        await _mediator.Send(command);
+        await _clientService.PayCreditCardAsync(vm.SourceAccountNumber, vm.CreditCardId, vm.Amount, GetAuthenticatedUserId());
         TempData["SuccessMessage"] = $"Se aplicó un pago de {vm.Amount:C2} a tu tarjeta.";
         return RedirectToAction(nameof(PayCreditCardSuccess));
     }

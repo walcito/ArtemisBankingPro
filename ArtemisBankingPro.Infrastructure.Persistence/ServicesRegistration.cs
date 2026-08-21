@@ -60,6 +60,8 @@ public static class ServicesRegistration
         services.AddScoped<ICreditCardRepository, CreditCardRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
+        services.AddScoped<IResetTokenRepository, ResetTokenRepository>();
         services.AddScoped<ISavingsAccountRepository, SavingsAccountRepository>();
         services.AddScoped<IBeneficiaryRepository, BeneficiaryRepository>();
         services.AddScoped<ILoanRepository, LoanRepository>();
@@ -69,3 +71,4 @@ public static class ServicesRegistration
         #endregion
     }
 }
+

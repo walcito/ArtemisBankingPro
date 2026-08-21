@@ -1,7 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
-using ArtemisBankingPro.Core.Application.Features.Users;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.User;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +9,17 @@ namespace ArtemisBankingPro.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly IAdminService _adminService;
 
-    public AdminController(IMediator mediator)
+    public AdminController(IAdminService adminService)
     {
-        _mediator = mediator;
+        _adminService = adminService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var users = await _mediator.Send(new GetUsersQuery());
+        var users = await _adminService.GetAllUsersAsync();
         var vms = users.Select(u => new UserViewModel
         {
             Id = u.Id,
@@ -64,20 +63,17 @@ public class AdminController : Controller
                     InitialAmount = vm.InitialAmount
                 };
 
-                await _mediator.Send(new CreateUserCommand
+                await _adminService.CreateUserAsync(new CreateUserDto
                 {
-                    User = new CreateUserDto
-                    {
-                        FirstName = commerceDto.FirstName,
-                        LastName = commerceDto.LastName,
-                        Identification = commerceDto.Identification,
-                        Email = commerceDto.Email,
-                        UserName = commerceDto.UserName,
-                        Password = commerceDto.Password,
-                        ConfirmPassword = commerceDto.ConfirmPassword,
-                        Role = "Commerce",
-                        InitialAmount = commerceDto.InitialAmount
-                    }
+                    FirstName = commerceDto.FirstName,
+                    LastName = commerceDto.LastName,
+                    Identification = commerceDto.Identification,
+                    Email = commerceDto.Email,
+                    UserName = commerceDto.UserName,
+                    Password = commerceDto.Password,
+                    ConfirmPassword = commerceDto.ConfirmPassword,
+                    Role = "Commerce",
+                    InitialAmount = commerceDto.InitialAmount
                 });
             }
             else
@@ -95,7 +91,7 @@ public class AdminController : Controller
                     InitialAmount = vm.InitialAmount
                 };
 
-                await _mediator.Send(new CreateUserCommand { User = dto });
+                await _adminService.CreateUserAsync(dto);
             }
 
             return RedirectToAction("Index");
@@ -111,8 +107,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
-        var users = await _mediator.Send(new GetUsersQuery());
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = await _adminService.GetUserByIdAsync(id);
         if (user is null) return RedirectToAction("Index");
 
         var vm = new SaveUserViewModel
@@ -137,29 +132,18 @@ public class AdminController : Controller
 
         try
         {
-            var editDto = new EditUserDto
+            var userDto = new UserDto
             {
+                Id = vm.Id ?? string.Empty,
                 FirstName = vm.FirstName,
                 LastName = vm.LastName,
                 Identification = vm.Identification,
                 Email = vm.Email,
                 UserName = vm.UserName,
-                Password = vm.Password,
-                ConfirmPassword = vm.ConfirmPassword
-            };
-
-            var userDto = new UserDto
-            {
-                Id = vm.Id ?? string.Empty,
-                FirstName = editDto.FirstName,
-                LastName = editDto.LastName,
-                Identification = editDto.Identification,
-                Email = editDto.Email,
-                UserName = editDto.UserName,
                 Role = vm.Role
             };
 
-            await _mediator.Send(new EditUserCommand { Id = vm.Id ?? string.Empty, User = userDto });
+            await _adminService.EditUserAsync(vm.Id ?? string.Empty, userDto);
             return RedirectToAction("Index");
         }
         catch (Exception ex)
@@ -173,7 +157,7 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangeStatus(string id, bool status)
     {
-        await _mediator.Send(new ChangeUserStatusCommand { Id = id, Status = status });
+        await _adminService.ChangeUserStatusAsync(id, status);
         return RedirectToAction("Index");
     }
 }

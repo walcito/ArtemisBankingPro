@@ -1,14 +1,8 @@
-using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using ArtemisBankingPro.Core.Application.Exceptions;
-using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
-using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
-using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetEligibleClients;
-using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
-using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Loan;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,27 +11,19 @@ namespace ArtemisBankingPro.WebApp.Controllers;
 [Authorize(Roles = "Administrator")]
 public class LoansController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly ILoanService _loanService;
     private readonly IMapper _mapper;
 
-    public LoansController(IMediator mediator, IMapper mapper)
+    public LoansController(ILoanService loanService, IMapper mapper)
     {
-        _mediator = mediator;
+        _loanService = loanService;
         _mapper = mapper;
     }
 
     public async Task<IActionResult> Index(
         int pageNumber = 1, int pageSize = 20, string? identificationNumber = null, LoanStatus? status = null)
     {
-        var query = new GetLoansQuery
-        {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            IdentificationNumber = identificationNumber,
-            Status = status
-        };
-
-        var result = await _mediator.Send(query);
+        var result = await _loanService.GetLoansAsync(pageNumber, pageSize, identificationNumber, status);
 
         var vm = new LoanListViewModel
         {
@@ -63,8 +49,7 @@ public class LoansController : Controller
 
     public async Task<IActionResult> Details(int id)
     {
-        var query = new ObtenerDetallePrestamoQuery { LoanId = id };
-        var result = await _mediator.Send(query);
+        var result = await _loanService.GetLoanDetailAsync(id);
 
         if (result == null)
             return NotFound();
@@ -100,7 +85,7 @@ public class LoansController : Controller
     [HttpGet]
     public async Task<IActionResult> SelectClient(string? identificationNumber)
     {
-        var result = await _mediator.Send(new GetEligibleClientsForLoanQuery { IdentificationNumber = identificationNumber });
+        var result = await _loanService.GetEligibleClientsAsync(identificationNumber);
         var vm = new SelectClientForLoanViewModel
         {
             AverageDebt = result.AverageDebt,
@@ -113,7 +98,7 @@ public class LoansController : Controller
     [HttpGet]
     public async Task<IActionResult> AssignForm(int userId)
     {
-        var result = await _mediator.Send(new GetEligibleClientsForLoanQuery());
+        var result = await _loanService.GetEligibleClientsAsync();
         var client = result.Clients.FirstOrDefault(c => c.Id == userId);
         
         if (client == null)
@@ -137,7 +122,7 @@ public class LoansController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var result = await _mediator.Send(new GetEligibleClientsForLoanQuery());
+            var result = await _loanService.GetEligibleClientsAsync();
             var client = result.Clients.FirstOrDefault(c => c.Id == vm.UserId);
             if (client != null)
             {
@@ -147,18 +132,9 @@ public class LoansController : Controller
             return View("AssignForm", vm);
         }
 
-        var command = new AsignarPrestamoCommand
-        {
-            UserId = vm.UserId,
-            DisbursedAmount = vm.DisbursedAmount,
-            AnnualInterestRate = vm.AnnualInterestRate,
-            TermInMonths = vm.TermInMonths,
-            ConfirmHighRisk = false
-        };
-
         try
         {
-            await _mediator.Send(command);
+            await _loanService.AssignLoanAsync(vm.UserId, vm.DisbursedAmount, vm.AnnualInterestRate, vm.TermInMonths, false);
             TempData["SuccessMessage"] = "Préstamo asignado exitosamente y desembolsado en la cuenta del cliente.";
             return RedirectToAction(nameof(Index));
         }
@@ -185,18 +161,9 @@ public class LoansController : Controller
     [HttpPost]
     public async Task<IActionResult> ConfirmHighRisk(HighRiskWarningViewModel vm)
     {
-        var command = new AsignarPrestamoCommand
-        {
-            UserId = vm.UserId,
-            DisbursedAmount = vm.DisbursedAmount,
-            AnnualInterestRate = vm.AnnualInterestRate,
-            TermInMonths = vm.TermInMonths,
-            ConfirmHighRisk = true
-        };
-
         try
         {
-            await _mediator.Send(command);
+            await _loanService.AssignLoanAsync(vm.UserId, vm.DisbursedAmount, vm.AnnualInterestRate, vm.TermInMonths, true);
             TempData["SuccessMessage"] = "Préstamo (Alto Riesgo) asignado exitosamente y desembolsado en la cuenta del cliente.";
             return RedirectToAction(nameof(Index));
         }
@@ -210,8 +177,7 @@ public class LoansController : Controller
     [HttpGet]
     public async Task<IActionResult> EditRate(int id)
     {
-        var query = new ObtenerDetallePrestamoQuery { LoanId = id };
-        var loan = await _mediator.Send(query);
+        var loan = await _loanService.GetLoanDetailAsync(id);
 
         if (loan == null || loan.Status != LoanStatus.Active)
         {
@@ -235,15 +201,9 @@ public class LoansController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        var command = new EditarTasaPrestamoCommand
-        {
-            LoanId = vm.LoanId,
-            NewAnnualInterestRate = vm.NewAnnualInterestRate
-        };
-
         try
         {
-            await _mediator.Send(command);
+            await _loanService.EditLoanRateAsync(vm.LoanId, vm.NewAnnualInterestRate);
             TempData["SuccessMessage"] = "La tasa de interés ha sido actualizada y la tabla de amortización se ha recalculado.";
             return RedirectToAction(nameof(Index));
         }
