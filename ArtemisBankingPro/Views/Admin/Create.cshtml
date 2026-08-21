@@ -1,4 +1,4 @@
-﻿@model ArtemisBankingPro.Core.Application.ViewModels.User.SaveUserViewModel
+@model ArtemisBankingPro.Core.Application.ViewModels.User.SaveUserViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Crear Usuario";
@@ -50,11 +50,10 @@
 
             <div style="margin-bottom:14px;">
                 <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Rol *</label>
-                <select asp-for="Role" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);">
+                <select id="roleSelect" asp-for="Role" onchange="toggleInitialAmount()" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);">
                     <option value="Client">Cliente</option>
                     <option value="Cashier">Cajero</option>
                     <option value="Admin">Administrador</option>
-                    <option value="Commerce">Comercio</option>
                 </select>
                 <span asp-validation-for="Role" class="text-danger" style="font-size:11px;"></span>
             </div>
@@ -64,7 +63,7 @@
                     <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Contraseña *</label>
                     <input asp-for="Password" type="password" placeholder="••••••••" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);" />
                     <span asp-validation-for="Password" class="text-danger" style="font-size:11px;"></span>
-                    <small style="display:block;font-size:11px;color:var(--text-faint);margin-top:4px;">Min 6 caracteres (incluir mayúscula, número y carácter especial ej: @@, #, $)</small>
+                    <small style="display:block;font-size:11px;color:var(--text-faint);margin-top:4px;">Min 6 caracteres (incluir mayúscula, número y carácter especial)</small>
                 </div>
                 <div>
                     <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Confirmar Contraseña *</label>
@@ -73,9 +72,9 @@
                 </div>
             </div>
 
-            <div style="margin-bottom:18px;">
+            <div id="initialAmountContainer" style="margin-bottom:18px;">
                 <label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Monto inicial (Solo Cliente)</label>
-                <input asp-for="InitialAmount" placeholder="5000.00" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);" />
+                <input id="InitialAmount" asp-for="InitialAmount" placeholder="5000.00" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);" />
             </div>
 
             <div style="display:flex;gap:10px;">
@@ -85,3 +84,25 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function toggleInitialAmount() {
+            var roleSelect = document.getElementById('roleSelect');
+            var container = document.getElementById('initialAmountContainer');
+            if (roleSelect && container) {
+                if (roleSelect.value === 'Client' || roleSelect.value === 'Cliente') {
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                    var input = document.getElementById('InitialAmount');
+                    if (input) input.value = '0.00';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleInitialAmount();
+        });
+    </script>
+}

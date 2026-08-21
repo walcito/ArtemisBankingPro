@@ -1,8 +1,13 @@
-﻿@model ArtemisBankingPro.Core.Application.ViewModels.Loan.LoanListViewModel
+@model ArtemisBankingPro.Core.Application.ViewModels.Loan.LoanListViewModel
 
 @{
     ViewData["Title"] = "Gestión de Préstamos";
 }
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <h2 style="margin:0; font-size:24px; font-weight:700;">Gestión de Préstamos</h2>
+    <a asp-action="SelectClient" class="btn-abp btn-abp-primary">Asignar préstamo</a>
+</div>
 
 <form method="get" class="row g-3 mb-4 align-items-end">
     <div class="col-md-3 field-abp" style="margin-bottom:0;">
@@ -55,10 +60,16 @@
                                 @(isAct ? "Activo" : loan.Status.ToString())
                             </span>
                         </td>
-                        <td>
+                        <td style="display:flex; gap:8px;">
                             <a asp-action="Details" asp-route-id="@loan.Id" class="btn-abp btn-abp-ghost btn-abp-sm">
                                 Ver detalles
                             </a>
+                            @if (isAct)
+                            {
+                                <a asp-action="EditRate" asp-route-id="@loan.Id" class="btn-abp btn-abp-ghost btn-abp-sm">
+                                    Editar
+                                </a>
+                            }
                         </td>
                     </tr>
                 }
