@@ -3,7 +3,7 @@ using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 
-namespace ArtemisBankingPro.Core.Application.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces.SavingsAccount;
 
 public interface ISavingsAccountService
 {

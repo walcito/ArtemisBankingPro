@@ -6,11 +6,11 @@ using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Creat
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
 using ArtemisBankingPro.Core.Application.Features.Users;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Services;
+namespace ArtemisBankingPro.Core.Application.Services.SavingsAccount;
 
 public class SavingsAccountService : ISavingsAccountService
 {

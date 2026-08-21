@@ -1,9 +1,9 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
 using ArtemisBankingPro.Core.Application.Features.Users;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Admin;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Services;
+namespace ArtemisBankingPro.Core.Application.Services.Admin;
 
 public class AdminService : IAdminService
 {

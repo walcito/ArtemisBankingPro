@@ -1,6 +1,6 @@
 namespace ArtemisBankingPro.Core.Application.Dtos.Loan;
 
-public class EditarTasaPrestamoRequest
+public class EditLoanRateRequest
 {
     public decimal NewAnnualInterestRate { get; set; }
 }

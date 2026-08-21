@@ -1,4 +1,4 @@
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.SavingsAccount;
 using ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 using Microsoft.AspNetCore.Authorization;

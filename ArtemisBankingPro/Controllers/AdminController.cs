@@ -1,5 +1,5 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Admin;
 using ArtemisBankingPro.Core.Application.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

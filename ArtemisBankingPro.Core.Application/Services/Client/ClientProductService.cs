@@ -9,10 +9,10 @@ using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferBetwe
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries;
 using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Client;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Services;
+namespace ArtemisBankingPro.Core.Application.Services.Client;
 
 public class ClientProductService : IClientProductService
 {

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Client;
 using ArtemisBankingPro.Core.Application.ViewModels.Client;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;

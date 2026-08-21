@@ -5,10 +5,10 @@ using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTra
 using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Cashier;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Services;
+namespace ArtemisBankingPro.Core.Application.Services.Cashier;
 
 public class CashierService : ICashierService
 {

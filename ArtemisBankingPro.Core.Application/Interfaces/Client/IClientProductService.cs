@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.Client;
 
-namespace ArtemisBankingPro.Core.Application.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces.Client;
 
 public interface IClientProductService
 {

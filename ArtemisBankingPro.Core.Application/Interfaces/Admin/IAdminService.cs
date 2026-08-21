@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.User;
 
-namespace ArtemisBankingPro.Core.Application.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces.Admin;
 
 public interface IAdminService
 {
