@@ -104,8 +104,7 @@ public class ClientController : Controller
     {
         try
         {
-            command.OwnerUserId = GetAuthenticatedUserId();
-            await _mediator.Send(command);
+            await _clientService.AddBeneficiaryAsync(GetAuthenticatedUserId(), command.BeneficiaryAccountNumber, command.Alias);
             TempData["SuccessMessage"] = "Beneficiario agregado correctamente.";
         }
         catch (Exception ex)
@@ -121,7 +120,7 @@ public class ClientController : Controller
     {
         try
         {
-            await _mediator.Send(new RemoveBeneficiaryCommand { Id = id, OwnerUserId = GetAuthenticatedUserId() });
+            await _clientService.RemoveBeneficiaryAsync(id, GetAuthenticatedUserId());
             TempData["SuccessMessage"] = "Beneficiario eliminado correctamente.";
         }
         catch (Exception ex)
