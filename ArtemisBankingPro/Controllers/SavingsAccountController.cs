@@ -1,25 +1,19 @@
-﻿using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CancelSavingsAccount;
-using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
-using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
+using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
 [Authorize(Roles = "Admin , Administrador")]
 public class SavingsAccountController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly ISavingsAccountService _savingsAccountService;
 
-    public SavingsAccountController(IMediator mediator)
+    public SavingsAccountController(ISavingsAccountService savingsAccountService)
     {
-        _mediator = mediator;
+        _savingsAccountService = savingsAccountService;
     }
 
     public async Task<IActionResult> Index(
@@ -27,16 +21,7 @@ public class SavingsAccountController : Controller
         AccountStatus? status = null,
         AccountType? type = null)
     {
-        var query = new GetSavingsAccountsQuery
-        {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            IdentificationNumber = identificationNumber,
-            Status = status,
-            Type = type
-        };
-
-        var result = await _mediator.Send(query);
+        var result = await _savingsAccountService.GetSavingsAccountsAsync(pageNumber, pageSize, identificationNumber, status, type);
 
         var vm = new SavingsAccountListViewModel
         {
@@ -60,26 +45,19 @@ public class SavingsAccountController : Controller
 
     public async Task<IActionResult> Details(string accountNumber, int pageNumber = 1)
     {
-        var query = new GetAccountTransactionsQuery
-        {
-            AccountNumber = accountNumber,
-            PageNumber = pageNumber,
-            PageSize = 10
-        };
-
-        var result = await _mediator.Send(query);
+        var transResult = await _savingsAccountService.GetAccountTransactionsAsync(accountNumber, pageNumber, 10);
         
-        var accounts = await _mediator.Send(new GetSavingsAccountsQuery { PageSize = 1000 });
+        var accounts = await _savingsAccountService.GetSavingsAccountsAsync(1, 1000, null, null, null);
         var account = accounts.Items.FirstOrDefault(a => a.AccountNumber == accountNumber);
 
         var vm = new AccountDetailsViewModel
         {
             AccountNumber = accountNumber,
             Balance = account?.Balance ?? 0m,
-            TotalCount = result.TotalCount,
-            PageNumber = result.PageNumber,
-            PageSize = result.PageSize,
-            Transactions = result.Items.Select(t => new TransactionViewModel
+            TotalCount = transResult.TotalCount,
+            PageNumber = transResult.PageNumber,
+            PageSize = transResult.PageSize,
+            Transactions = transResult.Items.Select(t => new TransactionViewModel
             {
                 Id = t.Id,
                 Amount = t.Amount,
@@ -95,14 +73,7 @@ public class SavingsAccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Create(int? selectedUserId = null, string? identificationNumber = null)
     {
-        var users = await _mediator.Send(new ArtemisBankingPro.Core.Application.Features.Users.GetUsersQuery());
-        // Filtrar clientes activos
-        var clients = users.Where(u => u.Role == "Cliente" && u.IsActive).ToList();
-        
-        if (!string.IsNullOrEmpty(identificationNumber))
-        {
-            clients = clients.Where(c => c.Identification.Contains(identificationNumber)).ToList();
-        }
+        var clients = await _savingsAccountService.GetActiveClientsAsync(identificationNumber);
 
         ViewBag.Clients = clients;
         ViewBag.SelectedUserId = selectedUserId;
@@ -122,15 +93,10 @@ public class SavingsAccountController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return await Create(vm.UserId == 0 ? (int?)null : vm.UserId); // Re-render with errors
+            return await Create(vm.UserId == 0 ? (int?)null : vm.UserId);
         }
 
-        var command = new CreateSavingsAccountCommand
-        {
-            UserId = vm.UserId,
-            InitialAmount = vm.InitialAmount
-        };
-        await _mediator.Send(command);
+        await _savingsAccountService.CreateSavingsAccountAsync(vm.UserId, vm.InitialAmount);
         return RedirectToAction(nameof(Index));
     }
 
@@ -138,7 +104,7 @@ public class SavingsAccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(string accountNumber)
     {
-        await _mediator.Send(new CancelSavingsAccountCommand { AccountNumber = accountNumber });
+        await _savingsAccountService.CancelSavingsAccountAsync(accountNumber);
         return RedirectToAction(nameof(Index));
     }
 }

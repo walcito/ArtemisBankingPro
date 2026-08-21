@@ -1,20 +1,16 @@
 using ArtemisBankingPro.Core.Application.Dtos.Account;
-using ArtemisBankingPro.Core.Application.Features.Account;
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Account;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtemisBankingPro.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly IMediator _mediator;
     private readonly IAccountService _accountService;
 
-    public AccountController(IMediator mediator, IAccountService accountService)
+    public AccountController(IAccountService accountService)
     {
-        _mediator = mediator;
         _accountService = accountService;
     }
 
@@ -30,14 +26,13 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        var result = await _mediator.Send(new AuthenticateCommand
+        var request = new AuthRequest
         {
-            Request = new AuthRequest
-            {
-                UserName = vm.UserName,
-                Password = vm.Password
-            }
-        });
+            UserName = vm.UserName,
+            Password = vm.Password
+        };
+        
+        var result = await _accountService.AuthenticateAsync(request);
 
         if (result.HasError)
         {
@@ -85,8 +80,7 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ConfirmAccount(string userId, string token)
     {
-        var request = new ConfirmAccountRequest { UserId = userId, Token = token };
-        var success = await _mediator.Send(new ConfirmAccountCommand { Request = request });
+        var success = await _accountService.ConfirmAccountAsync(userId, token);
 
         var vm = new ConfirmAccountViewModel
         {
@@ -108,8 +102,7 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        var request = new ForgotPasswordRequest { UserName = vm.UserName };
-        await _mediator.Send(new GetResetTokenCommand { Request = request });
+        await _accountService.GetResetTokenAsync(vm.UserName);
 
         ViewBag.Message = "Se ha enviado un correo con las instrucciones para restablecer su contraseña.";
         return View(vm);
@@ -127,16 +120,15 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(vm);
 
-        var success = await _mediator.Send(new ResetPasswordCommand
+        var request = new ResetPasswordRequest
         {
-            Request = new ResetPasswordRequest
-            {
-                UserId = vm.UserId,
-                Token = vm.Token,
-                Password = vm.Password,
-                ConfirmPassword = vm.ConfirmPassword
-            }
-        });
+            UserId = vm.UserId,
+            Token = vm.Token,
+            Password = vm.Password,
+            ConfirmPassword = vm.ConfirmPassword
+        };
+        
+        var success = await _accountService.ResetPasswordAsync(request);
 
         if (!success)
         {

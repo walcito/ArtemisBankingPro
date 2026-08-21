@@ -15,11 +15,17 @@ public static class ServicesRegistration
     public static void AddApplicationLayerIoc(this IServiceCollection services)
     {
         #region Services IOC
+        services.AddTransient(typeof(IGenericService<>), typeof(GenericService<>));
         services.AddScoped<IAmortizationService, AmortizationService>();
         services.AddScoped<ILoanNumberGeneratorService, LoanNumberGeneratorService>();
         services.AddScoped<ICvcHashService, CvcHashService>();
         services.AddScoped<ICardNumberGeneratorService, CardNumberGeneratorService>();
         services.AddScoped<ICreditCardService, CreditCardService>();
+        services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<ICashierService, CashierService>();
+        services.AddScoped<IClientProductService, ClientProductService>();
+        services.AddScoped<ILoanService, LoanService>();
+        services.AddScoped<ISavingsAccountService, SavingsAccountService>();
         #endregion
        
 
