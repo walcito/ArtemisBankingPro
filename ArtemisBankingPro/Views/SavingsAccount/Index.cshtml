@@ -52,40 +52,43 @@
                             @(account.Status.ToString() == "Active" ? "Activa" : "Cancelada")
                         </span>
                     </td>
-                <td class="row-actions">
-                    <a asp-action="Details" asp-route-accountNumber="@account.AccountNumber" class="btn btn-ghost btn-sm">Ver movimientos</a>
-                    @if (account.Type.ToString() == "Secondary" && account.Status.ToString() == "Active")
-                    {
-                        <form asp-action="Cancel" method="post" class="d-inline" style="margin: 0;">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="accountNumber" value="@account.AccountNumber" />
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que desea cancelar esta cuenta?');">
-                                Cancelar
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-        @if (!Model.Items.Any())
-        {
-            <tr>
-                <td colspan="6" class="skeleton-empty">
-                    <div class="ic">🏦</div>
-                    <h4>No hay cuentas de ahorro</h4>
-                    <p>No se encontraron resultados para los filtros aplicados.</p>
-                </td>
-            </tr>
-        }
-    </table>
-</div>
+                    <td class="row-actions">
+                        <a asp-action="Details" asp-route-accountNumber="@account.AccountNumber" class="btn btn-ghost btn-sm">Ver movimientos</a>
+                        @if (account.Type.ToString() == "Secondary" && account.Status.ToString() == "Active")
+                        {
+                            <form asp-action="Cancel" method="post" class="d-inline" style="margin: 0;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="accountNumber" value="@account.AccountNumber" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que desea cancelar esta cuenta?');">
+                                    Cancelar
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="6" class="skeleton-empty">
+                        <div class="ic">🏦</div>
+                        <h4>No hay cuentas de ahorro</h4>
+                        <p>No se encontraron resultados para los filtros aplicados.</p>
+                    </td>
+                </tr>
+            }
+            
+            
 
-@if (Model.TotalPages > 1)
-{
-    <div class="switch-tabs" style="margin-top: 20px;">
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            <a href="?pageNumber=@i&status=@Context.Request.Query["status"]&type=@Context.Request.Query["type"]&identificationNumber=@Context.Request.Query["identificationNumber"]" class="btn btn-ghost @(i == Model.PageNumber ? "on" : "")" style="border: none; padding: 8px 16px;">@i</a>
+            @if (Model.TotalPages > 1)
+           
+            {
+                <div class="switch-tabs" style="margin-top: 20px;">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a href="?pageNumber=@i&status=@Context.Request.Query["status"]&type=@Context.Request.Query["type"]&identificationNumber=@Context.Request.Query["identificationNumber"]" class="btn btn-ghost @(i == Model.PageNumber ? "on" : "")" style="border: none; padding: 8px 16px;">@i</a>
+                    }
+                </div>
+            }
+             
         }
-    </div>
-}
