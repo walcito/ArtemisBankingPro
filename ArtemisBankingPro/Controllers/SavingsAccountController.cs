@@ -96,8 +96,17 @@ public class SavingsAccountController : Controller
             return await Create(vm.UserId == 0 ? (int?)null : vm.UserId);
         }
 
-        await _savingsAccountService.CreateSavingsAccountAsync(vm.UserId, vm.InitialAmount);
-        return RedirectToAction(nameof(Index));
+        try
+        {
+            await _savingsAccountService.CreateSavingsAccountAsync(vm.UserId, vm.InitialAmount);
+            TempData["SuccessMessage"] = "Cuenta de ahorro asignada exitosamente.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return await Create(vm.UserId == 0 ? (int?)null : vm.UserId);
+        }
     }
 
     [HttpPost]

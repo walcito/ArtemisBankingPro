@@ -4,6 +4,19 @@
     var isStep1 = ViewBag.SelectedUserId == null;
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="margin-bottom:16px; background:#fce8e6; color:#c5221f; border:1px solid #fad2cf; padding:12px 16px; border-radius:8px; font-weight:600;">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" style="margin-bottom:16px;">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 @if (isStep1)
 {
     <!-- Paso 1: Seleccionar Cliente -->

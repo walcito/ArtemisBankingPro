@@ -5,25 +5,25 @@
 }
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <h2 style="margin:0; font-size:24px; font-weight:700;">Gestión de Préstamos</h2>
-    <a asp-action="SelectClient" class="btn-abp btn-abp-primary">Asignar préstamo</a>
+    <h1 style="font-family:'Space Grotesk'; font-size:22px; margin:0; font-weight:700;">Gestión de Préstamos</h1>
+    <a asp-action="SelectClient" class="btn btn-primary" style="background:#35648B; color:#fff; padding:10px 18px; border-radius:10px; font-weight:700; display:inline-block; text-decoration:none;">+ Asignar préstamo</a>
 </div>
 
-<form method="get" class="row g-3 mb-4 align-items-end">
-    <div class="col-md-3 field-abp" style="margin-bottom:0;">
-        <label>Filtrar por estado</label>
-        <select name="status" class="form-select">
+<form method="get" class="toolbar" style="display:flex; gap:12px; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap;">
+    <div class="field" style="max-width:180px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">Filtrar por estado</label>
+        <select name="status" onchange="this.form.submit()" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border);">
             <option value="">Todos</option>
             <option value="Active" selected="@(Context.Request.Query["status"] == "Active")">Activos</option>
             <option value="Paid" selected="@(Context.Request.Query["status"] == "Paid")">Pagados</option>
         </select>
     </div>
-    <div class="col-md-4 field-abp" style="margin-bottom:0;">
-        <label>Buscar por cédula</label>
-        <input type="text" name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]" />
+    <div class="field" style="max-width:240px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">Buscar por cédula</label>
+        <input type="text" name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border);" />
     </div>
-    <div class="col-auto">
-        <button type="submit" class="btn-abp btn-abp-primary">Buscar</button>
+    <div>
+        <button type="submit" class="btn btn-primary" style="background:#35648B; color:#fff; padding:9px 16px; border-radius:8px; border:none; font-weight:700; cursor:pointer;">Buscar</button>
     </div>
 </form>
 
