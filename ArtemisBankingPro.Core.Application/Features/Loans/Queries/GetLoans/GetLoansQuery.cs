@@ -1,6 +1,8 @@
-using ArtemisBankingPro.Core.Application.Common.Models;
+﻿using ArtemisBankingPro.Core.Application.Common.Models;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using MediatR;
+using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 

@@ -1,15 +1,15 @@
-@model ArtemisBankingPro.Core.Application.Common.Models.PagedResult<ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions.TransactionDto>
+﻿@model ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount.AccountDetailsViewModel
 @{
-    ViewData["Title"] = $"Cuenta {ViewBag.AccountNumber} · Movimientos";
+    ViewData["Title"] = $"Cuenta {Model.AccountNumber} · Movimientos";
 }
 
 <div class="card panel" style="margin-bottom:18px;">
-    <div class="amount-hero">@(((decimal)ViewBag.Balance).ToString("C2")) <small>balance disponible</small></div>
+    <div class="amount-hero">@Model.Balance.ToString("C2") <small>balance disponible</small></div>
 </div>
 
 <div class="card panel">
     <div class="section-title">Transacciones (más recientes primero)</div>
-    @foreach (var tx in Model.Items)
+    @foreach (var tx in Model.Transactions)
     {
         var isCredit = tx.Type.ToString() == "Credit" || tx.Type.ToString() == "Deposit";
         <div class="tx-row">
@@ -23,7 +23,7 @@
             <div class="tx-amt @(isCredit ? "credit" : "debit")">@(isCredit ? "+" : "−") @tx.Amount.ToString("C2")</div>
         </div>
     }
-    @if (!Model.Items.Any())
+    @if (!Model.Transactions.Any())
     {
         <div class="skeleton-empty">
             <div class="ic">📄</div>

@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 
-namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
+namespace ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 
 public class SavingsAccountDto
 {

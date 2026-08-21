@@ -1,4 +1,4 @@
-namespace ArtemisBankingPro.Core.Application.Features.Trades.Queries.GetTrades;
+namespace ArtemisBankingPro.Core.Application.Dtos.Commerce;
 
 public class TradeDto
 {

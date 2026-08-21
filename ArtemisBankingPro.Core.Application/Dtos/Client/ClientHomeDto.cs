@@ -1,4 +1,4 @@
-namespace ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
+namespace ArtemisBankingPro.Core.Application.Dtos.Client;
 
 public class ClientHomeDto
 {

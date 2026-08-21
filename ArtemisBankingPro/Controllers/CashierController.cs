@@ -1,10 +1,11 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
+using ArtemisBankingPro.Core.Application.Dtos.Cashier;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayCreditCard;
+using ArtemisBankingPro.Core.Application.ViewModels.Cashier;
 using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
@@ -51,20 +53,26 @@ public class CashierController : Controller
     {
         var query = new GetCashierHomeQuery { CashierUserId = GetAuthenticatedCashierId() };
         var result = await _mediator.Send(query);
-        return View(result);
+        var vm = new CashierHomeViewModel
+        {
+            TotalTransactionsToday = result.TotalTransactionsToday,
+            TotalAmountProcessedToday = result.TotalAmountProcessedToday,
+            RejectedTransactionsToday = result.RejectedTransactionsToday
+        };
+        return View(vm);
     }
 
-    public IActionResult Deposit() => View();
+    public IActionResult Deposit() => View(new DepositViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Deposit(DepositCommand command)
+    public IActionResult Deposit(DepositViewModel vm)
     {
         if (!ModelState.IsValid)
-            return View(command);
+            return View(vm);
 
-        // Guardamos el Command temporalmente, para reutilizarlo en la pantalla de confirmación
-        TempData["PendingDeposit"] = JsonSerializer.Serialize(command);
+        // Guardamos el ViewModel temporalmente, para reutilizarlo en la pantalla de confirmación
+        TempData["PendingDeposit"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmDeposit));
     }
 
@@ -73,8 +81,8 @@ public class CashierController : Controller
         if (TempData.Peek("PendingDeposit") is not string json)
             return RedirectToAction(nameof(Deposit));
 
-        var command = JsonSerializer.Deserialize<DepositCommand>(json);
-        return View(command);
+        var vm = JsonSerializer.Deserialize<DepositViewModel>(json);
+        return View(vm);
     }
 
     [HttpPost]
@@ -84,28 +92,33 @@ public class CashierController : Controller
         if (TempData["PendingDeposit"] is not string json)
             return RedirectToAction(nameof(Deposit));
 
-        var command = JsonSerializer.Deserialize<DepositCommand>(json);
+        var vm = JsonSerializer.Deserialize<DepositViewModel>(json);
 
-        if (!confirmed || command is null)
+        if (!confirmed || vm is null)
             return RedirectToAction(nameof(Deposit));
 
+        var command = new DepositCommand
+        {
+            AccountNumber = vm.AccountNumber,
+            Amount = vm.Amount
+        };
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = $"Se acreditaron {command.Amount:C2} a la cuenta {command.AccountNumber}.";
+        TempData["SuccessMessage"] = $"Se acreditaron {vm.Amount:C2} a la cuenta {vm.AccountNumber}.";
         return RedirectToAction(nameof(DepositSuccess));
     }
 
     public IActionResult DepositSuccess() => View();
 
-    public IActionResult Withdraw() => View();
+    public IActionResult Withdraw() => View(new WithdrawViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Withdraw(WithdrawCommand command)
+    public IActionResult Withdraw(WithdrawViewModel vm)
     {
         if (!ModelState.IsValid)
-            return View(command);
+            return View(vm);
 
-        TempData["PendingWithdraw"] = JsonSerializer.Serialize(command);
+        TempData["PendingWithdraw"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmWithdraw));
     }
 
@@ -114,8 +127,8 @@ public class CashierController : Controller
         if (TempData.Peek("PendingWithdraw") is not string json)
             return RedirectToAction(nameof(Withdraw));
 
-        var command = JsonSerializer.Deserialize<WithdrawCommand>(json);
-        return View(command);
+        var vm = JsonSerializer.Deserialize<WithdrawViewModel>(json);
+        return View(vm);
     }
 
     [HttpPost]
@@ -125,30 +138,33 @@ public class CashierController : Controller
         if (TempData["PendingWithdraw"] is not string json)
             return RedirectToAction(nameof(Withdraw));
 
-        var command = JsonSerializer.Deserialize<WithdrawCommand>(json);
+        var vm = JsonSerializer.Deserialize<WithdrawViewModel>(json);
 
-        if (!confirmed || command is null)
+        if (!confirmed || vm is null)
             return RedirectToAction(nameof(Withdraw));
 
+        var command = new WithdrawCommand
+        {
+            AccountNumber = vm.AccountNumber,
+            Amount = vm.Amount
+        };
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = $"Se descontaron {command.Amount:C2} de la cuenta {command.AccountNumber}.";
+        TempData["SuccessMessage"] = $"Se descontaron {vm.Amount:C2} de la cuenta {vm.AccountNumber}.";
         return RedirectToAction(nameof(WithdrawSuccess));
     }
 
     public IActionResult WithdrawSuccess() => View();
 
-    public IActionResult ThirdPartyTransaction() => View();
+    public IActionResult ThirdPartyTransaction() => View(new ThirdPartyTransactionViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult ThirdPartyTransaction(ThirdPartyTransactionCommand command)
+    public IActionResult ThirdPartyTransaction(ThirdPartyTransactionViewModel vm)
     {
-        command.CashierUserId = GetAuthenticatedCashierId();
-
         if (!ModelState.IsValid)
-            return View(command);
+            return View(vm);
 
-        TempData["PendingThirdParty"] = JsonSerializer.Serialize(command);
+        TempData["PendingThirdParty"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmThirdPartyTransaction));
     }
 
@@ -157,8 +173,8 @@ public class CashierController : Controller
         if (TempData.Peek("PendingThirdParty") is not string json)
             return RedirectToAction(nameof(ThirdPartyTransaction));
 
-        var command = JsonSerializer.Deserialize<ThirdPartyTransactionCommand>(json);
-        return View(command);
+        var vm = JsonSerializer.Deserialize<ThirdPartyTransactionViewModel>(json);
+        return View(vm);
     }
 
     [HttpPost]
@@ -168,29 +184,34 @@ public class CashierController : Controller
         if (TempData["PendingThirdParty"] is not string json)
             return RedirectToAction(nameof(ThirdPartyTransaction));
 
-        var command = JsonSerializer.Deserialize<ThirdPartyTransactionCommand>(json);
+        var vm = JsonSerializer.Deserialize<ThirdPartyTransactionViewModel>(json);
 
-        if (!confirmed || command is null)
+        if (!confirmed || vm is null)
             return RedirectToAction(nameof(ThirdPartyTransaction));
 
+        var command = new ThirdPartyTransactionCommand
+        {
+            SourceAccountNumber = vm.SourceAccountNumber,
+            DestinationAccountNumber = vm.DestinationAccountNumber,
+            Amount = vm.Amount,
+            CashierUserId = GetAuthenticatedCashierId()
+        };
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = $"Se transfirieron {command.Amount:C2} desde la cuenta {command.SourceAccountNumber} hacia la cuenta {command.DestinationAccountNumber}.";
+        TempData["SuccessMessage"] = $"Se transfirieron {vm.Amount:C2} desde la cuenta {vm.SourceAccountNumber} hacia la cuenta {vm.DestinationAccountNumber}.";
         return RedirectToAction(nameof(ThirdPartyTransactionSuccess));
     }
 
     public IActionResult ThirdPartyTransactionSuccess() => View();
-    public IActionResult PayLoan() => View();
+    public IActionResult PayLoan() => View(new CashierPayLoanViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult PayLoan(PayLoanCommand command)
+    public IActionResult PayLoan(CashierPayLoanViewModel vm)
     {
-        command.CashierUserId = GetAuthenticatedCashierId();
-
         if (!ModelState.IsValid)
-            return View(command);
+            return View(vm);
 
-        TempData["PendingPayLoan"] = JsonSerializer.Serialize(command);
+        TempData["PendingPayLoan"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmPayLoan));
     }
 
@@ -199,8 +220,8 @@ public class CashierController : Controller
         if (TempData.Peek("PendingPayLoan") is not string json)
             return RedirectToAction(nameof(PayLoan));
 
-        var command = JsonSerializer.Deserialize<PayLoanCommand>(json);
-        return View(command);
+        var vm = JsonSerializer.Deserialize<CashierPayLoanViewModel>(json);
+        return View(vm);
     }
 
     [HttpPost]
@@ -210,30 +231,35 @@ public class CashierController : Controller
         if (TempData["PendingPayLoan"] is not string json)
             return RedirectToAction(nameof(PayLoan));
 
-        var command = JsonSerializer.Deserialize<PayLoanCommand>(json);
+        var vm = JsonSerializer.Deserialize<CashierPayLoanViewModel>(json);
 
-        if (!confirmed || command is null)
+        if (!confirmed || vm is null)
             return RedirectToAction(nameof(PayLoan));
 
+        var command = new PayLoanCommand
+        {
+            SourceAccountNumber = vm.SourceAccountNumber,
+            LoanId = vm.LoanId,
+            Amount = vm.Amount,
+            CashierUserId = GetAuthenticatedCashierId()
+        };
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = $"Se aplicó un abono de {command.Amount:C2} al préstamo #{command.LoanId}.";
+        TempData["SuccessMessage"] = $"Se aplicó un abono de {vm.Amount:C2} al préstamo #{vm.LoanId}.";
         return RedirectToAction(nameof(PayLoanSuccess));
     }
 
     public IActionResult PayLoanSuccess() => View();
 
-    public IActionResult PayCreditCard() => View();
+    public IActionResult PayCreditCard() => View(new CashierPayCreditCardViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult PayCreditCard(PayCreditCardCommand command)
+    public IActionResult PayCreditCard(CashierPayCreditCardViewModel vm)
     {
-        command.CashierUserId = GetAuthenticatedCashierId();
-
         if (!ModelState.IsValid)
-            return View(command);
+            return View(vm);
 
-        TempData["PendingPayCreditCard"] = JsonSerializer.Serialize(command);
+        TempData["PendingPayCreditCard"] = JsonSerializer.Serialize(vm);
         return RedirectToAction(nameof(ConfirmPayCreditCard));
     }
 
@@ -242,8 +268,8 @@ public class CashierController : Controller
         if (TempData.Peek("PendingPayCreditCard") is not string json)
             return RedirectToAction(nameof(PayCreditCard));
 
-        var command = JsonSerializer.Deserialize<PayCreditCardCommand>(json);
-        return View(command);
+        var vm = JsonSerializer.Deserialize<CashierPayCreditCardViewModel>(json);
+        return View(vm);
     }
 
     [HttpPost]
@@ -253,13 +279,20 @@ public class CashierController : Controller
         if (TempData["PendingPayCreditCard"] is not string json)
             return RedirectToAction(nameof(PayCreditCard));
 
-        var command = JsonSerializer.Deserialize<PayCreditCardCommand>(json);
+        var vm = JsonSerializer.Deserialize<CashierPayCreditCardViewModel>(json);
 
-        if (!confirmed || command is null)
+        if (!confirmed || vm is null)
             return RedirectToAction(nameof(PayCreditCard));
 
+        var command = new PayCreditCardCommand
+        {
+            SourceAccountNumber = vm.SourceAccountNumber,
+            CreditCardId = vm.CreditCardId,
+            Amount = vm.Amount,
+            CashierUserId = GetAuthenticatedCashierId()
+        };
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = $"Se aplicó un pago de {command.Amount:C2} a la tarjeta #{command.CreditCardId}.";
+        TempData["SuccessMessage"] = $"Se aplicó un pago de {vm.Amount:C2} a la tarjeta #{vm.CreditCardId}.";
         return RedirectToAction(nameof(PayCreditCardSuccess));
     }
 

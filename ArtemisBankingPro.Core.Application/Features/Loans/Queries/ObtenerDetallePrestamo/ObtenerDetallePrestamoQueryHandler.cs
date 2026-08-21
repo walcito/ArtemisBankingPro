@@ -1,6 +1,8 @@
-using ArtemisBankingPro.Core.Domain.Entities.Loans;
+﻿using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
+using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 

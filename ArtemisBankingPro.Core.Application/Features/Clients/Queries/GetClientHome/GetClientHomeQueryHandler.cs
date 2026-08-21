@@ -1,8 +1,10 @@
-using ArtemisBankingPro.Core.Domain.Entities.Card;
+﻿using ArtemisBankingPro.Core.Domain.Entities.Card;
 using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
+using ArtemisBankingPro.Core.Application.Dtos.Client;
+using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
 
 namespace ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
 
