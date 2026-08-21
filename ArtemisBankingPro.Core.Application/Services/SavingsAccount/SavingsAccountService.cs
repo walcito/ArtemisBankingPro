@@ -5,9 +5,11 @@ using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Cance
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
-using ArtemisBankingPro.Core.Application.Features.Users;
 using ArtemisBankingPro.Core.Application.Interfaces.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Common.Enums.Users;
+using ArtemisBankingPro.Core.Domain.Entities.Users;
+using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 
 namespace ArtemisBankingPro.Core.Application.Services.SavingsAccount;
@@ -15,10 +17,12 @@ namespace ArtemisBankingPro.Core.Application.Services.SavingsAccount;
 public class SavingsAccountService : ISavingsAccountService
 {
     private readonly IMediator _mediator;
+    private readonly IGenericRepository<User> _userRepository;
 
-    public SavingsAccountService(IMediator mediator)
+    public SavingsAccountService(IMediator mediator, IGenericRepository<User> userRepository)
     {
         _mediator = mediator;
+        _userRepository = userRepository;
     }
 
     public async Task<PagedResult<SavingsAccountDto>> GetSavingsAccountsAsync(int pageNumber, int pageSize, string? identificationNumber, AccountStatus? status, AccountType? type)
@@ -59,12 +63,26 @@ public class SavingsAccountService : ISavingsAccountService
 
     public async Task<List<UserDto>> GetActiveClientsAsync(string? identificationNumber = null)
     {
-        var users = await _mediator.Send(new GetUsersQuery());
-        var clients = users.Where(u => u.Role == "Cliente" && u.IsActive).ToList();
+        var dbUsers = await _userRepository.GetAllAsync();
+        var clients = dbUsers
+            .Where(u => u.Role == Roles.Client && u.IsActive)
+            .Select(u => new UserDto
+            {
+                Id = u.Id.ToString(),
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Identification = u.IdentificationNumber,
+                Email = u.Email,
+                UserName = u.Username,
+                Role = "Client",
+                IsActive = u.IsActive
+            })
+            .ToList();
 
         if (!string.IsNullOrEmpty(identificationNumber))
         {
-            clients = clients.Where(c => c.Identification.Contains(identificationNumber)).ToList();
+            var searchClean = identificationNumber.Trim().Replace("-", "");
+            clients = clients.Where(c => c.Identification.Replace("-", "").Contains(searchClean)).ToList();
         }
 
         return clients;

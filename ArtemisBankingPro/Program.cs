@@ -22,6 +22,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await services.RunIdentitySeedAsync();
+        var dbContext = services.GetRequiredService<ArtemisBankingPro.Infrastructure.Persistence.Context.ArtemisBankingDbContext>();
+        await ArtemisBankingPro.Infrastructure.Persistence.Seed.DataSeeder.SeedAsync(dbContext);
     }
     catch (Exception)
     {
