@@ -4,15 +4,16 @@ using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 using MediatR;
 using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Interfaces.SavingsAccounts;
 
 namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
 
 public class GetSavingsAccountsQueryHandler
     : IRequestHandler<GetSavingsAccountsQuery, PagedResult<SavingsAccountDto>>
 {
-    private readonly IGenericRepository<SavingsAccount> _savingsAccountRepository;
+    private readonly ISavingsAccountRepository _savingsAccountRepository; 
 
-    public GetSavingsAccountsQueryHandler(IGenericRepository<SavingsAccount> savingsAccountRepository)
+    public GetSavingsAccountsQueryHandler(ISavingsAccountRepository savingsAccountRepository)
     {
         _savingsAccountRepository = savingsAccountRepository;
     }
@@ -20,8 +21,8 @@ public class GetSavingsAccountsQueryHandler
     public async Task<PagedResult<SavingsAccountDto>> Handle(
         GetSavingsAccountsQuery request, CancellationToken cancellationToken)
     {
-        var accounts = await _savingsAccountRepository.GetAllAsync();
-
+        var accounts = await _savingsAccountRepository.GetAllWithUserAsync(); 
+        
         var filtered = accounts.AsQueryable();
 
         if (request.Status.HasValue)

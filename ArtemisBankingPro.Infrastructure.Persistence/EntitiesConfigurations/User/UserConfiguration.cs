@@ -24,12 +24,14 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Role).IsRequired().HasConversion<int>();
         builder.Property(u => u.IsActive).IsRequired();
         builder.Property(u => u.TradeId);
+        builder.Property(u => u.IdentityUserId).IsRequired().HasMaxLength(450);
         #endregion
 
         #region Index Configuration
         builder.HasIndex(u => u.IdentificationNumber).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
         builder.HasIndex(u => u.Username).IsUnique();
+        builder.HasIndex(u => u.IdentityUserId).IsUnique();
         #endregion
 
         #region Relationship Configuration

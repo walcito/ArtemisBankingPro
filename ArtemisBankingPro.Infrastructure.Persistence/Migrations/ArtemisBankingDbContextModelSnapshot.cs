@@ -316,10 +316,14 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("AccountNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(9)
+                        .HasColumnType("nchar(9)")
+                        .IsFixedLength();
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0.00m);
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -332,9 +336,12 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountNumber")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavingsAccounts");
+                    b.ToTable("SavingsAccounts", (string)null);
                 });
 
             modelBuilder.Entity("ArtemisBankingPro.Core.Domain.Entities.Trades.Trade", b =>
@@ -521,6 +528,11 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("IdentityUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -549,6 +561,9 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("IdentificationNumber")
+                        .IsUnique();
+
+                    b.HasIndex("IdentityUserId")
                         .IsUnique();
 
                     b.HasIndex("RoleId");
@@ -641,7 +656,7 @@ namespace ArtemisBankingPro.Infrastructure.Persistence.Migrations
                     b.HasOne("ArtemisBankingPro.Core.Domain.Entities.Users.User", "User")
                         .WithMany("SavingsAccounts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");

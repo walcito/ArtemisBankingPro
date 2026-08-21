@@ -8,7 +8,6 @@ using ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayLoanFromClient;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayCreditCardFromClient;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
-using ArtemisBankingPro.Core.Application.Dtos.Client;
 using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

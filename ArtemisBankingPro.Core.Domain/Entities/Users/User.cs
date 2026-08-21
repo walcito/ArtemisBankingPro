@@ -8,6 +8,7 @@ namespace ArtemisBankingPro.Core.Domain.Entities.Users;
 public class User
 {
     public int Id { get; set; }
+    public string IdentityUserId { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string IdentificationNumber { get; set; } = string.Empty;

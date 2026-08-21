@@ -1,9 +1,9 @@
 ﻿using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CancelSavingsAccount;
 using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
-using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
+using ArtemisBankingPro.Core.Application.ViewModels.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -127,7 +127,7 @@ public class SavingsAccountController : Controller
 
         var command = new CreateSavingsAccountCommand
         {
-            UserId = vm.UserId,
+            UserId = vm.DomainUserId,
             InitialAmount = vm.InitialAmount
         };
         await _mediator.Send(command);
