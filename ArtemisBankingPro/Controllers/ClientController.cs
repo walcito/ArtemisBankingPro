@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
 using ArtemisBankingPro.Core.Application.Interfaces.Client;
 using ArtemisBankingPro.Core.Application.ViewModels.Client;
