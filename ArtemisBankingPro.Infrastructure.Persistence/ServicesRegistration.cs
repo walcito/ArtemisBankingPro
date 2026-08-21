@@ -1,10 +1,18 @@
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Interfaces.Card;
+using ArtemisBankingPro.Core.Domain.Interfaces.Loans;
+using ArtemisBankingPro.Core.Domain.Interfaces.SavingsAccounts;
+using ArtemisBankingPro.Core.Domain.Interfaces.Trades;
+using ArtemisBankingPro.Core.Domain.Interfaces.Transactions;
 using ArtemisBankingPro.Core.Domain.Interfaces.Users;
 using ArtemisBankingPro.Infrastructure.Persistence.Context;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Card;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Loans;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.SavingsAccount;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Trades;
+using ArtemisBankingPro.Infrastructure.Persistence.Repositories.Transactions;
 using ArtemisBankingPro.Infrastructure.Persistence.Repositories.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +60,12 @@ public static class ServicesRegistration
         services.AddScoped<ICreditCardRepository, CreditCardRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<ISavingsAccountRepository, SavingsAccountRepository>();
+        services.AddScoped<IBeneficiaryRepository, BeneficiaryRepository>();
+        services.AddScoped<ILoanRepository, LoanRepository>();
+        services.AddScoped<IAmortizationInstallmentRepository, AmortizationInstallmentRepository>();
+        services.AddScoped<ITradeRepository, TradeRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
         #endregion
     }
 }
