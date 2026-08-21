@@ -1,0 +1,47 @@
+@model ArtemisBankingPro.Core.Application.ViewModels.Loan.HighRiskWarningViewModel
+
+@{
+    ViewData["Title"] = "Advertencia de Riesgo";
+}
+
+<div style="max-width:600px; margin:40px auto; text-align:center;">
+    <div style="font-size:64px; margin-bottom:16px;">⚠️</div>
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:16px; color:var(--danger);">Alerta de Alto Riesgo Financiero</h2>
+    
+    <div class="card-abp" style="padding:32px; text-align:left; margin-bottom:24px;">
+        <p style="font-size:16px; line-height:1.6; margin-bottom:20px; font-weight:600; color:var(--text);">
+            @Model.WarningMessage
+        </p>
+
+        <div style="background:var(--bg); border:1px solid var(--border); padding:16px; border-radius:var(--radius); margin-bottom:24px;">
+            <div style="font-size:13px; color:var(--text-faint);">Cliente:</div>
+            <div style="font-size:16px; font-weight:700; margin-bottom:12px;">@Model.ClientFullName</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div>
+                    <div style="font-size:13px; color:var(--text-faint);">Capital aprobado:</div>
+                    <div style="font-weight:600;">@Model.DisbursedAmount.ToString("C2")</div>
+                </div>
+                <div>
+                    <div style="font-size:13px; color:var(--text-faint);">Plazo / Tasa:</div>
+                    <div style="font-weight:600;">@Model.TermInMonths meses · @Model.AnnualInterestRate.ToString("0.00")%</div>
+                </div>
+            </div>
+        </div>
+
+        <p style="color:var(--text-dim); font-size:14px; text-align:center;">
+            ¿Está seguro de que desea asignar este préstamo a pesar del nivel de riesgo?
+        </p>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px;">
+        <a asp-action="Index" class="btn-abp btn-abp-ghost">Cancelar</a>
+        <form asp-action="ConfirmHighRisk" method="post">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="DisbursedAmount" />
+            <input type="hidden" asp-for="AnnualInterestRate" />
+            <input type="hidden" asp-for="TermInMonths" />
+            <button type="submit" class="btn-abp btn-abp-danger">Confirmar asignación</button>
+        </form>
+    </div>
+</div>
