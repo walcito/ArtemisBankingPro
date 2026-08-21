@@ -1,4 +1,4 @@
-﻿@model ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount.SavingsAccountListViewModel
+@model ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount.SavingsAccountListViewModel
 
 @{
     ViewData["Title"] = "Gestión de Cuentas de Ahorro";
@@ -17,13 +17,13 @@
         <label>Filtrar por tipo</label>
         <select name="type" onchange="this.form.submit()">
             <option value="">Todos</option>
-            <option value="Primary" selected="@(Context.Request.Query["type"] == "Primary")">Principal</option>
+            <option value="Principal" selected="@(Context.Request.Query["type"] == "Principal")">Principal</option>
             <option value="Secondary" selected="@(Context.Request.Query["type"] == "Secondary")">Secundaria</option>
         </select>
     </div>
     <div class="field" style="max-width:220px;">
         <label>Buscar por cédula</label>
-        <input name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]" onblur="this.form.submit()">
+        <input name="identificationNumber" placeholder="40200000000" value="@Context.Request.Query["identificationNumber"]" onblur="this.form.submit()">
     </div>
     <a asp-action="Create" class="btn btn-primary" style="margin-left:auto;">+ Asignar cuenta secundaria</a>
 </form>
@@ -38,18 +38,20 @@
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
-        @foreach (var account in Model.Items)
+        @if (Model != null && Model.Items != null && Model.Items.Any())
         {
-            <tr>
-                <td style="font-weight:700">@account.AccountNumber</td>
-                <td>@account.UserFullName</td>
-                <td><span class="badge info">@(account.Type.ToString() == "Primary" ? "Principal" : "Secundaria")</span></td>
-                <td>@account.Balance.ToString("C2")</td>
-                <td>
-                    <span class="badge @(account.Status.ToString() == "Active" ? "ok" : "bad")">
-                        @(account.Status.ToString() == "Active" ? "Activa" : "Cancelada")
-                    </span>
-                </td>
+            @foreach (var account in Model.Items)
+            {
+                <tr>
+                    <td style="font-weight:700">@account.AccountNumber</td>
+                    <td>@account.UserFullName</td>
+                    <td><span class="badge info">@(account.Type.ToString() == "Principal" ? "Principal" : "Secundaria")</span></td>
+                    <td>@account.Balance.ToString("C2")</td>
+                    <td>
+                        <span class="badge @(account.Status.ToString() == "Active" ? "ok" : "bad")">
+                            @(account.Status.ToString() == "Active" ? "Activa" : "Cancelada")
+                        </span>
+                    </td>
                 <td class="row-actions">
                     <a asp-action="Details" asp-route-accountNumber="@account.AccountNumber" class="btn btn-ghost btn-sm">Ver movimientos</a>
                     @if (account.Type.ToString() == "Secondary" && account.Status.ToString() == "Active")
