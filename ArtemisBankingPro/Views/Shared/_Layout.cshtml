@@ -43,9 +43,7 @@
                         <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CreditCard" ? "active" : "")" asp-controller="CreditCard" asp-action="Index">
                             <span class="dot"></span>Tarjetas de Crédito
                         </a>
-                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Commerce" ? "active" : "")" asp-controller="Commerce" asp-action="Index">
-                            <span class="dot"></span>Comercios
-                        </a>
+                        
                     }
                     else if (User.IsInRole("Teller") || User.IsInRole("Cashier") || User.IsInRole("Cajero"))
                     {

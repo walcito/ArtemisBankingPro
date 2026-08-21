@@ -12,7 +12,7 @@ using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSav
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
-[Authorize(Roles = "Administrador")]
+[Authorize(Roles = "Admin , Administrador")]
 public class SavingsAccountController : Controller
 {
     private readonly IMediator _mediator;
