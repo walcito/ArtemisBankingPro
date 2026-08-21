@@ -23,6 +23,7 @@ public class SaveUserViewModel
     public string UserName { get; set; } = string.Empty;
 
     [DataType(DataType.Password)]
+    [RegularExpression(@"^(?=.*[A-Z]).+$", ErrorMessage = "La contraseña debe contener al menos una letra mayúscula.")]
     public string? Password { get; set; }
 
     [DataType(DataType.Password)]

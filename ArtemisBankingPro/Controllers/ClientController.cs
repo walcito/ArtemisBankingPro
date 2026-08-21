@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.AddBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferBetweenOwnAccounts;
@@ -104,8 +104,16 @@ public class ClientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddBeneficiary(AddBeneficiaryCommand command)
     {
-        command.OwnerUserId = GetAuthenticatedUserId();
-        await _mediator.Send(command);
+        try
+        {
+            command.OwnerUserId = GetAuthenticatedUserId();
+            await _mediator.Send(command);
+            TempData["SuccessMessage"] = "Beneficiario agregado correctamente.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
         return RedirectToAction(nameof(Beneficiaries));
     }
 
@@ -113,7 +121,15 @@ public class ClientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveBeneficiary(int id)
     {
-        await _mediator.Send(new RemoveBeneficiaryCommand { Id = id, OwnerUserId = GetAuthenticatedUserId() });
+        try
+        {
+            await _mediator.Send(new RemoveBeneficiaryCommand { Id = id, OwnerUserId = GetAuthenticatedUserId() });
+            TempData["SuccessMessage"] = "Beneficiario eliminado correctamente.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
         return RedirectToAction(nameof(Beneficiaries));
     }
 
