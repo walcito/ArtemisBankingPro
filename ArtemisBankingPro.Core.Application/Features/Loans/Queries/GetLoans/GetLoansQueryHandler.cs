@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Common.Models;
+using ArtemisBankingPro.Core.Application.Common.Models;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using MediatR;
@@ -20,7 +20,7 @@ public class GetLoansQueryHandler : IRequestHandler<GetLoansQuery, PagedResult<L
     public async Task<PagedResult<LoanDto>> Handle(
         GetLoansQuery request, CancellationToken cancellationToken)
     {
-        var loans = await _loanRepository.GetAllAsync();
+        var loans = await _loanRepository.GetAllListWithIncludeAsync(l => l.User!);
         var filtered = loans.AsQueryable();
 
         if (request.Status.HasValue)

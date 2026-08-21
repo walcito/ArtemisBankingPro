@@ -71,5 +71,52 @@ public static class IdentitySeeder
                 await userManager.AddToRoleAsync(defaultCashier, "Teller");
             }
         }
+
+        var defaultClients = new[]
+        {
+            new ApplicationUser
+            {
+                UserName = "juanp",
+                Email = "juan.perez@example.com",
+                FirstName = "Juan",
+                LastName = "Pérez",
+                IdentificationNumber = "40200000001",
+                EmailConfirmed = true,
+                IsActive = true
+            },
+            new ApplicationUser
+            {
+                UserName = "mariar",
+                Email = "maria.rodriguez@example.com",
+                FirstName = "María",
+                LastName = "Rodríguez",
+                IdentificationNumber = "40200000002",
+                EmailConfirmed = true,
+                IsActive = true
+            },
+            new ApplicationUser
+            {
+                UserName = "pedrom",
+                Email = "pedro.martinez@example.com",
+                FirstName = "Pedro",
+                LastName = "Martínez",
+                IdentificationNumber = "40200000003",
+                EmailConfirmed = true,
+                IsActive = true
+            }
+        };
+
+        foreach (var client in defaultClients)
+        {
+            if (await userManager.FindByEmailAsync(client.Email!) == null)
+            {
+                var result = await userManager.CreateAsync(client, "123P@$$word!");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(client, "Client");
+                    await userManager.AddToRoleAsync(client, "Cliente");
+                }
+            }
+        }
     }
 }

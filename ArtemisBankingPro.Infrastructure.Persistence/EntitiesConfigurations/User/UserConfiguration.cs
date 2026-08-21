@@ -38,6 +38,16 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasForeignKey<UserEntity>(u => u.TradeId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.HasMany(u => u.SavingsAccounts)
+            .WithOne(s => s.User)
+            .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(u => u.CreditCards)
+            .WithOne(c => c.User)
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasMany<ActivationToken>()
             .WithOne()
             .HasForeignKey(t => t.UserId)
