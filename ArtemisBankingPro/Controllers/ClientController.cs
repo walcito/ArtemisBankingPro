@@ -1,23 +1,13 @@
 using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.AddBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferBetweenOwnAccounts;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.ExpressTransaction;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBeneficiary;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayLoanFromClient;
-using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayCreditCardFromClient;
-using ArtemisBankingPro.Core.Application.Dtos.Client;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
 using ArtemisBankingPro.Core.Application.Interfaces;
 using ArtemisBankingPro.Core.Application.ViewModels.Client;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using ArtemisBankingPro.Core.Domain.Entities.Users;
 using ArtemisBankingPro.Core.Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
