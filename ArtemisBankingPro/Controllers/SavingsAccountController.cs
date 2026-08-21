@@ -1,12 +1,14 @@
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
+﻿using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CancelSavingsAccount;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
-using ArtemisBankingPro.Core.Application.Common.Models;
+using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
+using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
+using ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount;
 using ArtemisBankingPro.Core.Domain.Common.Enums.SavingsAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
+using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetSavingsAccounts;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
@@ -35,7 +37,25 @@ public class SavingsAccountController : Controller
         };
 
         var result = await _mediator.Send(query);
-        return View(result);
+
+        var vm = new SavingsAccountListViewModel
+        {
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize,
+            Items = result.Items.Select(a => new SavingsAccountViewModel
+            {
+                Id = a.Id,
+                AccountNumber = a.AccountNumber,
+                Balance = a.Balance,
+                Type = a.Type,
+                Status = a.Status,
+                UserFullName = a.UserFullName,
+                UserIdentificationNumber = a.UserIdentificationNumber
+            }).ToList()
+        };
+
+        return View(vm);
     }
 
     public async Task<IActionResult> Details(string accountNumber, int pageNumber = 1)
@@ -48,13 +68,28 @@ public class SavingsAccountController : Controller
         };
 
         var result = await _mediator.Send(query);
-        ViewBag.AccountNumber = accountNumber;
         
         var accounts = await _mediator.Send(new GetSavingsAccountsQuery { PageSize = 1000 });
         var account = accounts.Items.FirstOrDefault(a => a.AccountNumber == accountNumber);
-        ViewBag.Balance = account?.Balance ?? 0m;
-        
-        return View(result);
+
+        var vm = new AccountDetailsViewModel
+        {
+            AccountNumber = accountNumber,
+            Balance = account?.Balance ?? 0m,
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize,
+            Transactions = result.Items.Select(t => new TransactionViewModel
+            {
+                Id = t.Id,
+                Amount = t.Amount,
+                Type = t.Type,
+                Date = t.Date,
+                Description = t.Description
+            }).ToList()
+        };
+
+        return View(vm);
     }
 
     [HttpGet]
@@ -78,18 +113,23 @@ public class SavingsAccountController : Controller
             ViewBag.SelectedUser = selectedUser;
         }
 
-        return View(new CreateSavingsAccountCommand { UserId = selectedUserId ?? 0 });
+        return View(new CreateSavingsAccountViewModel { UserId = selectedUserId ?? 0 });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateSavingsAccountCommand command)
+    public async Task<IActionResult> Create(CreateSavingsAccountViewModel vm)
     {
         if (!ModelState.IsValid)
         {
-            return await Create(command.UserId == 0 ? (int?)null : command.UserId); // Re-render with errors
+            return await Create(vm.UserId == 0 ? (int?)null : vm.UserId); // Re-render with errors
         }
 
+        var command = new CreateSavingsAccountCommand
+        {
+            UserId = vm.UserId,
+            InitialAmount = vm.InitialAmount
+        };
         await _mediator.Send(command);
         return RedirectToAction(nameof(Index));
     }

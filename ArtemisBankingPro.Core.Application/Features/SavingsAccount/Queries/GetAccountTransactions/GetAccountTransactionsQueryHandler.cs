@@ -1,8 +1,10 @@
-using ArtemisBankingPro.Core.Application.Common.Models;
+﻿using ArtemisBankingPro.Core.Application.Common.Models;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using ArtemisBankingPro.Core.Domain.Entities.SavingsAccounts;
 using ArtemisBankingPro.Core.Domain.Entities.Transactions;
 using MediatR;
+using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
+using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 
 namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 

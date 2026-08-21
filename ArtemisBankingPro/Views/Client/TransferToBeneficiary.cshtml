@@ -1,7 +1,7 @@
-@model ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBeneficiary.TransferToBeneficiaryCommand
+﻿@model ArtemisBankingPro.Core.Application.ViewModels.Client.TransferToBeneficiaryViewModel
 @{
     ViewData["Title"] = "Transacción a terceros";
-    var beneficiaries = ViewBag.Beneficiaries as List<ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries.BeneficiaryDto>;
+    var beneficiaries = ViewBag.Beneficiaries as List<ArtemisBankingPro.Core.Application.Dtos.Client.BeneficiaryDto>;
 }
 
 <div class="two-col">

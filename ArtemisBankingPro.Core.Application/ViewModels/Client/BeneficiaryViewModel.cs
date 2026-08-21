@@ -1,6 +1,6 @@
-namespace ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries;
+namespace ArtemisBankingPro.Core.Application.ViewModels.Client;
 
-public class BeneficiaryDto
+public class BeneficiaryViewModel
 {
     public int Id { get; set; }
     public string Alias { get; set; } = string.Empty;
