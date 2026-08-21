@@ -31,15 +31,16 @@ public class CreateSavingsAccountCommandHandler : IRequestHandler<CreateSavingsA
             throw new Exception("El cliente no existe o no está activo.");
 
         var accounts = await _savingsAccountRepository.GetAllAsync();
-        var hasActivePrincipal = accounts.Any(a =>
-            a.UserId == request.UserId &&
-            a.Type == AccountType.Principal &&
-            a.Status == AccountStatus.Active);
+        var userAccounts = accounts.Where(a => a.UserId == request.UserId).ToList();
 
-        if (!hasActivePrincipal)
-            throw new Exception("El cliente debe tener una cuenta principal activa antes de crear una cuenta secundaria.");
+        var accountType = AccountType.Secondary;
+        if (!userAccounts.Any(a => a.Type == AccountType.Principal && a.Status == AccountStatus.Active))
+        {
+            // Si el cliente no tiene una cuenta principal activa previa, la primera se crea como Principal
+            accountType = AccountType.Principal;
+        }
 
-        //Genera número de cuenta único de 9 dígitos
+        // Genera número de cuenta único de 9 dígitos
         string accountNumber;
         do
         {
@@ -51,7 +52,7 @@ public class CreateSavingsAccountCommandHandler : IRequestHandler<CreateSavingsA
         {
             AccountNumber = accountNumber,
             Balance = request.InitialAmount,
-            Type = AccountType.Secondary,
+            Type = accountType,
             Status = AccountStatus.Active,
             UserId = request.UserId
         };
