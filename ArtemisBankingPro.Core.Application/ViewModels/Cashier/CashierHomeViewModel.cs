@@ -1,6 +1,6 @@
-namespace ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
+namespace ArtemisBankingPro.Core.Application.ViewModels.Cashier;
 
-public class CashierHomeDto
+public class CashierHomeViewModel
 {
     public int TotalTransactionsToday { get; set; }
     public decimal TotalAmountProcessedToday { get; set; }

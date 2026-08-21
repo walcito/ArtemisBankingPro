@@ -1,8 +1,8 @@
 using ArtemisBankingPro.Core.Domain.Common.Enums.Transactions;
 
-namespace ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
+namespace ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount;
 
-public class TransactionDto
+public class TransactionViewModel
 {
     public int Id { get; set; }
     public decimal Amount { get; set; }

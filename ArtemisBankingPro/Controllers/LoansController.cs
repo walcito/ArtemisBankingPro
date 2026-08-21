@@ -1,9 +1,12 @@
-using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
-using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
+﻿using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.ViewModels.Loan;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
+using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
@@ -29,7 +32,27 @@ public class LoansController : Controller
         };
 
         var result = await _mediator.Send(query);
-        return View(result);
+
+        var vm = new LoanListViewModel
+        {
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize,
+            Items = result.Items.Select(l => new LoanViewModel
+            {
+                Id = l.Id,
+                LoanNumber = l.LoanNumber,
+                DisbursedAmount = l.DisbursedAmount,
+                AnnualInterestRate = l.AnnualInterestRate,
+                TermInMonths = l.TermInMonths,
+                CurrentDebt = l.CurrentDebt,
+                Status = l.Status,
+                UserFullName = l.UserFullName,
+                UserIdentificationNumber = l.UserIdentificationNumber
+            }).ToList()
+        };
+
+        return View(vm);
     }
 
     public async Task<IActionResult> Details(int id)
@@ -40,6 +63,31 @@ public class LoansController : Controller
         if (result == null)
             return NotFound();
 
-        return View(result);
+        var vm = new LoanDetailViewModel
+        {
+            Id = result.Id,
+            LoanNumber = result.LoanNumber,
+            DisbursedAmount = result.DisbursedAmount,
+            AnnualInterestRate = result.AnnualInterestRate,
+            TermInMonths = result.TermInMonths,
+            CurrentDebt = result.CurrentDebt,
+            Status = result.Status,
+            UserId = result.UserId,
+            UserFullName = result.UserFullName,
+            UserIdentificationNumber = result.UserIdentificationNumber,
+            Installments = result.Installments.Select(i => new LoanInstallmentViewModel
+            {
+                Id = i.Id,
+                InstallmentNumber = i.InstallmentNumber,
+                InstallmentAmount = i.InstallmentAmount,
+                Interest = i.Interest,
+                PrincipalAmortization = i.PrincipalAmortization,
+                PendingBalance = i.PendingBalance,
+                Status = i.Status,
+                PaidAmount = i.PaidAmount
+            }).ToList()
+        };
+
+        return View(vm);
     }
 }

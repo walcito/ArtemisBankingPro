@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace ArtemisBankingPro.Core.Application.ViewModels.Admin;
 
-namespace ArtemisBankingPro.Core.Application.ViewModels.Admin
+public class DashboardViewModel
 {
-    internal class DashboardViewModel
-    {
-    }
+    public int TotalActiveUsers { get; set; }
+    public int TotalActiveAccounts { get; set; }
+    public int TotalActiveLoans { get; set; }
+    public int TotalActiveCreditCards { get; set; }
+    public decimal TotalDepositsToday { get; set; }
+    public decimal TotalTransactionsToday { get; set; }
 }

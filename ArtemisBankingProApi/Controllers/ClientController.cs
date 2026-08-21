@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.AddBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferBetweenOwnAccounts;
@@ -7,12 +7,15 @@ using ArtemisBankingPro.Core.Application.Features.Clients.Commands.TransferToBen
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.CashAdvance;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayLoanFromClient;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.PayCreditCardFromClient;
-using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
-using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries;
-using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
+using ArtemisBankingPro.Core.Application.Dtos.Client;
+using ArtemisBankingPro.Core.Application.Dtos.Client;
+using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetBeneficiaries;
+using ArtemisBankingPro.Core.Application.Features.Clients.Queries.GetClientHome;
+using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Queries.GetAccountTransactions;
 
 namespace ArtemisBankingPro.WebAPI.Controllers;
 

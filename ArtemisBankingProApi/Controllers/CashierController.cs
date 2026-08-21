@@ -1,13 +1,14 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
+using ArtemisBankingPro.Core.Application.Dtos.Cashier;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
 using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayCreditCard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 
 namespace ArtemisBankingPro.WebApp.Controllers;
 
