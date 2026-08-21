@@ -1,7 +1,6 @@
-﻿using ArtemisBankingPro.Core.Application.Features.Trades.Commands.CreateTrade;
+using ArtemisBankingPro.Core.Application.Features.Trades.Commands.CreateTrade;
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.UpdateTrade;
 using ArtemisBankingPro.Core.Application.Features.Trades.Commands.ToggleTradeStatus;
-using ArtemisBankingPro.Core.Application.Dtos.Commerce;
 using ArtemisBankingPro.Core.Application.Dtos.Commerce;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
