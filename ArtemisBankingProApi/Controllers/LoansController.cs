@@ -2,8 +2,6 @@ using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.PagarPrestamo;
-using ArtemisBankingPro.Core.Application.Dtos.Loan;
-using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

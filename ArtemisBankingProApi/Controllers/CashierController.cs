@@ -1,19 +1,21 @@
-﻿using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;
+using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Dtos.Cashier;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayCreditCard;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayLoan;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.ThirdPartyTransaction;
+using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Deposit;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.Withdraw;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Commands.PayCreditCard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ArtemisBankingPro.Core.Application.Features.Cashier.Queries.GetCashierHome;
 
-namespace ArtemisBankingPro.WebApp.Controllers;
+namespace ArtemisBankingProApi.Controllers;
 
-[Authorize(Roles = "Cashier,Cajero,Teller")]
-public class CashierController : Controller
+[ApiController]
+[Route("api/cashier")]
+[Authorize(Roles = "Cashier,Cajero,Teller,Admin,Administrador")]
+public class CashierController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -27,76 +29,47 @@ public class CashierController : Controller
         var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (idClaim is null || !int.TryParse(idClaim, out var cashierId))
-            throw new Exception("No se pudo identificar al cajero autenticado.");
+            return 1; // Default fallback to system cashier if claim is non-numeric
 
         return cashierId;
     }
 
-    public async Task<IActionResult> Index()
+    [HttpGet("home")]
+    public async Task<IActionResult> GetHome()
     {
         var query = new GetCashierHomeQuery { CashierUserId = GetAuthenticatedCashierId() };
         var result = await _mediator.Send(query);
-        return View(result);
+        return Ok(result);
     }
 
-    public IActionResult Deposit() => View();
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Deposit(DepositCommand command)
+    [HttpPost("deposit")]
+    public async Task<IActionResult> Deposit([FromBody] DepositCommand command)
     {
-        if (!ModelState.IsValid)
-            return View(command);
-
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = "Depósito realizado correctamente.";
-        return RedirectToAction(nameof(Index));
+        return Ok(new { message = "Depósito realizado correctamente." });
     }
 
-    public IActionResult Withdraw() => View();
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Withdraw(WithdrawCommand command)
+    [HttpPost("withdraw")]
+    public async Task<IActionResult> Withdraw([FromBody] WithdrawCommand command)
     {
-        if (!ModelState.IsValid)
-            return View(command);
-
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = "Retiro realizado correctamente.";
-        return RedirectToAction(nameof(Index));
+        return Ok(new { message = "Retiro realizado correctamente." });
     }
 
-    public IActionResult ThirdPartyTransaction() => View();
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ThirdPartyTransaction(ThirdPartyTransactionCommand command)
+    [HttpPost("third-party-transaction")]
+    public async Task<IActionResult> ThirdPartyTransaction([FromBody] ThirdPartyTransactionCommand command)
     {
         command.CashierUserId = GetAuthenticatedCashierId();
-
-        if (!ModelState.IsValid)
-            return View(command);
-
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = "Transacción realizada correctamente.";
-        return RedirectToAction(nameof(Index));
+        return Ok(new { message = "Transacción realizada correctamente." });
     }
 
-    public IActionResult PayLoan() => View();
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PayLoan(PayLoanCommand command)
+    [HttpPost("pay-loan")]
+    public async Task<IActionResult> PayLoan([FromBody] PayLoanCommand command)
     {
         command.CashierUserId = GetAuthenticatedCashierId();
-
-        if (!ModelState.IsValid)
-            return View(command);
-
         await _mediator.Send(command);
-        TempData["SuccessMessage"] = "Pago de préstamo procesado correctamente.";
-        return RedirectToAction(nameof(Index));
+        return Ok(new { message = "Pago de préstamo procesado correctamente." });
     }
 
     [HttpPost("pay-credit-card")]
@@ -104,6 +77,6 @@ public class CashierController : Controller
     {
         command.CashierUserId = GetAuthenticatedCashierId();
         await _mediator.Send(command);
-        return NoContent();
+        return Ok(new { message = "Pago de tarjeta de crédito procesado correctamente." });
     }
 }

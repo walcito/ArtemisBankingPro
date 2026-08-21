@@ -1,6 +1,5 @@
-﻿using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
+using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount;
 using ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CancelSavingsAccount;
-using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using ArtemisBankingPro.Core.Application.Dtos.SavingsAccount;
 using ArtemisBankingPro.Core.Application.Common.Models;
 using MediatR;
