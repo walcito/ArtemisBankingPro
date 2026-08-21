@@ -1,39 +1,49 @@
-﻿@model ArtemisBankingPro.Core.Application.ViewModels.SavingsAccount.CreateSavingsAccountViewModel
+@model ArtemisBankingPro.Core.Application.Features.SavingsAccounts.Commands.CreateSavingsAccount.CreateSavingsAccountCommand
 @{
     ViewData["Title"] = "Asignar cuenta secundaria";
+    var isStep1 = ViewBag.SelectedUserId == null;
 }
 
-@if (string.IsNullOrEmpty(ViewBag.SelectedUserId))
+@if (isStep1)
 {
     <!-- Paso 1: Seleccionar Cliente -->
-    <div class="alert alert-info">Deuda promedio actual de clientes activos: <b>RD$46,280.90</b></div>
-    <form method="get" class="field" style="max-width:280px; display: flex; gap: 8px;">
+    <div style="margin-bottom:20px;">
+        <a asp-action="Index" class="btn btn-ghost btn-sm" style="margin-bottom:10px;">← Volver al listado</a>
+        <h2 style="font-size:22px; font-weight:800; margin:0;">Asignar Cuenta Secundaria (Paso 1 de 2)</h2>
+        <p style="color:var(--text-faint); margin:0; font-size:13px;">Seleccione el cliente activo que recibirá la nueva cuenta secundaria.</p>
+    </div>
+
+    <form method="get" class="field" style="max-width:320px; display: flex; gap: 8px; margin-bottom:16px;">
         <div style="flex: 1;">
             <label>Buscar por cédula</label>
-            <input name="identificationNumber" placeholder="402-0000000-0" value="@Context.Request.Query["identificationNumber"]">
+            <input name="identificationNumber" placeholder="40200000000" value="@Context.Request.Query["identificationNumber"]">
         </div>
         <button type="submit" class="btn btn-primary" style="align-self: flex-end; padding: 11px 13px;">Buscar</button>
     </form>
+
     <div class="card">
         <table>
             <tr>
-                <th></th>
+                <th style="width:50px;"></th>
                 <th>Cédula</th>
                 <th>Nombre</th>
                 <th>Correo</th>
-                <th>Deuda actual</th>
+                <th>Usuario</th>
             </tr>
-            @foreach (var client in ViewBag.Clients)
+            @if (ViewBag.Clients != null)
             {
-                <tr>
-                    <td>
-                        <input type="radio" name="selectedUserId" value="@client.Id" form="selectForm" required>
-                    </td>
-                    <td>@client.IdentificationNumber</td>
-                    <td style="font-weight:700">@client.FirstName @client.LastName</td>
-                    <td style="color:var(--text-dim)">@client.Email</td>
-                    <td>RD$0.00</td> <!-- Mock de deuda, el API de Users no lo trae por defecto -->
-                </tr>
+                foreach (var client in ViewBag.Clients)
+                {
+                    <tr>
+                        <td>
+                            <input type="radio" name="selectedUserId" value="@client.Id" form="selectForm" required>
+                        </td>
+                        <td style="font-weight:700;">@client.Identification</td>
+                        <td>@client.FirstName @client.LastName</td>
+                        <td style="color:var(--text-dim);">@client.Email</td>
+                        <td>@client.UserName</td>
+                    </tr>
+                }
             }
         </table>
     </div>
@@ -41,28 +51,33 @@
         <input type="hidden" name="identificationNumber" value="@Context.Request.Query["identificationNumber"]" />
         <div style="display:flex;gap:10px;margin-top:16px;">
             <a asp-action="Index" class="btn btn-ghost">Volver atrás</a>
-            <button type="submit" class="btn btn-primary">Siguiente paso</button>
+            <button type="submit" class="btn btn-primary">Siguiente paso →</button>
         </div>
     </form>
 }
 else
 {
     <!-- Paso 2: Configuración de la cuenta -->
+    <div style="margin-bottom:20px;">
+        <a asp-action="Create" class="btn btn-ghost btn-sm" style="margin-bottom:10px;">← Volver al paso 1</a>
+        <h2 style="font-size:22px; font-weight:800; margin:0;">Configurar Cuenta Secundaria (Paso 2 de 2)</h2>
+    </div>
+
     <form asp-action="Create" method="post" class="card panel" style="max-width:460px;">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="UserId" />
         
-        <div class="section-title">Cliente seleccionado: @ViewBag.SelectedUser?.FirstName @ViewBag.SelectedUser?.LastName</div>
+        <div class="section-title">Cliente: @ViewBag.SelectedUser?.FirstName @ViewBag.SelectedUser?.LastName (@ViewBag.SelectedUser?.Identification)</div>
         
         <div class="field">
             <label>Balance inicial <span class="req">*</span></label>
-            <input asp-for="InitialAmount" placeholder="0.00">
+            <input asp-for="InitialAmount" type="number" step="0.01" min="0" placeholder="0.00">
             <span asp-validation-for="InitialAmount" class="text-danger" style="font-size: 11px;"></span>
         </div>
         
         <div style="display:flex;gap:10px;">
             <a asp-action="Create" class="btn btn-ghost">Volver atrás</a>
-            <button type="submit" class="btn btn-primary">Asignar</button>
+            <button type="submit" class="btn btn-primary">Asignar Cuenta</button>
         </div>
         <div class="field-hint" style="margin-top:8px;">Puede ser RD$0.00. El número de cuenta de 9 dígitos se genera automáticamente y la cuenta queda Activa como Secundaria.</div>
     </form>
