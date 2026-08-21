@@ -10,8 +10,8 @@ public class LoanMappingProfile : Profile
     {
         #region DTO → ViewModel Mappings
         CreateMap<LoanDto, LoanViewModel>().ReverseMap();
-        CreateMap<DetallePrestamoDto, LoanDetailViewModel>().ReverseMap();
-        CreateMap<CuotaPrestamoDto, LoanInstallmentViewModel>().ReverseMap();
+        CreateMap<LoanDetailDto, LoanDetailViewModel>().ReverseMap();
+        CreateMap<LoanInstallmentDto, LoanInstallmentViewModel>().ReverseMap();
         #endregion
     }
 }

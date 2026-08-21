@@ -1,6 +1,6 @@
 using ArtemisBankingPro.Core.Application.Dtos.Cashier;
 
-namespace ArtemisBankingPro.Core.Application.Interfaces;
+namespace ArtemisBankingPro.Core.Application.Interfaces.Cashier;
 
 public interface ICashierService
 {

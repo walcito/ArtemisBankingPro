@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Cashier;
 using ArtemisBankingPro.Core.Application.ViewModels.Cashier;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;

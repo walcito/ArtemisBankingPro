@@ -5,11 +5,11 @@ using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrest
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetEligibleClients;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.GetLoans;
 using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Loan;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using MediatR;
 
-namespace ArtemisBankingPro.Core.Application.Services;
+namespace ArtemisBankingPro.Core.Application.Services.Loan;
 
 public class LoanService : ILoanService
 {
@@ -31,7 +31,7 @@ public class LoanService : ILoanService
         });
     }
 
-    public async Task<DetallePrestamoDto?> GetLoanDetailAsync(int loanId)
+    public async Task<LoanDetailDto?> GetLoanDetailAsync(int loanId)
     {
         return await _mediator.Send(new ObtenerDetallePrestamoQuery { LoanId = loanId });
     }

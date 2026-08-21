@@ -1,5 +1,5 @@
 using ArtemisBankingPro.Core.Application.Exceptions;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Loan;
 using ArtemisBankingPro.Core.Application.ViewModels.Loan;
 using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 using AutoMapper;

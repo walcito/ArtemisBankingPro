@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Domain.Entities.Loans;
+using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
 using MediatR;
 using ArtemisBankingPro.Core.Application.Dtos.Loan;
@@ -6,25 +6,23 @@ using ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePr
 
 namespace ArtemisBankingPro.Core.Application.Features.Loans.Queries.ObtenerDetallePrestamo;
 
-public class ObtenerDetallePrestamoQueryHandler : IRequestHandler<ObtenerDetallePrestamoQuery, DetallePrestamoDto?>
+public class ObtenerDetallePrestamoQueryHandler : IRequestHandler<ObtenerDetallePrestamoQuery, LoanDetailDto?>
 {
-    private readonly IGenericRepository<Loan> _loanRepository;
+    private readonly IGenericRepository<Domain.Entities.Loans.Loan> _loanRepository;
 
-    public ObtenerDetallePrestamoQueryHandler(IGenericRepository<Loan> loanRepository)
+    public ObtenerDetallePrestamoQueryHandler(IGenericRepository<Domain.Entities.Loans.Loan> loanRepository)
     {
         _loanRepository = loanRepository;
     }
 
-    public async Task<DetallePrestamoDto?> Handle(ObtenerDetallePrestamoQuery request, CancellationToken cancellationToken)
+    public async Task<LoanDetailDto?> Handle(ObtenerDetallePrestamoQuery request, CancellationToken cancellationToken)
     {
-        // Obtener el préstamo con sus cuotas y el usuario dueño del préstamo
         var loans = await _loanRepository.GetAllListWithIncludeAsync(l => l.Installments, l => l.User!);
         var loan = loans.FirstOrDefault(l => l.Id == request.LoanId);
 
-        if (loan is null)
-            return null;
+        if (loan == null) return null;
 
-        var dto = new DetallePrestamoDto
+        var dto = new LoanDetailDto
         {
             Id = loan.Id,
             LoanNumber = loan.LoanNumber,
@@ -35,10 +33,10 @@ public class ObtenerDetallePrestamoQueryHandler : IRequestHandler<ObtenerDetalle
             Status = loan.Status,
             UserId = loan.UserId,
             UserFullName = loan.User != null ? $"{loan.User.FirstName} {loan.User.LastName}" : string.Empty,
-            UserIdentificationNumber = loan.User?.IdentificationNumber ?? string.Empty,
+            UserIdentificationNumber = loan.User != null ? loan.User.IdentificationNumber : string.Empty,
             Installments = loan.Installments
                 .OrderBy(i => i.InstallmentNumber)
-                .Select(i => new CuotaPrestamoDto
+                .Select(i => new LoanInstallmentDto
                 {
                     Id = i.Id,
                     InstallmentNumber = i.InstallmentNumber,

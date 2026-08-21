@@ -1,4 +1,4 @@
-﻿using ArtemisBankingPro.Core.Application.Dtos.Loan;
+using ArtemisBankingPro.Core.Application.Dtos.Loan;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.AsignarPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.EditarTasaPrestamo;
 using ArtemisBankingPro.Core.Application.Features.Loans.Commands.PagarPrestamo;
@@ -56,8 +56,8 @@ public class LoansController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPatch("{id}/rate")]
-    public async Task<IActionResult> EditarTasaPrestamo(int id, [FromBody] EditarTasaPrestamoRequest request)
+    [HttpPost("{id}/tasa-interes")]
+    public async Task<IActionResult> EditarTasaPrestamo(int id, [FromBody] EditLoanRateRequest request)
     {
         var command = new EditarTasaPrestamoCommand
         {

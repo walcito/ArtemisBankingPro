@@ -2,7 +2,7 @@ using ArtemisBankingPro.Core.Domain.Common.Enums.Loans;
 
 namespace ArtemisBankingPro.Core.Application.Dtos.Loan;
 
-public class DetallePrestamoDto
+public class LoanDetailDto
 {
     public int Id { get; set; }
     public string LoanNumber { get; set; } = string.Empty;
@@ -14,6 +14,5 @@ public class DetallePrestamoDto
     public int UserId { get; set; }
     public string UserFullName { get; set; } = string.Empty;
     public string UserIdentificationNumber { get; set; } = string.Empty;
-    public List<CuotaPrestamoDto> Installments { get; set; } = new();
+    public List<LoanInstallmentDto> Installments { get; set; } = new();
 }
-

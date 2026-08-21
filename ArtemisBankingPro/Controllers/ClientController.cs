@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using ArtemisBankingPro.Core.Application.Features.Clients.Commands.RemoveBeneficiary;
 using ArtemisBankingPro.Core.Application.Dtos.Client;
-using ArtemisBankingPro.Core.Application.Interfaces;
+using ArtemisBankingPro.Core.Application.Interfaces.Client;
 using ArtemisBankingPro.Core.Application.ViewModels.Client;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -94,8 +94,7 @@ public class ClientController : Controller
     {
         try
         {
-            command.OwnerUserId = GetAuthenticatedUserId();
-            await _mediator.Send(command);
+            await _clientService.AddBeneficiaryAsync(GetAuthenticatedUserId(), command.BeneficiaryAccountNumber, command.Alias);
             TempData["SuccessMessage"] = "Beneficiario agregado correctamente.";
         }
         catch (Exception ex)
@@ -111,7 +110,7 @@ public class ClientController : Controller
     {
         try
         {
-            await _mediator.Send(new RemoveBeneficiaryCommand { Id = id, OwnerUserId = GetAuthenticatedUserId() });
+            await _clientService.RemoveBeneficiaryAsync(id, GetAuthenticatedUserId());
             TempData["SuccessMessage"] = "Beneficiario eliminado correctamente.";
         }
         catch (Exception ex)

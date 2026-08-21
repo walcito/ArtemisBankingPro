@@ -1,15 +1,15 @@
 using ArtemisBankingPro.Core.Application.Interfaces;
-using ArtemisBankingPro.Core.Domain.Entities.Loans;
 using ArtemisBankingPro.Core.Domain.Interfaces;
+using LoanEntity = ArtemisBankingPro.Core.Domain.Entities.Loans.Loan;
 
 namespace ArtemisBankingPro.Core.Application.Services;
 
 // Generates a unique 9-digit loan number
 public class LoanNumberGeneratorService : ILoanNumberGeneratorService
 {
-    private readonly IGenericRepository<Loan> _loanRepository;
+    private readonly IGenericRepository<LoanEntity> _loanRepository;
 
-    public LoanNumberGeneratorService(IGenericRepository<Loan> loanRepository)
+    public LoanNumberGeneratorService(IGenericRepository<LoanEntity> loanRepository)
     {
         _loanRepository = loanRepository;
     }
